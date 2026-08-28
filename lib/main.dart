@@ -1,3 +1,4 @@
+import 'package:after_project/ui/login/widgets/tela_login.dart';
 import 'package:flutter/material.dart';
 import 'config/supabase_config.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const TelaLogin(),
     );
   }
 }
