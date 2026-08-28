@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'config/supabase_config.dart';
 
-void main() {
+void main() async{
+  await SupabaseConfig.initialize();
+  //TODO teste de conexão com o BD
+  final response = await supabase.from('evento_detalhado').select();
+  print("Supabase response:");
+  print(response);
+
   runApp(const MyApp());
 }
 
