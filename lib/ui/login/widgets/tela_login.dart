@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:after_project/ui/core/themes/app_colors.dart';
+import 'package:after_project/ui/core/ui/gradient_text.dart';
+import 'package:after_project/ui/core/ui/logo.dart';
+import 'package:after_project/ui/core/ui/textbox.dart';
+import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/utils/validators.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -16,9 +22,17 @@ class _TelaLoginState extends State<TelaLogin> {
   bool _mostrarSenha = false;
 
   void _handleLoginClick(){
-    // TODO: fazer login no supabase aqui
+    // TODO: fazer login no supabase aqui e ir pra tela principal
     debugPrint('Email: ${_emailController.text}');
     debugPrint('Senha: ${_senhaController.text}');
+  }
+
+  void _handleEsqueciSenhaTap(){
+    //TODO recuperação de senha
+  }
+
+  void _handleCadastro(){
+    //TODO ir pra tela de cadastro
   }
 
   @override void dispose() {
@@ -29,75 +43,148 @@ class _TelaLoginState extends State<TelaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  "Entrar",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+    return Scaffold( //fundo
+      body: Stack(
+        children: [
+          Positioned.fill( //imagem de fundo
+            child: Image.asset('assets/images/login_bg.jpg', fit: BoxFit.cover)
+          ),
+          Positioned.fill( //card transparente
+            child: Padding( //espaço entre as laterais da tela
+              padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 85),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF111111).withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(28),
                 ),
-                const SizedBox(height: 32),
-
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder()
-                  ),
-                  validator: Validators.email,
-                ),
-                const SizedBox(height: 16),
-
-                TextFormField(
-                  controller: _senhaController,
-                  obscureText: !_mostrarSenha,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _mostrarSenha
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _mostrarSenha = !_mostrarSenha;
-                        });
-                      },
-                    ),
-                  ),
-                  validator: Validators.senha,
-                ),
-                const SizedBox(height: 24),
-
-                ElevatedButton(
-                  onPressed: _handleLoginClick,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text('Entrar'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () {
-                    // TODO: navegar pra tela de cadastro
-                  },
-                  child: const Text('Não tem conta? Cadastre-se'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          SafeArea( //pra não ficar em cima dos controles do sistema
+            child: Padding( //espaço entre as laterais da tela (horizontal)
+              padding: const EdgeInsets.symmetric(horizontal: 37),
+              child: Form( //formulário com os textboxs e botão
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
+                  crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
+                  children: [
+                    Center(
+                      child: AppLogo(size: 84),
+                    ),
+                    const SizedBox(height: 25), //espaçamento
+                    GradientText(
+                      text: "Bem-Vindo!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 32,
+                        height: 1.0,
+                        color: Colors.white,
+                      ),
+                      gradient: LinearGradient(
+                        colors: [AppColors.titleGradA, AppColors.titleGradB, AppColors.titleGradC],
+                        stops: [0.0, 0.423, 1.0],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Faça login para continuar!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 56),
+                    AppTextField(
+                      label: "Email",
+                      controller: _emailController,
+                      validator: Validators.email,
+                      tipoInput: TextInputType.emailAddress,
+                      iconeComeco: Icon(Icons.mail_outline),
+                    ),
+                    const SizedBox(height: 29),
+                    AppTextField(
+                      label: "Senha",
+                      controller: _senhaController,
+                      validator: Validators.senha,
+                      tipoInput: TextInputType.visiblePassword,
+                      esconderTexto: !_mostrarSenha,
+                      iconeFim: IconButton(
+                        icon: Icon(
+                          _mostrarSenha
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _mostrarSenha = !_mostrarSenha;
+                          });
+                        },
+                      ),
+                      iconeComeco: Icon(Icons.lock_outline),
+                    ),
+                    const SizedBox(height: 12),
+                    RichText(
+                      textAlign: TextAlign.end,
+                      text: TextSpan(
+                        text: "Esqueci minha senha",
+                        recognizer: TapGestureRecognizer()..onTap = () => _handleEsqueciSenhaTap(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Color(0xFFBA12F3),
+                        )
+                      ),
+                    ),
+                    const SizedBox(height: 31),
+                    GradientButton(
+                      text: 'Entrar',
+                      height: 40,
+                      onTap: _handleLoginClick,
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+
+                    //TODO: login de outras formas
+                    const SizedBox(height: 70),
+
+                    const SizedBox(height: 40),
+
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                        children: [
+                          TextSpan(text: "Não tem uma conta ainda? "),
+                          TextSpan(
+                            text: "Cadastre-se!",
+                            recognizer: TapGestureRecognizer()..onTap = () => _handleCadastro(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Color(0xFFBA12F3),
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
