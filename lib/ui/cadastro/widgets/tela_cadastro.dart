@@ -50,148 +50,157 @@ class _TelaCadastroState extends State<TelaCadastro> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 37),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
-                crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
-                children: [
-                  Align(
-                    alignment: AlignmentGeometry.topStart,
-                    child: AppLogo(size: 84),
-                  ),
-                  const SizedBox(height: 16),
-                  GradientText(
-                    text: "Bem-Vindo!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 32,
-                      height: 1.0,
-                      color: Colors.white,
-                    ),
-                    gradient: LinearGradient(
-                      colors: [AppColors.titleGradA, AppColors.titleGradB, AppColors.titleGradC],
-                      stops: [0.0, 0.423, 1.0],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Faça o cadastro para continuar!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: _RoleToggle(
-                      organizador: _organizador,
-                      onChanged: (v) => setState(() => _organizador = v),
-                    ),
-                  ),
-                  const SizedBox(height: 61),
-                  AppTextField(
-                    label: "Nome completo",
-                    controller: _nomeController,
-                    validator: Validators.nome,
-                    tipoInput: TextInputType.text,
-                    iconeComeco: Icon(Icons.person_outline),
-                  ),
-                  const SizedBox(height: 37),
-                  AppTextField(
-                    label: "Email",
-                    controller: _emailController,
-                    validator: Validators.email,
-                    tipoInput: TextInputType.text,
-                    iconeComeco: Icon(Icons.mail_outline),
-                  ),
-                  const SizedBox(height: 37),
-                  AppTextField(
-                    label: "Senha",
-                    controller: _senhaController,
-                    validator: Validators.senha,
-                    tipoInput: TextInputType.visiblePassword,
-                    esconderTexto: !_mostrarSenha,
-                    iconeFim: IconButton(
-                      icon: Icon(
-                        _mostrarSenha
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: IntrinsicHeight(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
+                    crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
+                    children: [
+                      Align(
+                        alignment: AlignmentGeometry.topStart,
+                        child: AppLogo(size: 84),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _mostrarSenha = !_mostrarSenha;
-                        });
-                      },
-                    ),
-                    iconeComeco: Icon(Icons.lock_outline),
-                  ),
-                  const SizedBox(height: 37),
-                  AppTextField(
-                    label: "Confirme a senha",
-                    controller: _confirmaSenhaController,
-                    validator: (value) => Validators.confirmaSenha(value, _confirmaSenhaController.text),
-                    tipoInput: TextInputType.visiblePassword,
-                    esconderTexto: !_mostrarConfirmaSenha,
-                    iconeFim: IconButton(
-                      icon: Icon(
-                        _mostrarConfirmaSenha
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _mostrarConfirmaSenha = !_mostrarConfirmaSenha;
-                        });
-                      },
-                    ),
-                    iconeComeco: Icon(Icons.lock_outline),
-                  ),
-                  const SizedBox(height: 41),
-                  GradientButton(
-                    text: "Entrar",
-                    height: 40,
-                    onTap: _handleCadastroClick,
-                    textStyle: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-
-                  //TODO: login de outras formas
-                  const SizedBox(height: 70),
-
-                  const SizedBox(height: 40),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        color: Colors.white,
-                      ),
-                      children: [
-                        TextSpan(text: "Ja tem uma conta? "),
-                        TextSpan(
-                            text: "Faça login aqui!",
-                            recognizer: TapGestureRecognizer()..onTap = () => _handleLoginTap(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 13,
-                              color: Color(0xFFBA12F3),
-                            )
+                      const SizedBox(height: 16),
+                      GradientText(
+                        text: "Bem-Vindo!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 32,
+                          height: 1.0,
+                          color: Colors.white,
                         ),
-                      ],
-                    ),
+                        gradient: LinearGradient(
+                          colors: [AppColors.titleGradA, AppColors.titleGradB, AppColors.titleGradC],
+                          stops: [0.0, 0.423, 1.0],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Faça o cadastro para continuar!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: _RoleToggle(
+                          organizador: _organizador,
+                          onChanged: (v) => setState(() => _organizador = v),
+                        ),
+                      ),
+                      const SizedBox(height: 61),
+                      AppTextField(
+                        label: "Nome completo",
+                        controller: _nomeController,
+                        validator: Validators.nome,
+                        tipoInput: TextInputType.text,
+                        iconeComeco: Icon(Icons.person_outline),
+                      ),
+                      const SizedBox(height: 37),
+                      AppTextField(
+                        label: "Email",
+                        controller: _emailController,
+                        validator: Validators.email,
+                        tipoInput: TextInputType.text,
+                        iconeComeco: Icon(Icons.mail_outline),
+                      ),
+                      const SizedBox(height: 37),
+                      AppTextField(
+                        label: "Senha",
+                        controller: _senhaController,
+                        validator: Validators.senha,
+                        tipoInput: TextInputType.visiblePassword,
+                        esconderTexto: !_mostrarSenha,
+                        iconeFim: IconButton(
+                          icon: Icon(
+                            _mostrarSenha
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarSenha = !_mostrarSenha;
+                            });
+                          },
+                        ),
+                        iconeComeco: Icon(Icons.lock_outline),
+                      ),
+                      const SizedBox(height: 37),
+                      AppTextField(
+                        label: "Confirme a senha",
+                        controller: _confirmaSenhaController,
+                        validator: (value) => Validators.confirmaSenha(value, _confirmaSenhaController.text),
+                        tipoInput: TextInputType.visiblePassword,
+                        esconderTexto: !_mostrarConfirmaSenha,
+                        iconeFim: IconButton(
+                          icon: Icon(
+                            _mostrarConfirmaSenha
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _mostrarConfirmaSenha = !_mostrarConfirmaSenha;
+                            });
+                          },
+                        ),
+                        iconeComeco: Icon(Icons.lock_outline),
+                      ),
+                      const SizedBox(height: 41),
+                      GradientButton(
+                        text: "Entrar",
+                        height: 40,
+                        onTap: _handleCadastroClick,
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+
+                      //TODO: login de outras formas
+                      const SizedBox(height: 70),
+
+                      const SizedBox(height: 40),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
+                          children: [
+                            TextSpan(text: "Ja tem uma conta? "),
+                            TextSpan(
+                                text: "Faça login aqui!",
+                                recognizer: TapGestureRecognizer()..onTap = () => _handleLoginTap(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFFBA12F3),
+                                )
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
