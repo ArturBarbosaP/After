@@ -4,6 +4,8 @@ class Validators {
   static final RegExp emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
   static final RegExp senhaRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).+$');
   static final int senhaTamanhoMinimo = 8;
+  static final int nomeTamanhoMinimo = 8;
+  static final int nomeTamanhoMaximo = 80;
 
   static String? required(String? value, {String campo = 'Este campo'}) {
     if (value == null || value.trim().isEmpty) {
@@ -36,6 +38,30 @@ class Validators {
 
     if (!senhaRegex.hasMatch(value)){
       return "A senha deve conter pelo menos uma letra e um número";
+    }
+    return null;
+  }
+
+  static String? confirmaSenha(String? value, String senhaOriginal){
+    final String? obrigatorio = required(value, campo: "Confirme a senha");
+    if (obrigatorio != null){
+      return obrigatorio;
+    }
+
+    if (value != senhaOriginal){
+      return "As senhas devem ser iguais!";
+    }
+    return null;
+  }
+
+  static String? nome(String? value){
+    final String? obrigatorio = required(value, campo: "Nome");
+    if (obrigatorio != null){
+      return obrigatorio;
+    }
+
+    if (value!.length < nomeTamanhoMinimo || value.length > nomeTamanhoMaximo){
+      return "O nome deve conter no mínimo $nomeTamanhoMinimo e no máximo $nomeTamanhoMinimo";
     }
     return null;
   }

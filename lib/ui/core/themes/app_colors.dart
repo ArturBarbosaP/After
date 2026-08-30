@@ -18,4 +18,10 @@ class AppColors {
   //btn entrar
   static const Color btnGradA = Color(0xFF8F1E8E);
   static const Color btnGradB = Color(0xFF242176);
+
+  //background
+  static const Color bgTop = Color(0xFF15053B);
+  static const Color bgMid = Color(0xFF56014D);
+  static const Color bgBottom = Color(0xFF640A7E);
+
 }

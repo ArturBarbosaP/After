@@ -1,3 +1,4 @@
+import 'package:after_project/ui/cadastro/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/login/widgets/tela_login.dart';
 import 'package:flutter/material.dart';
 import 'config/supabase_config.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const TelaLogin(),
+      home: const TelaCadastro(),
     );
   }
 }
