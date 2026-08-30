@@ -30,7 +30,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
   }
 
   void _handleLoginTap(){
-    //TODO ir pra tela de login
+    Navigator.pop(context);
   }
 
   @override

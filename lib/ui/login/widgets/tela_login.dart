@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:after_project/ui/cadastro/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_text.dart';
 import 'package:after_project/ui/core/ui/logo.dart';
@@ -30,7 +31,11 @@ class _TelaLoginState extends State<TelaLogin> {
   }
 
   void _handleCadastroTap(){
-    //TODO ir pra tela de cadastro
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => const TelaCadastro(),
+      )
+    );
   }
 
   @override void dispose() {
