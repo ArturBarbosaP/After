@@ -26,11 +26,21 @@ class _TelaCadastroState extends State<TelaCadastro> {
   bool _mostrarConfirmaSenha = false;
 
   void _handleCadastroClick(){
-    // TODO: fazer login no supabase aqui e ir pra tela principal
+    // TODO: fazer cadastro no supabase aqui e ir pra tela principal
   }
 
   void _handleLoginTap(){
+    //TODO mudar a animação de troca de tela e limpar os campos
     Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    _confirmaSenhaController.dispose();
+    super.dispose();
   }
 
   @override

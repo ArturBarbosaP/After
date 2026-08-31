@@ -61,7 +61,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void _handleCadastroTap(){
-    //TODO mudar a animação de troca de tela
+    //TODO mudar a animação de troca de tela e limpar os campos
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => const TelaCadastro(),
