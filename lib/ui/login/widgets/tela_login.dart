@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:provider/provider.dart';
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/auth_repository.dart';
+import 'package:after_project/ui/login/view_models/login_viewmodel.dart';
 import 'package:after_project/ui/cadastro/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_text.dart';
@@ -8,22 +12,48 @@ import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/utils/validators.dart';
 
-class TelaLogin extends StatefulWidget {
+class TelaLogin extends StatelessWidget {
   const TelaLogin({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => LoginViewmodel(getIt<AuthRepository>()),
+      child: const _TelaLoginBody(),
+    );
+  }
+}
+
+class _TelaLoginBody extends StatefulWidget {
+  const _TelaLoginBody();
 
   @override
   State<StatefulWidget> createState() => _TelaLoginState();
 }
 
-class _TelaLoginState extends State<TelaLogin> {
+class _TelaLoginState extends State<_TelaLoginBody> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
 
   bool _mostrarSenha = false;
 
-  void _handleLoginClick(){
-    // TODO: fazer login no supabase aqui e ir pra tela principal
+  void _handleLoginClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final loginViewModel = context.read<LoginViewmodel>();
+    
+    final sucesso = await loginViewModel.loginEmailSenha(
+      email: _emailController.text,
+      senha: _senhaController.text
+    );
+
+    if (sucesso && mounted){
+      //TODO ir pra tela de login
+      print("Login feito com sucesso!");
+    } else {
+      print(loginViewModel.mensagemErro!);
+    }
   }
 
   void _handleEsqueciSenhaTap(){
@@ -31,6 +61,7 @@ class _TelaLoginState extends State<TelaLogin> {
   }
 
   void _handleCadastroTap(){
+    //TODO mudar a animação de troca de tela
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => const TelaCadastro(),
@@ -46,6 +77,7 @@ class _TelaLoginState extends State<TelaLogin> {
 
   @override
   Widget build(BuildContext context) {
+    final loginViewModel = context.watch<LoginViewmodel>();
     return Scaffold( //fundo
       body: Stack(
         children: [
@@ -119,7 +151,7 @@ class _TelaLoginState extends State<TelaLogin> {
                         AppTextField(
                           label: "Senha",
                           controller: _senhaController,
-                          validator: Validators.senha,
+                          validator: Validators.required,
                           tipoInput: TextInputType.visiblePassword,
                           esconderTexto: !_mostrarSenha,
                           iconeFim: IconButton(
@@ -136,6 +168,10 @@ class _TelaLoginState extends State<TelaLogin> {
                           ),
                           iconeComeco: Icon(Icons.lock_outline),
                         ),
+                        const SizedBox(height: 3),
+                        if (loginViewModel.mensagemErro != null) ...[
+                          //TODO fazer mensagem de erro de login e mudar a msg de erro
+                        ],
                         const SizedBox(height: 12),
                         RichText(
                           textAlign: TextAlign.end,
@@ -150,10 +186,10 @@ class _TelaLoginState extends State<TelaLogin> {
                           ),
                         ),
                         const SizedBox(height: 31),
-                        GradientButton(
+                        GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
                           text: 'Entrar',
                           height: 40,
-                          onTap: _handleLoginClick,
+                          onTap: loginViewModel.isLoading ? null : _handleLoginClick,
                           textStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
@@ -177,13 +213,13 @@ class _TelaLoginState extends State<TelaLogin> {
                             children: [
                               TextSpan(text: "Não tem uma conta ainda? "),
                               TextSpan(
-                                  text: "Cadastre-se!",
-                                  recognizer: TapGestureRecognizer()..onTap = () => _handleCadastroTap(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                    color: Color(0xFFBA12F3),
-                                  )
+                                text: "Cadastre-se!",
+                                recognizer: TapGestureRecognizer()..onTap = () => _handleCadastroTap(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFFBA12F3),
+                                )
                               ),
                             ],
                           ),
