@@ -50,6 +50,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
 
     if (sucesso && mounted){
       //TODO ir pra tela home
+      limparCampos();
       print("Login feito com sucesso!");
     } else {
       print(loginViewModel.mensagemErro!);
@@ -61,12 +62,18 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void _handleCadastroTap(){
-    //TODO mudar a animação de troca de tela e limpar os campos
+    //TODO mudar a animação de troca de tela
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => const TelaCadastro(),
       )
     );
+    limparCampos();
+  }
+
+  void limparCampos(){
+    _emailController.clear();
+    _senhaController.clear();
   }
 
   @override void dispose() {

@@ -60,8 +60,9 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Conta criada com sucesso!"))
       );
-      //TODO mudar a animação de troca de tela e limpar os campos
+      //TODO mudar a animação de troca de tela
       Navigator.pop(context);
+      limparCampos();
     } else {
       print(cadastroViewModel.mensagemErro!);
     }
@@ -69,8 +70,17 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   }
 
   void _handleLoginTap(){
-    //TODO mudar a animação de troca de tela e limpar os campos
+    //TODO mudar a animação de troca de tela
     Navigator.pop(context);
+    limparCampos();
+  }
+
+  void limparCampos(){
+    _nomeController.clear();
+    _emailController.clear();
+    _senhaController.clear();
+    _confirmaSenhaController.clear();
+    _organizador = false;
   }
 
   @override
@@ -216,7 +226,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                       ],
                       const SizedBox(height: 41),
                       GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
-                        text: "Entrar",
+                        text: "Criar conta",
                         height: 40,
                         onTap: _handleCadastroClick,
                         textStyle: TextStyle(
