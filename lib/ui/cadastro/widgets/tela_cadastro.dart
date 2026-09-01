@@ -1,3 +1,7 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/model/supabase_cadastro_model.dart';
+import 'package:after_project/data/repositories/auth_repository.dart';
+import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -6,15 +10,28 @@ import 'package:after_project/ui/core/ui/gradient_text.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/utils/validators.dart';
+import 'package:provider/provider.dart';
 
-class TelaCadastro extends StatefulWidget {
+class TelaCadastro extends StatelessWidget {
   const TelaCadastro({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CadastroViewmodel(getIt<AuthRepository>()),
+      child: const _TelaCadastroBody(),
+    );
+  }
+}
+
+class _TelaCadastroBody extends StatefulWidget {
+  const _TelaCadastroBody();
 
   @override
   State<StatefulWidget> createState() => _TelaCadastroState();
 }
 
-class _TelaCadastroState extends State<TelaCadastro> {
+class _TelaCadastroState extends State<_TelaCadastroBody> {
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
@@ -25,8 +42,30 @@ class _TelaCadastroState extends State<TelaCadastro> {
   bool _mostrarSenha = false;
   bool _mostrarConfirmaSenha = false;
 
-  void _handleCadastroClick(){
-    // TODO: fazer cadastro no supabase aqui e ir pra tela principal
+  Future<void> _handleCadastroClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final cadastroViewModel = context.read<CadastroViewmodel>();
+
+    final sucesso = await cadastroViewModel.cadastro(
+        SupabaseCadastroModel(
+          nome: _nomeController.text,
+          email: _emailController.text,
+          senha: _senhaController.text,
+          organizador: _organizador
+        )
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Conta criada com sucesso!"))
+      );
+      //TODO mudar a animação de troca de tela e limpar os campos
+      Navigator.pop(context);
+    } else {
+      print(cadastroViewModel.mensagemErro!);
+    }
+
   }
 
   void _handleLoginTap(){
@@ -45,6 +84,8 @@ class _TelaCadastroState extends State<TelaCadastro> {
 
   @override
   Widget build(BuildContext context) {
+    final cadastroViewModel = context.watch<CadastroViewmodel>();
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -169,8 +210,12 @@ class _TelaCadastroState extends State<TelaCadastro> {
                         ),
                         iconeComeco: Icon(Icons.lock_outline),
                       ),
+                      const SizedBox(height: 3),
+                      if (cadastroViewModel.mensagemErro != null) ...[
+                        //TODO fazer mensagem de erro de login e mudar a msg de erro
+                      ],
                       const SizedBox(height: 41),
-                      GradientButton(
+                      GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
                         text: "Entrar",
                         height: 40,
                         onTap: _handleCadastroClick,

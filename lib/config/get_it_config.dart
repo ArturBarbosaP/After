@@ -12,7 +12,7 @@ void setUpGetIt(){
       () => SupabaseAuthService(getIt<SupabaseClient>())
   );
 
-  //Viewmodels
+  //Repositories
   getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepository(getIt<SupabaseAuthService>())
   );
