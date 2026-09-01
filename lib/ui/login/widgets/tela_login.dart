@@ -62,7 +62,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void _handleCadastroTap(){
-    //TODO mudar a animação de troca de tela
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => const TelaCadastro(),
@@ -158,7 +157,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                         AppTextField(
                           label: "Senha",
                           controller: _senhaController,
-                          validator: Validators.required,
+                          validator: (value) => Validators.required(value, campo: "Senha"),
                           tipoInput: TextInputType.visiblePassword,
                           esconderTexto: !_mostrarSenha,
                           iconeFim: IconButton(

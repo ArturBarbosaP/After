@@ -1,4 +1,5 @@
 import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/login/widgets/tela_login.dart';
 import 'package:flutter/material.dart';
 import 'config/supabase_config.dart';
@@ -17,7 +18,17 @@ class App extends StatelessWidget {
       title: 'After',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        useMaterial3: true
+        useMaterial3: true,
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: FadeForwardsPageTransitionsBuilder(
+              backgroundColor: AppColors.bgTop,
+            ),
+            TargetPlatform.iOS: FadeForwardsPageTransitionsBuilder(
+              backgroundColor: AppColors.bgTop,
+            ),
+          },
+        ),
       ),
       home: const TelaLogin(),
     );

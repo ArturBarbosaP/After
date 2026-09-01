@@ -60,7 +60,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Conta criada com sucesso!"))
       );
-      //TODO mudar a animação de troca de tela
       Navigator.pop(context);
       limparCampos();
     } else {
@@ -70,7 +69,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   }
 
   void _handleLoginTap(){
-    //TODO mudar a animação de troca de tela
     Navigator.pop(context);
     limparCampos();
   }
