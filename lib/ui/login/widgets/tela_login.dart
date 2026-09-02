@@ -175,9 +175,15 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           iconeComeco: Icon(Icons.lock_outline),
                         ),
                         const SizedBox(height: 3),
-                        if (loginViewModel.mensagemErro != null) ...[
-                          //TODO fazer mensagem de erro de login e mudar a msg de erro
-                        ],
+                        Text(
+                          loginViewModel.mensagemErro != null ? loginViewModel.mensagemErro! : "",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.red
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         RichText(
                           textAlign: TextAlign.end,

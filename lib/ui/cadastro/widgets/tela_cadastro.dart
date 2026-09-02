@@ -219,9 +219,15 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                         iconeComeco: Icon(Icons.lock_outline),
                       ),
                       const SizedBox(height: 3),
-                      if (cadastroViewModel.mensagemErro != null) ...[
-                        //TODO fazer mensagem de erro de login e mudar a msg de erro
-                      ],
+                      Text(
+                        cadastroViewModel.mensagemErro != null ? cadastroViewModel.mensagemErro! : "",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.red
+                        ),
+                      ),
                       const SizedBox(height: 41),
                       GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
                         text: "Criar conta",
