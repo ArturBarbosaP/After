@@ -73,6 +73,14 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     limparCampos();
   }
 
+  void _handleLoginGoogleTap(){
+
+  }
+
+  void _handleLoginFacebookTap(){
+
+  }
+
   void limparCampos(){
     _nomeController.clear();
     _emailController.clear();
@@ -124,6 +132,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                     mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
                     crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
                     children: [
+                      const SizedBox(height: 35),
                       Align(
                         alignment: AlignmentGeometry.topStart,
                         child: AppLogo(size: 84),
@@ -241,10 +250,38 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                         ),
                       ),
                       const SizedBox(height: 25),
-
-                      //TODO: login de outras formas
-                      const SizedBox(height: 70),
-
+                      Text(
+                        'Entrar com',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Image.asset(
+                              'assets/images/ic_google.png',
+                              width: 45,
+                              height: 45,
+                            ),
+                            onPressed: _handleLoginGoogleTap,
+                          ),
+                          IconButton(
+                            icon: Image.asset(
+                              'assets/images/ic_facebook.png',
+                              width: 45,
+                              height: 45,
+                            ),
+                            onPressed: _handleLoginFacebookTap,
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 40),
                       RichText(
                         textAlign: TextAlign.center,
@@ -268,6 +305,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 35),
                     ],
                   ),
                 ),

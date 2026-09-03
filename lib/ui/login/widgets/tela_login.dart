@@ -70,6 +70,14 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     limparCampos();
   }
 
+  void _handleLoginGoogleTap(){
+
+  }
+
+  void _handleLoginFacebookTap(){
+
+  }
+
   void limparCampos(){
     _emailController.clear();
     _senhaController.clear();
@@ -117,6 +125,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                       mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
                       crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
                       children: [
+                        const SizedBox(height: 45),
                         Center(
                           child: AppLogo(size: 84),
                         ),
@@ -210,10 +219,38 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           ),
                         ),
                         const SizedBox(height: 25),
-
-                        //TODO: login de outras formas
-                        const SizedBox(height: 70),
-
+                        Text(
+                          'Entrar com',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 9),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Image.asset(
+                                'assets/images/ic_google.png',
+                                width: 45,
+                                height: 45,
+                              ),
+                              onPressed: _handleLoginGoogleTap,
+                            ),
+                            IconButton(
+                              icon: Image.asset(
+                                'assets/images/ic_facebook.png',
+                                width: 45,
+                                height: 45,
+                              ),
+                              onPressed: _handleLoginFacebookTap,
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 40),
                         RichText(
                           textAlign: TextAlign.center,
@@ -237,6 +274,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                             ],
                           ),
                         ),
+                        const SizedBox(height: 45),
                       ],
                     ),
                   ),
