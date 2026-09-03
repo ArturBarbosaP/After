@@ -198,10 +198,11 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           ),
                         ),
                         const SizedBox(height: 31),
-                        GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
+                        GradientButton(
                           text: 'Entrar',
                           height: 40,
                           onTap: loginViewModel.isLoading ? null : _handleLoginClick,
+                          loading: loginViewModel.isLoading,
                           textStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18,

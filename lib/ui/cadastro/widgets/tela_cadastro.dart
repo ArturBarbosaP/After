@@ -229,10 +229,11 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                         ),
                       ),
                       const SizedBox(height: 41),
-                      GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
+                      GradientButton(
                         text: "Criar conta",
                         height: 40,
-                        onTap: _handleCadastroClick,
+                        onTap: cadastroViewModel.isLoading ? null : _handleCadastroClick,
+                        loading: cadastroViewModel.isLoading,
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
