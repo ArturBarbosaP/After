@@ -2,6 +2,8 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/model/supabase_cadastro_model.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
+import 'package:after_project/ui/core/ui/checkbox.dart';
+import 'package:after_project/ui/core/ui/tela_termos_uso.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -41,6 +43,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   bool _organizador = false;
   bool _mostrarSenha = false;
   bool _mostrarConfirmaSenha = false;
+  bool _confirmouTermo = false;
 
   Future<void> _handleCadastroClick() async {
     if (!_formKey.currentState!.validate()) return;
@@ -71,6 +74,14 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   void _handleLoginTap(){
     Navigator.pop(context);
     limparCampos();
+  }
+
+  void _handleMostrarTermos(){
+    Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaTermosUso(),
+        )
+    );
   }
 
   void _handleLoginGoogleTap(){
@@ -227,7 +238,35 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                         ),
                         iconeComeco: Icon(Icons.lock_outline),
                       ),
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 5),
+                      AppCheckboxField(
+                        value: _confirmouTermo,
+                        activeColor: AppColors.textboxIcon,
+                        onChanged: (value) => setState(() => _confirmouTermo = value),
+                        label: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(text: "Li e concordo com os "),
+                              TextSpan(
+                                  text: "Termos de Uso",
+                                  recognizer: TapGestureRecognizer()..onTap = () => _handleMostrarTermos(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Color(0xFFBA12F3),
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
                       Text(
                         cadastroViewModel.mensagemErro != null ? cadastroViewModel.mensagemErro! : "",
                         textAlign: TextAlign.center,
@@ -261,7 +300,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                       ),
                       const SizedBox(height: 9),
                       Row(
-                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
