@@ -9,12 +9,21 @@ class AppColors {
   static const Color textboxText = Color(0xFF793F83);       // rgba(121, 63, 131, 1)
   static const Color textboxIcon = Color(0xFF793F83);       // rgba(121, 63, 131, 1)
   static const Color buttonBorder = Color(0xFF2E044A);      // rgba(46, 4, 74, 1)
+  static const Color fotoBorder = Color(0xFF542E6E);        // rgba(84, 46, 110, 1)
 
   //gradients
   //bem vindo - login e cadastro
   static const Color titleGradA = Color(0xFF4537E6);
   static const Color titleGradB = Color(0xFF8E85DF);
   static const Color titleGradC = Color(0xFFF415DA);
+
+  //username - home
+  static const Color usernameGradA = Color(0xFFFF16E4);
+  static const Color usernameGradB = Color(0xFF513BF2);
+
+  //foto placeholder - home
+  static const Color fotoGradA = Color(0xFFF216D1);
+  static const Color fotoGradB = Color(0xFF9925D3);
 
   //btn entrar
   static const Color btnGradA = Color(0xFF8F1E8E);
@@ -25,4 +34,5 @@ class AppColors {
   static const Color bgMid = Color(0xFF56014D);
   static const Color bgBottom = Color(0xFF640A7E);
 
+  static const Color bgAppBar = Color(0xFF410156);
 }

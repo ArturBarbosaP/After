@@ -2,6 +2,7 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/model/supabase_cadastro_model.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
+import 'package:after_project/ui/cadastro/widgets/role.dart';
 import 'package:after_project/ui/core/ui/checkbox.dart';
 import 'package:after_project/ui/core/ui/tela_termos_uso.dart';
 import 'package:after_project/ui/home/widgets/tela_home.dart';
@@ -141,7 +142,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 37),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height -
@@ -187,7 +188,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                       ),
                       const SizedBox(height: 20),
                       Center(
-                        child: _RoleToggle(
+                        child: RoleToggle(
                           organizador: _organizador,
                           onChanged: (v) => setState(() => _organizador = v),
                         ),
@@ -361,52 +362,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RoleToggle extends StatelessWidget {
-  const _RoleToggle({required this.organizador, required this.onChanged});
-
-  final bool organizador;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 29,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(33),
-        border: Border.all(color: const Color(0xC2610053), width: 1),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _seg("Sou usuário", !organizador, () => onChanged(false), 137),
-          _seg("Sou organizador(a)", organizador, () => onChanged(true), 156),
-        ],
-      ),
-    );
-  }
-
-  Widget _seg(String label, bool active, VoidCallback onTap, double w) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: w,
-        height: 29,
-        alignment: Alignment.center,
-        color: active ? const Color(0xFFC758AF) : Colors.transparent,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-            color: Colors.white,
           ),
         ),
       ),
