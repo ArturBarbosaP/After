@@ -1,3 +1,4 @@
+import 'package:after_project/ui/home/widgets/tela_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +51,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
 
     if (sucesso && mounted){
       navigatorHome();
-      print("Login feito com sucesso!");
     }
   }
 
@@ -61,7 +61,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
 
     if (sucesso && mounted){
       navigatorHome();
-      print("Login com google feito com sucesso!");
     }
   }
 
@@ -88,11 +87,12 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void navigatorHome(){
-    /*Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const TelaHome(), TODO
-        )
-    );*/
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (context) => const TelaHome(),
+      ),
+      (route) => false,
+    );
     limparCampos();
   }
 
@@ -237,13 +237,26 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           ),
                         ),
                         const SizedBox(height: 25),
-                        Text(
-                          'Entrar com',
+                        RichText(
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            color: Colors.white,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(
+                                  text: "Entrar sem login ",
+                                  recognizer: TapGestureRecognizer()..onTap = () => navigatorHome(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Color(0xFFBA12F3),
+                                  )
+                              ),
+                              TextSpan(text: "ou Entrar com:"),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 9),
