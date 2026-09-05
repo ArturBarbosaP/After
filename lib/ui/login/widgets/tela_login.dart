@@ -51,8 +51,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     if (sucesso && mounted){
       navigatorHome();
       print("Login feito com sucesso!");
-    } else {
-      print(loginViewModel.mensagemErro!);
     }
   }
 
@@ -64,8 +62,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     if (sucesso && mounted){
       navigatorHome();
       print("Login com google feito com sucesso!");
-    } else {
-      print(loginViewModel.mensagemErro!);
     }
   }
 
@@ -101,8 +97,8 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void limparCampos(){
-    _emailController.clear();
-    _senhaController.clear();
+    context.read<LoginViewmodel>().limparErro();
+    _formKey.currentState?.reset();
   }
 
   @override void dispose() {

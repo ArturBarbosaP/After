@@ -65,8 +65,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
       );
       Navigator.pop(context);
       limparCampos();
-    } else {
-      print(cadastroViewModel.mensagemErro!);
     }
   }
 
@@ -78,8 +76,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     if (sucesso && mounted){
       navigatorHome();
       print("Login com google feito com sucesso!");
-    } else {
-      print(loginViewModel.mensagemErro!);
     }
   }
 
@@ -110,10 +106,8 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   }
 
   void limparCampos(){
-    _nomeController.clear();
-    _emailController.clear();
-    _senhaController.clear();
-    _confirmaSenhaController.clear();
+     context.read<CadastroViewmodel>().limparErro();
+    _formKey.currentState?.reset();
     _organizador = false;
   }
 
