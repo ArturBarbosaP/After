@@ -68,7 +68,23 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     } else {
       print(cadastroViewModel.mensagemErro!);
     }
+  }
 
+  void _handleLoginGoogleTap() async {
+    final loginViewModel = context.read<CadastroViewmodel>();
+
+    final sucesso = await loginViewModel.loginGoogle();
+
+    if (sucesso && mounted){
+      navigatorHome();
+      print("Login com google feito com sucesso!");
+    } else {
+      print(loginViewModel.mensagemErro!);
+    }
+  }
+
+  void _handleLoginFacebookTap(){
+    //TODO login com o facebook
   }
 
   void _handleLoginTap(){
@@ -84,12 +100,13 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     );
   }
 
-  void _handleLoginGoogleTap(){
-
-  }
-
-  void _handleLoginFacebookTap(){
-
+  void navigatorHome(){
+    /*Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaHome(), TODO
+        )
+    );*/
+    limparCampos();
   }
 
   void limparCampos(){

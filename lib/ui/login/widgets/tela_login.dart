@@ -49,16 +49,37 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     );
 
     if (sucesso && mounted){
-      //TODO ir pra tela home
-      limparCampos();
+      navigatorHome();
       print("Login feito com sucesso!");
     } else {
       print(loginViewModel.mensagemErro!);
     }
   }
 
+  void _handleLoginGoogleTap() async {
+    final loginViewModel = context.read<LoginViewmodel>();
+
+    final sucesso = await loginViewModel.loginGoogle();
+
+    if (sucesso && mounted){
+      navigatorHome();
+      print("Login com google feito com sucesso!");
+    } else {
+      print(loginViewModel.mensagemErro!);
+    }
+  }
+
+  void _handleLoginFacebookTap(){
+    //TODO login com o facebook
+  }
+
   void _handleEsqueciSenhaTap(){
-    //TODO recuperação de senha
+    /*Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaEsqueciSenha(), TODO
+        )
+    );*/
+    limparCampos();
   }
 
   void _handleCadastroTap(){
@@ -70,12 +91,13 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     limparCampos();
   }
 
-  void _handleLoginGoogleTap(){
-
-  }
-
-  void _handleLoginFacebookTap(){
-
+  void navigatorHome(){
+    /*Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaHome(), TODO
+        )
+    );*/
+    limparCampos();
   }
 
   void limparCampos(){

@@ -1,3 +1,4 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthService {
@@ -25,6 +26,29 @@ class SupabaseAuthService {
     final AuthResponse res = await _client.auth.signInWithPassword(
         email: email,
         password: senha
+    );
+  }
+
+  Future<void> loginGoogle() async {
+    final googleSignIn = GoogleSignIn.instance;
+
+    final googleUser = await googleSignIn.attemptLightweightAuthentication()
+        ?? await googleSignIn.authenticate();
+
+    const scopes = ['email', 'profile'];
+    final authorization =
+        await googleUser.authorizationClient.authorizationForScopes(scopes) ??
+        await googleUser.authorizationClient.authorizeScopes(scopes);
+
+    final idToken = googleUser.authentication.idToken;
+    if (idToken == null ){
+      throw const AuthException('No ID Token found.');
+    }
+
+    final AuthResponse res = await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: authorization.accessToken
     );
   }
 }

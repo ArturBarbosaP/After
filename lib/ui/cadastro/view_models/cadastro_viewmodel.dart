@@ -31,4 +31,23 @@ class CadastroViewmodel extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> loginGoogle() async {
+    _loading = true;
+    _mensagemErro = null;
+
+    notifyListeners();
+
+    try {
+      await _authRepository.loginGoogle();
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on AuthFailure catch (e) {
+      _loading = false;
+      _mensagemErro = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
 }

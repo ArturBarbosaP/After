@@ -1,5 +1,6 @@
 import 'package:after_project/data/services/supabase_auth_service.dart';
 import 'package:after_project/data/model/supabase_cadastro_model.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthFailure implements Exception {
@@ -23,7 +24,8 @@ class AuthRepository {
     } on AuthException catch (ex) {
       throw AuthFailure(_traduzirAuthError(ex));
     }
-    catch (_){
+    catch (e) {
+      print(e);
       throw AuthFailure("Não foi possível fazer o cadastro. Tente novamente.");
     }
   }
@@ -35,10 +37,29 @@ class AuthRepository {
     on AuthException catch (ex) {
       throw AuthFailure(_traduzirAuthError(ex));
     }
-    catch(_){
+    catch (e) {
+      print(e);
       throw AuthFailure("Não foi possível fazer o login. Tente novamente.");
     }
   }
+
+  Future<void> loginGoogle() async {
+    try {
+      await _authService.loginGoogle();
+    }
+    on GoogleSignInException catch (e) {
+      print(e);
+      throw AuthFailure('Login com o Google cancelado');
+    }
+    on AuthException catch (ex) {
+      throw AuthFailure(_traduzirAuthError(ex));
+    }
+    catch (e) {
+      print(e);
+      throw AuthFailure('Não foi possível entrar com o Google. Tente novamente.');
+    }
+  }
+
 
   String _traduzirAuthError(AuthException e) {
     switch (e.message) {
