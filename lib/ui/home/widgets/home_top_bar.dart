@@ -23,7 +23,7 @@ class HomeTopBar extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(_horizontalPadding, statusBarHeight, _horizontalPadding, _verticalPadding),
       height: kToolbarHeight + statusBarHeight + _contentHeight,
-      color: AppColors.bgAppBar,
+      color: AppColors.appBarBackground,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

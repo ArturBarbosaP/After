@@ -22,8 +22,7 @@ class UserRepository {
       if (json == null) return null;
 
       return UserProfileDto.fromJson(json).toDomain();
-    }
-    catch (ex, stackTrace) {
+    } catch (ex, stackTrace) {
       developer.log(
           'Falha ao recuperar usuario - Exception',
           name: 'UserRepository',
