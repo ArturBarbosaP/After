@@ -16,6 +16,10 @@ class AppColors {
   static const Color aoVivoBorder = Color(0xFFFF0909);
   static const Color agendadoBackground = Color(0xFF0F235E);
   static const Color agendadoBorder = Color(0xFF010EFF);
+  static const Color catFiltroBack = Color(0xFF4E0E59);
+  static const Color catFiltroBorder = Color(0xFF761687);
+  static const Color catFiltroBackSelect = Color(0xFFBF1DA7);
+  static const Color catFiltroBorderSelect = Color(0xFFF211F2);
 
   //gradients
   //bem vindo - login e cadastro

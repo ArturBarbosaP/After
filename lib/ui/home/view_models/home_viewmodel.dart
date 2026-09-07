@@ -1,5 +1,6 @@
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,6 +26,9 @@ class HomeViewmodel extends ChangeNotifier {
 
   String? _mensagemErro;
   String? get mensagemErro => _mensagemErro;
+
+  Categoria? _categoriaSelecionadaFiltro;
+  Categoria? get categoriaSelecionadaFiltro => _categoriaSelecionadaFiltro;
 
   Future<void> _loadUsuario() async {
     try {
@@ -64,5 +68,11 @@ class HomeViewmodel extends ChangeNotifier {
           stackTrace: stackTrace
       );
     }
+  }
+
+  void filtrarCategoria(Categoria? categoria) async {
+    _categoriaSelecionadaFiltro = categoria;
+    notifyListeners();
+    //TODO filtrar eventos pela categoria selecionada
   }
 }

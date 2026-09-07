@@ -4,6 +4,8 @@ import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/searchfield.dart';
 import 'package:after_project/ui/home/view_models/home_viewmodel.dart';
+import 'package:after_project/ui/home/widgets/categorias_filtro.dart';
+import 'package:after_project/ui/home/widgets/evento_destaque.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +30,6 @@ class _TelaHomeBody extends StatefulWidget {
 }
 
 class _TelaHomeState extends State<_TelaHomeBody> {
-
 
 
   void _handlePerfilTap() {
@@ -98,85 +99,11 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      GestureDetector(
+                      EventoDestaque(
                         onTap: _handleEmDestaqueTap,
-                        child: Container(
-                          padding: EdgeInsets.all(17),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                colors: [AppColors.emDestaqueGradA, AppColors.emDestaqueGradB],
-                              )
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.fromLTRB(17, 8, 17, 8),
-                                    decoration: BoxDecoration(
-                                        color: eventoDestaque.status.label == 'Em andamento'
-                                            ? AppColors.aoVivoBackground
-                                            : AppColors.agendadoBackground,
-                                        borderRadius: BorderRadius.circular(33),
-                                        border: Border.all(
-                                          width: 1,
-                                          color: eventoDestaque.status.label == 'Em andamento'
-                                              ? AppColors.aoVivoBorder
-                                              : AppColors.agendadoBorder
-                                        )
-                                    ),
-                                    child: Text(
-                                      eventoDestaque.status.label,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        eventoDestaque.titulo,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        eventoDestaque.endereco,
-                                        textAlign: TextAlign.end,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        status: eventoDestaque.status.label,
+                        titulo: eventoDestaque.titulo,
+                        endereco: eventoDestaque.endereco
                       ),
                     ],
                     const SizedBox(height: 15),
@@ -190,6 +117,20 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                       ),
                     ),
                     const SizedBox(height: 15),
+                    CategoriasFiltro(
+                      categoriaSelecionada: homeViewModel.categoriaSelecionadaFiltro,
+                      onCategorySelected: homeViewModel.filtrarCategoria,
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      'Eventos ao vivo',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
