@@ -14,6 +14,8 @@ class AppColors {
   static const Color searchBackground = Color(0xFF833481);
   static const Color aoVivoBackground = Color(0xFFB4151D);
   static const Color aoVivoBorder = Color(0xFFFF0909);
+  static const Color agendadoBackground = Color(0xFF0F235E);
+  static const Color agendadoBorder = Color(0xFF010EFF);
 
   //gradients
   //bem vindo - login e cadastro

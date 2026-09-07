@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppSearchField extends StatelessWidget {
   final VoidCallback onPesquisarTap;
 
-  AppSearchField({
+  const AppSearchField({
     super.key,
     required this.onPesquisarTap
   });
