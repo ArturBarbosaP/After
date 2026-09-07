@@ -1,3 +1,5 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/home/view_models/home_viewmodel.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
@@ -10,7 +12,7 @@ class TelaHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HomeViewmodel(),
+      create: (_) => HomeViewmodel(getIt<UserRepository>()),
       child: const _TelaHomeBody(),
     );
   }
@@ -33,10 +35,13 @@ class _TelaHomeState extends State<_TelaHomeBody> {
 
   @override
   Widget build(BuildContext context) {
+    final homeViewModel = context.watch<HomeViewmodel>();
+    final usuario = homeViewModel.usuario;
+
     return Scaffold(
       appBar: HomeTopBar(
-        nomeUsuario: 'Artur', //TODO passar o nome e foto de perfil do usuario logado
-        fotoPerfilUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr5BkP6EdN5V6380bBWWKNnS9GKuO0YGochLPvleTWclg91-P3blaLD-k&s=10',
+        nomeUsuario: usuario?.nome ?? '',
+        fotoPerfilUrl: usuario?.urlFotoPerfil,
         onAvatarTap: _handlePerfilTap,
       ),
       body: Container(
@@ -64,7 +69,10 @@ class _TelaHomeState extends State<_TelaHomeBody> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-
+                    const SizedBox(height: 25), //espaçamento
+                    Container(
+                      height: 37,
+                    ),
                   ],
                 ),
               ),
