@@ -11,7 +11,7 @@ class EventoDetalhado {
   final String descricao;
   final Categoria categoria;
   final Status status;
-  final String imagemCapa;
+  final String? imagemCapa;
   final String organizadorId;
   final String organizadorSite;
   final bool organizadorVerificado;
@@ -28,7 +28,7 @@ class EventoDetalhado {
     required this.descricao,
     required this.categoria,
     required this.status,
-    required this.imagemCapa,
+    this.imagemCapa,
     required this.organizadorId,
     required this.organizadorSite,
     required this.organizadorVerificado,

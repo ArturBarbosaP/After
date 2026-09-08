@@ -12,7 +12,7 @@ class EventoDetalhadoDto {
   final String descricao;
   final String categoria;
   final String status;
-  final String imagemCapa;
+  final String? imagemCapa;
   final String organizadorId;
   final String organizadorSite;
   final bool organizadorVerificado;
@@ -29,7 +29,7 @@ class EventoDetalhadoDto {
     required this.descricao,
     required this.categoria,
     required this.status,
-    required this.imagemCapa,
+    this.imagemCapa,
     required this.organizadorId,
     required this.organizadorSite,
     required this.organizadorVerificado,
@@ -49,7 +49,7 @@ class EventoDetalhadoDto {
       descricao: json['descricao'] as String,
       categoria: json['categoria'] as String,
       status: json['status'] as String,
-      imagemCapa: json['imagem_capa'] as String,
+      imagemCapa: json['imagem_capa'] as String?,
       organizadorId: json['organizador_id'] as String,
       organizadorSite: json['organizador_site'] as String,
       organizadorVerificado: json['organizador_verificado'] as bool,

@@ -6,6 +6,7 @@ import 'package:after_project/ui/core/ui/searchfield.dart';
 import 'package:after_project/ui/home/view_models/home_viewmodel.dart';
 import 'package:after_project/ui/home/widgets/categorias_filtro.dart';
 import 'package:after_project/ui/home/widgets/evento_destaque.dart';
+import 'package:after_project/ui/home/widgets/eventos_ao_vivo.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,11 +45,16 @@ class _TelaHomeState extends State<_TelaHomeBody> {
     //TODO abrir o evento em destaque
   }
 
+  void _handleEventoAoVivoTap(){
+    //TODO abrir evento ao vivo
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeViewModel = context.watch<HomeViewmodel>();
     final usuario = homeViewModel.usuario;
     final eventoDestaque = homeViewModel.eventoDestaque;
+    final eventosAoVivo = homeViewModel.eventosAoVivo;
 
     return Scaffold(
       appBar: HomeTopBar(
@@ -80,7 +86,7 @@ class _TelaHomeState extends State<_TelaHomeBody> {
               ),
               child: IntrinsicHeight(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
+                  mainAxisAlignment: MainAxisAlignment.start, //alinhando no centro da tela (verticalmente)
                   crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
                   children: [
                     const SizedBox(height: 25), //espaçamento
@@ -131,6 +137,24 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                         color: Colors.white,
                       ),
                     ),
+                    const SizedBox(height: 15),
+                    EventosAoVivo(
+                      onTap: _handleEventoAoVivoTap,
+                      eventosAoVivo: eventosAoVivo,
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      'Próximas horas',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+
+                    const SizedBox(height: 25)
                   ],
                 ),
               ),

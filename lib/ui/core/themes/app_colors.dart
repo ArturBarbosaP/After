@@ -20,6 +20,7 @@ class AppColors {
   static const Color catFiltroBorder = Color(0xFF761687);
   static const Color catFiltroBackSelect = Color(0xFFBF1DA7);
   static const Color catFiltroBorderSelect = Color(0xFFF211F2);
+  static const Color cardEventLiveBackground = Color(0xFF21002A);
 
   //gradients
   //bem vindo - login e cadastro
