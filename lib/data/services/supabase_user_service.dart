@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseUserService {
   final SupabaseClient _client;
-  final String nomeTabela = 'usuario';
+  final String _nomeTabela = 'usuario';
 
   SupabaseUserService(this._client);
 
@@ -10,7 +10,7 @@ class SupabaseUserService {
 
   Future<Map<String, dynamic>?> fetchUsuario(String id) async {
     return await _client
-        .from(nomeTabela)
+        .from(_nomeTabela)
         .select('id, nome, foto_perfil')
         .eq('id', id)
         .maybeSingle();

@@ -21,6 +21,11 @@ class AppColors {
   static const Color catFiltroBackSelect = Color(0xFFBF1DA7);
   static const Color catFiltroBorderSelect = Color(0xFFF211F2);
   static const Color cardEventLiveBackground = Color(0xFF21002A);
+  static const Color cardEventProximosBackground = Color(0xFF5B0560);
+  static const Color cardEventProximosBorder = Color(0xFF280036);
+  static const Color textEventProximoHj = Color(0xFFFBA910);
+  static const Color textEventProximoAmanha = Color(0xFF10FBE0);
+  static const Color textEventProximoDepoisAmanha = Color(0xFF38FB10);
 
   //gradients
   //bem vindo - login e cadastro

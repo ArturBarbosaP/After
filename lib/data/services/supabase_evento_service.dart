@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseEventoService {
   final SupabaseClient _client;
+  final String _nomeTabela = 'evento_detalhado';
 
   SupabaseEventoService(this._client);
 
@@ -10,7 +11,7 @@ class SupabaseEventoService {
     //filtrar por evento ao vivo que acabou de começar ou que está quase começando,
     // mais próximo do usuário, com organizador verificado
     final emAndamento = await _client
-        .from('evento_detalhado')
+        .from(_nomeTabela)
         .select()
         .eq('status', 'Em andamento')
         .order('data_inicio')
@@ -20,7 +21,7 @@ class SupabaseEventoService {
     if (emAndamento != null) return emAndamento;
 
     return await _client
-        .from('evento_detalhado')
+        .from(_nomeTabela)
         .select()
         .eq('status', 'Agendado')
         .order('data_inicio')
@@ -30,7 +31,7 @@ class SupabaseEventoService {
 
   Future<List<Map<String, dynamic>>> fetchEventosAoVivo() async {
     final response = await _client
-        .from('evento_detalhado')
+        .from(_nomeTabela)
         .select()
         .eq('status', 'Em andamento')
         .order('data_inicio')
@@ -46,5 +47,17 @@ class SupabaseEventoService {
     );
 
     return List<Map<String, dynamic>>.from(response as List);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventos() async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', 'Agendado')
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio')
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }

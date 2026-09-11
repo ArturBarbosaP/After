@@ -7,6 +7,7 @@ import 'package:after_project/ui/home/view_models/home_viewmodel.dart';
 import 'package:after_project/ui/home/widgets/categorias_filtro.dart';
 import 'package:after_project/ui/home/widgets/evento_destaque.dart';
 import 'package:after_project/ui/home/widgets/eventos_ao_vivo.dart';
+import 'package:after_project/ui/home/widgets/eventos_proximos.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,12 +50,17 @@ class _TelaHomeState extends State<_TelaHomeBody> {
     //TODO abrir evento ao vivo
   }
 
+  void _handleEventoProximoTap(){
+    //TODO abrir proximo evento
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeViewModel = context.watch<HomeViewmodel>();
     final usuario = homeViewModel.usuario;
     final eventoDestaque = homeViewModel.eventoDestaque;
     final eventosAoVivo = homeViewModel.eventosAoVivo;
+    final proximosEventos = homeViewModel.proximosEventos;
 
     return Scaffold(
       appBar: HomeTopBar(
@@ -63,6 +69,8 @@ class _TelaHomeState extends State<_TelaHomeBody> {
         onAvatarTap: _handlePerfilTap,
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient( //fundo gradiente
             begin: Alignment.topCenter,
@@ -78,86 +86,79 @@ class _TelaHomeState extends State<_TelaHomeBody> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.of(context).padding.bottom,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start, //alinhando no centro da tela (verticalmente)
-                  crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
-                  children: [
-                    const SizedBox(height: 25), //espaçamento
-                    AppSearchField(
-                      onPesquisarTap: _handlePesquisarTap,
-                    ),
-                    if (eventoDestaque != null)...[
-                      const SizedBox(height: 15),
-                      Text(
-                        'Em destaque',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      EventoDestaque(
-                        onTap: _handleEmDestaqueTap,
-                        status: eventoDestaque.status.label,
-                        titulo: eventoDestaque.titulo,
-                        endereco: eventoDestaque.endereco
-                      ),
-                    ],
-                    const SizedBox(height: 15),
-                    Text(
-                      'Categorias',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    CategoriasFiltro(
-                      categoriaSelecionada: homeViewModel.categoriaSelecionadaFiltro,
-                      onCategorySelected: homeViewModel.filtrarCategoria,
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      'Eventos ao vivo',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    EventosAoVivo(
-                      onTap: _handleEventoAoVivoTap,
-                      eventosAoVivo: eventosAoVivo,
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      'Próximas horas',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    const SizedBox(height: 25)
-                  ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 25), //espaçamento
+                AppSearchField(
+                  onPesquisarTap: _handlePesquisarTap,
                 ),
-              ),
+                if (eventoDestaque != null)...[
+                  const SizedBox(height: 15),
+                  Text(
+                    'Em destaque',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  EventoDestaque(
+                    onTap: _handleEmDestaqueTap,
+                    status: eventoDestaque.status.label,
+                    titulo: eventoDestaque.titulo,
+                    endereco: eventoDestaque.endereco
+                  ),
+                ],
+                const SizedBox(height: 15),
+                Text(
+                  'Categorias',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                CategoriasFiltro(
+                  categoriaSelecionada: homeViewModel.categoriaSelecionadaFiltro,
+                  onCategorySelected: homeViewModel.filtrarCategoria,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'Eventos ao vivo',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                EventosAoVivo(
+                  onTap: _handleEventoAoVivoTap,
+                  eventosAoVivo: eventosAoVivo,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'Próximas horas',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                EventosProximos(
+                  onTap: _handleEventoProximoTap,
+                  proximosEventos: proximosEventos,
+                ),
+                const SizedBox(height: 15),
+              ],
             ),
           ),
         ),

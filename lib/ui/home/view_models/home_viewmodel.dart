@@ -15,6 +15,7 @@ class HomeViewmodel extends ChangeNotifier {
     _loadUsuario();
     _loadEventoDestaque();
     _loadEventosAoVivo();
+    _loadProximosEventos();
   }
 
   bool _loading = false;
@@ -34,6 +35,9 @@ class HomeViewmodel extends ChangeNotifier {
 
   List<EventosComAmigos> _eventosAoVivo = [];
   List<EventosComAmigos> get eventosAoVivo => _eventosAoVivo;
+
+  List<EventoDetalhado> _proximosEventos = [];
+  List<EventoDetalhado> get proximosEventos => _proximosEventos;
 
   Future<void> _loadUsuario() async {
     try {
@@ -96,6 +100,26 @@ class HomeViewmodel extends ChangeNotifier {
       notifyListeners();
       developer.log(
           'Falha ao recuperar eventos ao vivo com amigos',
+          name: 'HomeViewmodel',
+          error: e,
+          stackTrace: stackTrace
+      );
+    }
+  }
+
+  Future<void> _loadProximosEventos() async {
+    try {
+      _proximosEventos = await _eventoRepository.getProximosEventos();
+      notifyListeners();
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _loading = false;
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      notifyListeners();
+      developer.log(
+          'Falha ao recuperar próximos eventos',
           name: 'HomeViewmodel',
           error: e,
           stackTrace: stackTrace
