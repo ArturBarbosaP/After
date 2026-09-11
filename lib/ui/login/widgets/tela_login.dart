@@ -1,3 +1,4 @@
+import 'package:after_project/ui/core/ui/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
@@ -49,24 +50,55 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     );
 
     if (sucesso && mounted){
-      //TODO ir pra tela de login
-      print("Login feito com sucesso!");
-    } else {
-      print(loginViewModel.mensagemErro!);
+      navigatorHome();
     }
   }
 
+  void _handleLoginGoogleTap() async {
+    final loginViewModel = context.read<LoginViewmodel>();
+
+    final sucesso = await loginViewModel.loginGoogle();
+
+    if (sucesso && mounted){
+      navigatorHome();
+    }
+  }
+
+  void _handleLoginFacebookTap(){
+    //TODO login com o facebook
+  }
+
   void _handleEsqueciSenhaTap(){
-    //TODO recuperação de senha
+    /*Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaEsqueciSenha(), TODO
+        )
+    );*/
+    limparCampos();
   }
 
   void _handleCadastroTap(){
-    //TODO mudar a animação de troca de tela e limpar os campos
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) => const TelaCadastro(),
       )
     );
+    limparCampos();
+  }
+
+  void navigatorHome(){
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (context) => const AppShell(),
+      ),
+      (route) => false,
+    );
+    limparCampos();
+  }
+
+  void limparCampos(){
+    context.read<LoginViewmodel>().limparErro();
+    _formKey.currentState?.reset();
   }
 
   @override void dispose() {
@@ -111,6 +143,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                       mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
                       crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
                       children: [
+                        const SizedBox(height: 45),
                         Center(
                           child: AppLogo(size: 84),
                         ),
@@ -151,7 +184,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                         AppTextField(
                           label: "Senha",
                           controller: _senhaController,
-                          validator: Validators.required,
+                          validator: (value) => Validators.required(value, campo: "Senha"),
                           tipoInput: TextInputType.visiblePassword,
                           esconderTexto: !_mostrarSenha,
                           iconeFim: IconButton(
@@ -169,9 +202,15 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           iconeComeco: Icon(Icons.lock_outline),
                         ),
                         const SizedBox(height: 3),
-                        if (loginViewModel.mensagemErro != null) ...[
-                          //TODO fazer mensagem de erro de login e mudar a msg de erro
-                        ],
+                        Text(
+                          loginViewModel.mensagemErro != null ? loginViewModel.mensagemErro! : "",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.red
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         RichText(
                           textAlign: TextAlign.end,
@@ -186,10 +225,11 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           ),
                         ),
                         const SizedBox(height: 31),
-                        GradientButton( //TODO colocar alguma forma de mostrar que ta carregando o app
+                        GradientButton(
                           text: 'Entrar',
                           height: 40,
                           onTap: loginViewModel.isLoading ? null : _handleLoginClick,
+                          loading: loginViewModel.isLoading,
                           textStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
@@ -197,10 +237,51 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                           ),
                         ),
                         const SizedBox(height: 25),
-
-                        //TODO: login de outras formas
-                        const SizedBox(height: 70),
-
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(
+                                  text: "Entrar sem login ",
+                                  recognizer: TapGestureRecognizer()..onTap = () => navigatorHome(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Color(0xFFBA12F3),
+                                  )
+                              ),
+                              TextSpan(text: "ou Entrar com:"),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 9),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Image.asset(
+                                'assets/images/ic_google.png',
+                                width: 45,
+                                height: 45,
+                              ),
+                              onPressed: _handleLoginGoogleTap,
+                            ),
+                            IconButton(
+                              icon: Image.asset(
+                                'assets/images/ic_facebook.png',
+                                width: 45,
+                                height: 45,
+                              ),
+                              onPressed: _handleLoginFacebookTap,
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 40),
                         RichText(
                           textAlign: TextAlign.center,
@@ -224,6 +305,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                             ],
                           ),
                         ),
+                        const SizedBox(height: 45),
                       ],
                     ),
                   ),

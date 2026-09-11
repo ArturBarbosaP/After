@@ -1,3 +1,11 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/model/supabase_cadastro_model.dart';
+import 'package:after_project/data/repositories/auth_repository.dart';
+import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
+import 'package:after_project/ui/cadastro/widgets/role.dart';
+import 'package:after_project/ui/core/ui/checkbox.dart';
+import 'package:after_project/ui/core/ui/shell.dart';
+import 'package:after_project/ui/core/ui/tela_termos_uso.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -6,15 +14,28 @@ import 'package:after_project/ui/core/ui/gradient_text.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/utils/validators.dart';
+import 'package:provider/provider.dart';
 
-class TelaCadastro extends StatefulWidget {
+class TelaCadastro extends StatelessWidget {
   const TelaCadastro({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CadastroViewmodel(getIt<AuthRepository>()),
+      child: const _TelaCadastroBody(),
+    );
+  }
+}
+
+class _TelaCadastroBody extends StatefulWidget {
+  const _TelaCadastroBody();
 
   @override
   State<StatefulWidget> createState() => _TelaCadastroState();
 }
 
-class _TelaCadastroState extends State<TelaCadastro> {
+class _TelaCadastroState extends State<_TelaCadastroBody> {
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
@@ -24,14 +45,72 @@ class _TelaCadastroState extends State<TelaCadastro> {
   bool _organizador = false;
   bool _mostrarSenha = false;
   bool _mostrarConfirmaSenha = false;
+  bool _confirmouTermo = false;
 
-  void _handleCadastroClick(){
-    // TODO: fazer cadastro no supabase aqui e ir pra tela principal
+  Future<void> _handleCadastroClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final cadastroViewModel = context.read<CadastroViewmodel>();
+
+    final sucesso = await cadastroViewModel.cadastro(
+        SupabaseCadastroModel(
+          nome: _nomeController.text,
+          email: _emailController.text,
+          senha: _senhaController.text,
+          organizador: _organizador
+        )
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Conta criada com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
+  }
+
+  void _handleLoginGoogleTap() async {
+    final loginViewModel = context.read<CadastroViewmodel>();
+
+    final sucesso = await loginViewModel.loginGoogle();
+
+    if (sucesso && mounted){
+      navigatorHome();
+    }
+  }
+
+  void _handleLoginFacebookTap(){
+    //TODO login com o facebook
   }
 
   void _handleLoginTap(){
-    //TODO mudar a animação de troca de tela e limpar os campos
     Navigator.pop(context);
+    limparCampos();
+  }
+
+  void _handleMostrarTermos(){
+    Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => const TelaTermosUso(),
+        )
+    );
+  }
+
+  void navigatorHome(){
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (context) => const AppShell(),
+      ),
+          (route) => false,
+    );
+    limparCampos();
+  }
+
+  void limparCampos(){
+     context.read<CadastroViewmodel>().limparErro();
+    _formKey.currentState?.reset();
+    _organizador = false;
   }
 
   @override
@@ -45,6 +124,8 @@ class _TelaCadastroState extends State<TelaCadastro> {
 
   @override
   Widget build(BuildContext context) {
+    final cadastroViewModel = context.watch<CadastroViewmodel>();
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -61,7 +142,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 37),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height -
@@ -75,6 +156,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
                     mainAxisAlignment: MainAxisAlignment.center, //alinhando no centro da tela (verticalmente)
                     crossAxisAlignment: CrossAxisAlignment.stretch, //esticando os componentes (horizontalmente)
                     children: [
+                      const SizedBox(height: 35),
                       Align(
                         alignment: AlignmentGeometry.topStart,
                         child: AppLogo(size: 84),
@@ -106,7 +188,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
                       ),
                       const SizedBox(height: 20),
                       Center(
-                        child: _RoleToggle(
+                        child: RoleToggle(
                           organizador: _organizador,
                           onChanged: (v) => setState(() => _organizador = v),
                         ),
@@ -169,11 +251,50 @@ class _TelaCadastroState extends State<TelaCadastro> {
                         ),
                         iconeComeco: Icon(Icons.lock_outline),
                       ),
+                      const SizedBox(height: 5),
+                      AppCheckboxField(
+                        value: _confirmouTermo,
+                        activeColor: AppColors.textboxIcon,
+                        onChanged: (value) => setState(() => _confirmouTermo = value),
+                        label: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(text: "Li e concordo com os "),
+                              TextSpan(
+                                  text: "Termos de Uso",
+                                  recognizer: TapGestureRecognizer()..onTap = () => _handleMostrarTermos(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Color(0xFFBA12F3),
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        cadastroViewModel.mensagemErro != null ? cadastroViewModel.mensagemErro! : "",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.red
+                        ),
+                      ),
                       const SizedBox(height: 41),
                       GradientButton(
-                        text: "Entrar",
+                        text: "Criar conta",
                         height: 40,
-                        onTap: _handleCadastroClick,
+                        onTap: cadastroViewModel.isLoading ? null : _handleCadastroClick,
+                        loading: cadastroViewModel.isLoading,
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
@@ -181,10 +302,37 @@ class _TelaCadastroState extends State<TelaCadastro> {
                         ),
                       ),
                       const SizedBox(height: 25),
-
-                      //TODO: login de outras formas
-                      const SizedBox(height: 70),
-
+                      Text(
+                        'Entrar com',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Image.asset(
+                              'assets/images/ic_google.png',
+                              width: 45,
+                              height: 45,
+                            ),
+                            onPressed: _handleLoginGoogleTap,
+                          ),
+                          IconButton(
+                            icon: Image.asset(
+                              'assets/images/ic_facebook.png',
+                              width: 45,
+                              height: 45,
+                            ),
+                            onPressed: _handleLoginFacebookTap,
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 40),
                       RichText(
                         textAlign: TextAlign.center,
@@ -208,57 +356,12 @@ class _TelaCadastroState extends State<TelaCadastro> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 35),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RoleToggle extends StatelessWidget {
-  const _RoleToggle({required this.organizador, required this.onChanged});
-
-  final bool organizador;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 29,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(33),
-        border: Border.all(color: const Color(0xC2610053), width: 1),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _seg("Sou usuário", !organizador, () => onChanged(false), 137),
-          _seg("Sou organizador(a)", organizador, () => onChanged(true), 156),
-        ],
-      ),
-    );
-  }
-
-  Widget _seg(String label, bool active, VoidCallback onTap, double w) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: w,
-        height: 29,
-        alignment: Alignment.center,
-        color: active ? const Color(0xFFC758AF) : Colors.transparent,
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-            color: Colors.white,
           ),
         ),
       ),

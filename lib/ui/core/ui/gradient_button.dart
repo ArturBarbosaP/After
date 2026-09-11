@@ -10,6 +10,7 @@ class GradientButton extends StatelessWidget {
   final double borderRadius;
   final BoxBorder? border;
   final TextStyle textStyle;
+  final bool loading;
 
   const GradientButton({
     super.key,
@@ -21,6 +22,7 @@ class GradientButton extends StatelessWidget {
     this.borderRadius = 5,
     this.border,
     required this.textStyle,
+    required this.loading
   });
 
   @override
@@ -39,7 +41,13 @@ class GradientButton extends StatelessWidget {
           border: border ??
               Border.all(color: AppColors.buttonBorder, width: 1),
         ),
-        child: Text(text, style: textStyle),
+        child: loading
+            ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white,),
+            )
+            : Text(text, style: textStyle),
       ),
     );
   }
