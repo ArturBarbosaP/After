@@ -4,8 +4,8 @@ import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
 import 'package:after_project/ui/cadastro/widgets/role.dart';
 import 'package:after_project/ui/core/ui/checkbox.dart';
+import 'package:after_project/ui/core/ui/shell.dart';
 import 'package:after_project/ui/core/ui/tela_termos_uso.dart';
-import 'package:after_project/ui/home/widgets/tela_home.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -100,7 +100,7 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
   void navigatorHome(){
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
-        builder: (context) => const TelaHome(),
+        builder: (context) => const AppShell(),
       ),
           (route) => false,
     );

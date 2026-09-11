@@ -1,4 +1,4 @@
-import 'package:after_project/ui/home/widgets/tela_home.dart';
+import 'package:after_project/ui/core/ui/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
@@ -89,7 +89,7 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   void navigatorHome(){
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(
-        builder: (context) => const TelaHome(),
+        builder: (context) => const AppShell(),
       ),
       (route) => false,
     );
