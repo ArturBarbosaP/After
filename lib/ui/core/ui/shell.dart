@@ -1,5 +1,6 @@
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/home/widgets/tela_home.dart';
+import 'package:after_project/ui/mapa/widgets/tela_mapa.dart';
 import 'package:flutter/material.dart';
 
 class AppShell extends StatefulWidget {
@@ -14,8 +15,8 @@ class _AppShellState extends State<AppShell>{
 
   final List<Widget> _screens = const [
     TelaHome(),
-    /*TelaMapa(),
-    TelaFavoritos(),
+    TelaMapa(),
+    /*TelaFavoritos(),
     TelaPerfil(),*/
   ];
 

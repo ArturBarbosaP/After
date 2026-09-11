@@ -26,6 +26,7 @@ class AppColors {
   static const Color textEventProximoHj = Color(0xFFFBA910);
   static const Color textEventProximoAmanha = Color(0xFF10FBE0);
   static const Color textEventProximoDepoisAmanha = Color(0xFF38FB10);
+  static const Color eventoProximoBorder = Color(0xFF82149B);
 
   //gradients
   //bem vindo - login e cadastro
@@ -44,6 +45,10 @@ class AppColors {
   //em destaque - home
   static const Color emDestaqueGradA = Color(0xFF6C0F69);
   static const Color emDestaqueGradB = Color(0xFF4C086E);
+
+  //evento mais próximo - mapa
+  static const Color eventoProximoGradA = Color(0xFF7D1479);
+  static const Color eventoProximoGradB = Color(0xFFB4639B);
 
   //btn entrar
   static const Color btnGradA = Color(0xFF8F1E8E);
