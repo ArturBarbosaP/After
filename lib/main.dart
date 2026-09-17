@@ -1,7 +1,7 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/config/google_signin_config.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
-import 'package:after_project/ui/login/widgets/tela_login.dart';
+import 'package:after_project/ui/core/ui/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'config/supabase_config.dart';
 
@@ -32,7 +32,7 @@ class App extends StatelessWidget {
           },
         ),
       ),
-      home: const TelaLogin(),
+      home: const AppAuthGate(),
     );
   }
 }
