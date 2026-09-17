@@ -64,10 +64,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     }
   }
 
-  void _handleLoginFacebookTap(){
-    //TODO login com o facebook
-  }
-
   void _handleEsqueciSenhaTap(){
     /*Navigator.of(context).push(
         MaterialPageRoute<void>(
@@ -271,14 +267,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                                 height: 45,
                               ),
                               onPressed: _handleLoginGoogleTap,
-                            ),
-                            IconButton(
-                              icon: Image.asset(
-                                'assets/images/ic_facebook.png',
-                                width: 45,
-                                height: 45,
-                              ),
-                              onPressed: _handleLoginFacebookTap,
                             ),
                           ],
                         ),

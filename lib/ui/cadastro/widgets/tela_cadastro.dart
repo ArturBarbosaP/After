@@ -80,10 +80,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     }
   }
 
-  void _handleLoginFacebookTap(){
-    //TODO login com o facebook
-  }
-
   void _handleLoginTap(){
     Navigator.pop(context);
     limparCampos();
@@ -322,14 +318,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                               height: 45,
                             ),
                             onPressed: _handleLoginGoogleTap,
-                          ),
-                          IconButton(
-                            icon: Image.asset(
-                              'assets/images/ic_facebook.png',
-                              width: 45,
-                              height: 45,
-                            ),
-                            onPressed: _handleLoginFacebookTap,
                           ),
                         ],
                       ),
