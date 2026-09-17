@@ -51,4 +51,8 @@ class SupabaseAuthService {
       accessToken: authorization.accessToken
     );
   }
+
+  Future<void> logout() async {
+    await _client.auth.signOut(scope: SignOutScope.global);
+  }
 }

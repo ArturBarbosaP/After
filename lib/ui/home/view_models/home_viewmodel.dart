@@ -1,3 +1,4 @@
+import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
@@ -10,8 +11,9 @@ import 'dart:developer' as developer;
 class HomeViewmodel extends ChangeNotifier {
   final UserRepository _userRepository;
   final EventoRepository _eventoRepository;
+  final AuthRepository _authRepository;
 
-  HomeViewmodel(this._userRepository, this._eventoRepository){
+  HomeViewmodel(this._userRepository, this._eventoRepository, this._authRepository){
     _loadUsuario();
     _loadEventoDestaque();
     _loadEventosAoVivo();
@@ -131,5 +133,32 @@ class HomeViewmodel extends ChangeNotifier {
     _categoriaSelecionadaFiltro = categoria;
     notifyListeners();
     //TODO filtrar eventos pela categoria selecionada
+  }
+
+  Future<bool> logout() async {
+    _loading = true;
+    _mensagemErro = null;
+
+    notifyListeners();
+
+    try {
+      await _authRepository.logout();
+      return true;
+    } on AuthFailure catch (e) {
+      _loading = false;
+      _mensagemErro = e.message;
+      return false;
+    } catch (e, stackTrace) {
+      _loading = false;
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      notifyListeners();
+      developer.log(
+          'Falha no logout',
+          name: 'HomeViewmodel',
+          error: e,
+          stackTrace: stackTrace
+      );
+      return false;
+    }
   }
 }

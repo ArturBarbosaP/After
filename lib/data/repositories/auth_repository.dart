@@ -99,6 +99,30 @@ class AuthRepository {
     }
   }
 
+  Future<void> logout() async {
+    try {
+      await _authService.logout();
+    }
+    on AuthException catch (ex, stackTrace) {
+      developer.log(
+          'Falha no logout - AuthException',
+          name: 'AuthRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw AuthFailure(_traduzirAuthError(ex));
+    }
+    catch (ex, stackTrace) {
+      developer.log(
+          'Falha no logout - Exception',
+          name: 'AuthRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw AuthFailure("Não foi possível fazer o logout. Tente novamente.");
+    }
+  }
+
 
   String _traduzirAuthError(AuthException e) {
     switch (e.message) {

@@ -1,4 +1,5 @@
 import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -9,6 +10,7 @@ import 'package:after_project/ui/home/widgets/evento_destaque.dart';
 import 'package:after_project/ui/home/widgets/eventos_ao_vivo.dart';
 import 'package:after_project/ui/home/widgets/eventos_proximos.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
+import 'package:after_project/ui/login/widgets/tela_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +20,7 @@ class TelaHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HomeViewmodel(getIt<UserRepository>(), getIt<EventoRepository>()),
+      create: (_) => HomeViewmodel(getIt<UserRepository>(), getIt<EventoRepository>(), getIt<AuthRepository>()),
       child: const _TelaHomeBody(),
     );
   }
@@ -33,6 +35,18 @@ class _TelaHomeBody extends StatefulWidget {
 
 class _TelaHomeState extends State<_TelaHomeBody> {
 
+  void _handleSairTap() async {
+    final homeViewModel = context.read<HomeViewmodel>();
+
+    final sucesso = await homeViewModel.logout();
+
+    if (sucesso && mounted){
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(builder: (context) => const TelaLogin()),
+            (route) => false,
+      );
+    }
+  }
 
   void _handlePerfilTap() {
     //TODO abrir tela de edição de perfil
@@ -67,6 +81,7 @@ class _TelaHomeState extends State<_TelaHomeBody> {
         nomeUsuario: usuario?.nome ?? '',
         fotoPerfilUrl: usuario?.urlFotoPerfil,
         onAvatarTap: _handlePerfilTap,
+        onSairTap: _handleSairTap,
       ),
       body: Container(
         width: double.infinity,
