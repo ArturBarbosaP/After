@@ -1,6 +1,6 @@
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
-import 'package:after_project/utils/greeting.dart';
+import 'package:after_project/utils/datetime_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

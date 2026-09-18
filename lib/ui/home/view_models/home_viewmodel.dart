@@ -29,8 +29,8 @@ class HomeViewmodel extends ChangeNotifier {
   UserProfile? _usuario;
   UserProfile? get usuario => _usuario;
 
-  EventoDetalhado? _eventoDetalhado;
-  EventoDetalhado? get eventoDestaque => _eventoDetalhado;
+  EventoDetalhado? _eventoDestaque;
+  EventoDetalhado? get eventoDestaque => _eventoDestaque;
 
   Categoria? _categoriaSelecionadaFiltro;
   Categoria? get categoriaSelecionadaFiltro => _categoriaSelecionadaFiltro;
@@ -63,7 +63,7 @@ class HomeViewmodel extends ChangeNotifier {
 
   Future<void> _loadEventoDestaque() async {
     try {
-      _eventoDetalhado = await _eventoRepository.getEventoDestaque();
+      _eventoDestaque = await _eventoRepository.getEventoDestaque();
       notifyListeners();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
