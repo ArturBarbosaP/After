@@ -1,3 +1,4 @@
+import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseEventoService {
@@ -21,7 +22,7 @@ class SupabaseEventoService {
     final response = await _client
         .from(_nomeTabela)
         .select()
-        .eq('status', 'Em andamento')
+        .eq('status', Status.emAndamento.label)
         .order('data_inicio', ascending: true)
         .limit(10);
 
@@ -41,7 +42,7 @@ class SupabaseEventoService {
     final response = await _client
         .from(_nomeTabela)
         .select()
-        .eq('status', 'Agendado')
+        .eq('status', Status.agendado.label)
         .gte('data_inicio', DateTime.now().toIso8601String())
         .order('data_inicio', ascending: true)
         .limit(3);

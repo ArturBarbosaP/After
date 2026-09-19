@@ -30,10 +30,10 @@ String formatarData(DateTime data) {
       '${data.month.toString().padLeft(2, '0')}';
 }
 
-String formatarHorario(DateTime data) {
+String formatarHorario(DateTime data, bool manterMinuto) {
   final hora = data.hour.toString().padLeft(2, '0');
 
-  if (data.minute == 0) {
+  if (data.minute == 0 && !manterMinuto) {
     return '${hora}h';
   }
 
@@ -42,17 +42,31 @@ String formatarHorario(DateTime data) {
 }
 
 String formatarPeriodo(DateTime dataInicio, DateTime dataFim) {
-  final inicio = '${formatarData(dataInicio)} • ${formatarHorario(dataInicio)}';
+  final inicio = '${formatarData(dataInicio)} • ${formatarHorario(dataInicio, false)}';
 
   final mesmoDia = dataInicio.year == dataFim.year &&
       dataInicio.month == dataFim.month &&
       dataInicio.day == dataFim.day;
 
   if (mesmoDia) {
-    return '$inicio - ${formatarHorario(dataFim)}';
+    return '$inicio - ${formatarHorario(dataFim, false)}';
   }
 
-  final fim = '${formatarData(dataFim)} • ${formatarHorario(dataFim)}';
+  final fim = '${formatarData(dataFim)} • ${formatarHorario(dataFim, false)}';
 
   return '$inicio - $fim';
+}
+
+String formatarProgressao(DateTime dataInicio, DateTime dataFim) {
+  final mesmoDia = dataInicio.year == dataFim.year &&
+      dataInicio.month == dataFim.month &&
+      dataInicio.day == dataFim.day;
+
+  if (mesmoDia) {
+    return '${formatarHorario(dataInicio, true)} - '
+        '${formatarHorario(dataFim, true)}';
+  }
+
+  return '${formatarData(dataInicio)} • ${formatarHorario(dataInicio, true)} - '
+      '${formatarData(dataFim)} • ${formatarHorario(dataFim, true)}';
 }

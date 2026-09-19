@@ -1,6 +1,7 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/services/location_service.dart';
+import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
@@ -30,7 +31,7 @@ class MapaViewmodel extends ChangeNotifier {
       final locationService = getIt<LocationService>();
       final permission = await locationService.requestPermission();
 
-      if (permission != LocationPermissionResult.granted){
+      if (permission != PermissaoLocalizacao.granted){
         return;
       }
 

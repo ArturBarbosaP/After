@@ -1,19 +1,12 @@
+import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:geolocator/geolocator.dart';
 
-enum LocationPermissionResult {
-  granted,
-  serviceDisabled,   // GPS do aparelho está desligado
-  denied,            // usuário negou, mas pode perguntar de novo
-  deniedForever,      // usuário negou permanentemente (precisa ir nas configs do app)
-}
-
-
 class LocationService {
-  Future<LocationPermissionResult> requestPermission() async {
+  Future<PermissaoLocalizacao> requestPermission() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
-      return LocationPermissionResult.serviceDisabled;
+      return PermissaoLocalizacao.serviceDisabled;
     }
 
     var permission = await Geolocator.checkPermission();
@@ -23,14 +16,14 @@ class LocationService {
     }
 
     if (permission == LocationPermission.denied) {
-      return LocationPermissionResult.denied;
+      return PermissaoLocalizacao.denied;
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return LocationPermissionResult.deniedForever;
+      return PermissaoLocalizacao.deniedForever;
     }
 
-    return LocationPermissionResult.granted;
+    return PermissaoLocalizacao.granted;
   }
 
   Future<Position> getCurrentPosition() {

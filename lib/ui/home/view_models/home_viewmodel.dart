@@ -4,6 +4,7 @@ import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:after_project/ui/home/view_models/eventos_com_amigos.dart';
@@ -75,7 +76,7 @@ class HomeViewmodel extends ChangeNotifier {
       final locationService = getIt<LocationService>();
       final permission = await locationService.requestPermission();
 
-      if (permission != LocationPermissionResult.granted){
+      if (permission != PermissaoLocalizacao.granted){
         return;
       }
 

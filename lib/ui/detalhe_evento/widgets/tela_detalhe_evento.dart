@@ -1,10 +1,12 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
+import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
+import 'package:after_project/ui/detalhe_evento/widgets/progressao_evento.dart';
 import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/helper.dart';
 import 'package:flutter/material.dart';
@@ -272,16 +274,21 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      //TODO colocar barra de progressão
-                      Text(
-                        'O evento não ainda não começou!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                          color: Colors.white,
+                      if (evento.status == Status.emAndamento)...[
+                        BarraProgressaoEvento(
+                          dataInicio: evento.dataInicio,
+                          dataFim: evento.dataFim,
                         ),
-                      ),
+                      ] else
+                        Text(
+                          'O evento não ainda não começou!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
                       const SizedBox(height: 20),
                       Text(
                         'Sobre o evento',
@@ -373,7 +380,7 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
