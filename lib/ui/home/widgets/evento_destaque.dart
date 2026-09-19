@@ -60,7 +60,7 @@ class EventoDestaque extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(left: 15),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(

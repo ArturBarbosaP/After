@@ -5,6 +5,7 @@ import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
 import 'package:after_project/utils/datetime_helper.dart';
+import 'package:after_project/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -192,6 +193,19 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                               color: Colors.white,
                             ),
                           ),
+                          if (evento.preco != null) ...[
+                            const SizedBox(height: 5),
+                            Text(
+                              '•  Valor: ${moedaFormat.format(evento.preco)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 15),

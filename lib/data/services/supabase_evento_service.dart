@@ -22,7 +22,7 @@ class SupabaseEventoService {
         .from(_nomeTabela)
         .select()
         .eq('status', 'Em andamento')
-        .order('data_inicio')
+        .order('data_inicio', ascending: true)
         .limit(10);
 
     return List<Map<String, dynamic>>.from(response);
@@ -43,7 +43,7 @@ class SupabaseEventoService {
         .select()
         .eq('status', 'Agendado')
         .gte('data_inicio', DateTime.now().toIso8601String())
-        .order('data_inicio')
+        .order('data_inicio', ascending: true)
         .limit(3);
 
     return List<Map<String, dynamic>>.from(response);

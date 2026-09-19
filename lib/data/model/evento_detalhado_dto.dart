@@ -7,12 +7,12 @@ class EventoDetalhadoDto {
   final String dataInicio;
   final String dataFim;
   final String endereco;
-
   final String titulo;
   final String descricao;
   final String categoria;
   final String status;
   final String? imagemCapa;
+  final double? preco;
   final String organizadorId;
   final String organizadorSite;
   final bool organizadorVerificado;
@@ -31,6 +31,7 @@ class EventoDetalhadoDto {
     required this.categoria,
     required this.status,
     this.imagemCapa,
+    this.preco,
     required this.organizadorId,
     required this.organizadorSite,
     required this.organizadorVerificado,
@@ -46,12 +47,12 @@ class EventoDetalhadoDto {
       dataInicio: json['data_inicio'] as String,
       dataFim: json['data_fim'] as String,
       endereco: json['endereco'] as String,
-
       titulo: json['titulo'] as String,
       descricao: json['descricao'] as String,
       categoria: json['categoria'] as String,
       status: json['status'] as String,
       imagemCapa: json['imagem_capa'] as String?,
+      preco: json['preco'] as double?,
       organizadorId: json['organizador_id'] as String,
       organizadorSite: json['organizador_site'] as String,
       organizadorVerificado: json['organizador_verificado'] as bool,
@@ -72,12 +73,13 @@ class EventoDetalhadoDto {
       descricao: descricao,
       categoria: Categoria.fromString(categoria),
       status: Status.fromString(status),
-      imagemCapa: imagemCapa,
+      imagemCapa: imagemCapa == '' ? null : imagemCapa,
+      preco: preco == 0 ? null : preco,
       organizadorId: organizadorId,
       organizadorSite: organizadorSite,
       organizadorVerificado: organizadorVerificado,
       organizadorNome: organizadorNome,
-      organizadorFoto: organizadorFoto,
+      organizadorFoto: organizadorFoto == '' ? null : organizadorFoto,
       organizadorBio: organizadorBio,
       distancia: distancia
     );
