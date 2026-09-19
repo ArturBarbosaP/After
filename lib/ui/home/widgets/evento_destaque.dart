@@ -2,17 +2,18 @@ import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class EventoDestaque extends StatelessWidget {
-  final VoidCallback onTap;
+  final void Function(int eventoId) onTap;
   final String status;
   final String titulo;
   final String endereco;
+  final int id;
 
-  const EventoDestaque({super.key, required this.onTap, required this.status, required this.titulo, required this.endereco});
+  const EventoDestaque({super.key, required this.onTap, required this.status, required this.titulo, required this.endereco, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap(id),
       child: Container(
         padding: EdgeInsets.all(17),
         decoration: BoxDecoration(

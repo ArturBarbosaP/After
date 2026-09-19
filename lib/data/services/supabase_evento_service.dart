@@ -59,4 +59,12 @@ class SupabaseEventoService {
     final rows = List<Map<String, dynamic>>.from(emAndamento as List);
     return rows.isEmpty ? null : rows.first;
   }
+
+  Future<Map<String, dynamic>?> fetchEventoPorId(int id) async {
+    return await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('id', id)
+        .maybeSingle();
+  }
 }

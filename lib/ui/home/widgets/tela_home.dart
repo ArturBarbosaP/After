@@ -4,6 +4,7 @@ import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/searchfield.dart';
+import 'package:after_project/ui/detalhe_evento/widgets/tela_detalhe_evento.dart';
 import 'package:after_project/ui/home/view_models/home_viewmodel.dart';
 import 'package:after_project/ui/home/widgets/categorias_filtro.dart';
 import 'package:after_project/ui/home/widgets/evento_destaque.dart';
@@ -48,6 +49,14 @@ class _TelaHomeState extends State<_TelaHomeBody> {
     }
   }
 
+  void _abrirDetalhesEvento(int eventoId) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => TelaDetalheEvento(eventoId: eventoId)
+      ),
+    );
+  }
+
   void _handlePerfilTap() {
     //TODO abrir tela de edição de perfil
   }
@@ -56,17 +65,9 @@ class _TelaHomeState extends State<_TelaHomeBody> {
     //TODO pesquisar pelo evento digitado
   }
 
-  void _handleEmDestaqueTap() {
-    //TODO abrir o evento em destaque
-  }
-
-  void _handleEventoAoVivoTap(){
-    //TODO abrir evento ao vivo
-  }
-
-  void _handleEventoProximoTap(){
-    //TODO abrir proximo evento
-  }
+  void _handleEmDestaqueTap(int eventoId) => _abrirDetalhesEvento(eventoId);
+  void _handleEventoAoVivoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
+  void _handleEventoProximoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +125,8 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                     onTap: _handleEmDestaqueTap,
                     status: eventoDestaque.status.label,
                     titulo: eventoDestaque.titulo,
-                    endereco: eventoDestaque.endereco
+                    endereco: eventoDestaque.endereco,
+                    id: eventoDestaque.id,
                   ),
                 ],
                 const SizedBox(height: 15),

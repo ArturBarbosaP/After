@@ -5,30 +5,41 @@ import 'dart:developer' as developer;
 
 class DetalheEventoViewmodel extends ChangeNotifier {
   final EventoRepository _eventoRepository;
+  final int id;
 
-  DetalheEventoViewmodel(this._eventoRepository){
+  DetalheEventoViewmodel(this._eventoRepository, this.id){
     _loadEvento();
   }
 
+  bool _loading = false;
+  bool get isLoading => _loading;
 
-  late EventoDetalhado _evento;
-  EventoDetalhado get evento => _evento;
+  String? _mensagemErro;
+  String? get mensagemErro => _mensagemErro;
+
+  EventoDetalhado? _evento;
+  EventoDetalhado? get evento => _evento;
 
   Future<void> _loadEvento() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
     try {
-      _evento = (await _eventoRepository.getEventoDestaque())!; //TODO pegar evento clicado
-      notifyListeners();
+      _evento = await _eventoRepository.getEventoPorId(id);
     } on EventoFailure catch (e) {
-      notifyListeners();
+      _mensagemErro = e.message;
     } catch (e, stackTrace) {
-      notifyListeners();
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento destaque',
-          name: 'HomeViewmodel',
+          'Falha ao recuperar evento pelo id',
+          name: 'DetalheEventoViewmodel',
           error: e,
           stackTrace: stackTrace
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
-
 }

@@ -4,7 +4,7 @@ import 'package:after_project/ui/home/view_models/eventos_com_amigos.dart';
 import 'package:flutter/material.dart';
 
 class EventosAoVivo extends StatelessWidget {
-  final VoidCallback onTap;
+  final void Function(int eventId) onTap;
   final List<EventosComAmigos> eventosAoVivo;
 
   const EventosAoVivo({super.key, required this.onTap, required this.eventosAoVivo});
@@ -23,7 +23,7 @@ class EventosAoVivo extends StatelessWidget {
           final evento = data.evento;
 
           return GestureDetector(
-            onTap: onTap,
+            onTap: () => onTap(evento.id),
             child: SizedBox(
               width: 144,
               child: Container(

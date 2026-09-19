@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TelaDetalheEvento extends StatelessWidget {
-  const TelaDetalheEvento({super.key});
+  const TelaDetalheEvento({super.key, required this.eventoId});
+
+  final int eventoId;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DetalheEventoViewmodel(getIt<EventoRepository>()),
+      create: (_) => DetalheEventoViewmodel(getIt<EventoRepository>(), eventoId),
       child: const _TelaDetalheEventoBody(),
     );
   }
@@ -45,6 +47,61 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
   Widget build(BuildContext context) {
     final detalheEventoViewmodel = context.watch<DetalheEventoViewmodel>();
     final evento = detalheEventoViewmodel.evento;
+
+    if (detalheEventoViewmodel.isLoading) {
+      return Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.bgTop,
+                AppColors.bgMid,
+                AppColors.bgBottom,
+              ],
+              stops: [0.0, 0.519, 1.0],
+            ),
+          ),
+          child: Center(child: CircularProgressIndicator(color: Colors.white))
+        ),
+      );
+    }
+
+    if (evento == null) {
+      return Scaffold(
+        appBar: const AppTopBar(
+          title: 'Evento',
+          backIcon: true,
+        ),
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.bgTop,
+                  AppColors.bgMid,
+                  AppColors.bgBottom,
+                ],
+                stops: [0.0, 0.519, 1.0],
+              ),
+            ),
+            child: Center(child: Text(
+              '${detalheEventoViewmodel.mensagemErro}',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ))
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppTopBar(

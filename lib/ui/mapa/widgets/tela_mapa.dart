@@ -3,6 +3,7 @@ import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/searchfield.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/ui/detalhe_evento/widgets/tela_detalhe_evento.dart';
 import 'package:after_project/ui/mapa/view_models/mapa_viewmodel.dart';
 import 'package:after_project/utils/location_helper.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +30,19 @@ class _TelaMapaBody extends StatefulWidget {
 
 class _TelaMapaState extends State<_TelaMapaBody> {
 
+  void _abrirDetalhesEvento(int eventoId) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+          builder: (context) => TelaDetalheEvento(eventoId: eventoId)
+      ),
+    );
+  }
+
   void _handlePesquisarTap(){
     //TODO pesquisar pelo evento digitado
   }
 
-  void _handleEventoProximoTap(){
-    //TODO abrir pagina do evento proximo
-  }
+  void _handleEventoProximoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +97,7 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                   ),
                   const SizedBox(height: 5),
                   GestureDetector(
-                    onTap: _handleEventoProximoTap,
+                    onTap: () => _handleEventoProximoTap(eventoPerto.id),
                     child: Container(
                       height: 64,
                       width: double.infinity,

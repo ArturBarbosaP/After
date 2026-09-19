@@ -98,4 +98,21 @@ class EventoRepository {
       throw EventoFailure("Não foi possível recuperar o evento mais próximo. Tente novamente.");
     }
   }
+
+  Future<EventoDetalhado?> getEventoPorId(int id) async {
+    try {
+      final json = await _eventoService.fetchEventoPorId(id);
+      if (json == null) return null;
+
+      return EventoDetalhadoDto.fromJson(json).toDomain();
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar evento pelo id - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar o evento pelo id. Tente novamente.");
+    }
+  }
 }
