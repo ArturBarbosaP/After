@@ -19,6 +19,7 @@ class EventoDetalhadoDto {
   final String organizadorNome;
   final String? organizadorFoto;
   final String? organizadorBio;
+  final double? distancia;
 
   EventoDetalhadoDto({
     required this.id,
@@ -35,7 +36,8 @@ class EventoDetalhadoDto {
     required this.organizadorVerificado,
     required this.organizadorNome,
     this.organizadorFoto,
-    this.organizadorBio
+    this.organizadorBio,
+    this.distancia
   });
 
   factory EventoDetalhadoDto.fromJson(Map<String, dynamic> json){
@@ -55,7 +57,8 @@ class EventoDetalhadoDto {
       organizadorVerificado: json['organizador_verificado'] as bool,
       organizadorNome: json['organizador_nome'] as String,
       organizadorFoto: json['organizador_foto'] as String?,
-      organizadorBio: json['organizador_bio'] as String?
+      organizadorBio: json['organizador_bio'] as String?,
+      distancia: json['distancia_metros'] as double?
     );
   }
 
@@ -75,7 +78,8 @@ class EventoDetalhadoDto {
       organizadorVerificado: organizadorVerificado,
       organizadorNome: organizadorNome,
       organizadorFoto: organizadorFoto,
-      organizadorBio: organizadorBio
+      organizadorBio: organizadorBio,
+      distancia: distancia
     );
   }
 }

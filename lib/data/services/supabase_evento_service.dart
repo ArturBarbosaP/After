@@ -6,27 +6,15 @@ class SupabaseEventoService {
 
   SupabaseEventoService(this._client);
 
-  Future<Map<String, dynamic>?> fetchEventoDestaque() async {
-    //TODO ajustar regra de evento destaque
-    //filtrar por evento ao vivo que acabou de começar ou que está quase começando,
-    // mais próximo do usuário, com organizador verificado
-    final emAndamento = await _client
-        .from(_nomeTabela)
-        .select()
-        .eq('status', 'Em andamento')
-        .order('data_inicio')
-        .limit(1)
-        .maybeSingle();
+  Future<Map<String, dynamic>?> fetchEventoDestaque(double lat, double lng) async {
 
-    if (emAndamento != null) return emAndamento;
+    final emAndamento = await _client.rpc(
+      'get_evento_destaque',
+      params: {'user_lat': lat, 'user_lng': lng},
+    );
 
-    return await _client
-        .from(_nomeTabela)
-        .select()
-        .eq('status', 'Agendado')
-        .order('data_inicio')
-        .limit(1)
-        .maybeSingle();
+    final rows = List<Map<String, dynamic>>.from(emAndamento as List);
+    return rows.isEmpty ? null : rows.first;
   }
 
   Future<List<Map<String, dynamic>>> fetchEventosAoVivo() async {

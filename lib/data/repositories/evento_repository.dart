@@ -14,9 +14,9 @@ class EventoRepository {
 
   EventoRepository(this._eventoService);
 
-  Future<EventoDetalhado?> getEventoDestaque() async {
+  Future<EventoDetalhado?> getEventoDestaque(double lat, double lng) async {
     try{
-      final json = await _eventoService.fetchEventoDestaque();
+      final json = await _eventoService.fetchEventoDestaque(lat, lng);
       if (json == null) return null;
 
       return EventoDetalhadoDto.fromJson(json).toDomain();

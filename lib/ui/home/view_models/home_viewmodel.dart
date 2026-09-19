@@ -1,6 +1,8 @@
+import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
@@ -63,7 +65,15 @@ class HomeViewmodel extends ChangeNotifier {
 
   Future<void> _loadEventoDestaque() async {
     try {
-      _eventoDestaque = await _eventoRepository.getEventoDestaque();
+      final locationService = getIt<LocationService>();
+      final permission = await locationService.requestPermission();
+
+      if (permission != LocationPermissionResult.granted){
+        return;
+      }
+
+      final pos = await locationService.getCurrentPosition();
+      _eventoDestaque = await _eventoRepository.getEventoDestaque(pos.latitude, pos.longitude);
       notifyListeners();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;

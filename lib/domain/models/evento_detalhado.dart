@@ -18,6 +18,7 @@ class EventoDetalhado {
   final String organizadorNome;
   final String? organizadorFoto;
   final String? organizadorBio;
+  final double? distancia;
 
   EventoDetalhado({
     required this.id,
@@ -34,6 +35,7 @@ class EventoDetalhado {
     required this.organizadorVerificado,
     required this.organizadorNome,
     this.organizadorFoto,
-    this.organizadorBio
+    this.organizadorBio,
+    this.distancia
   });
 }
