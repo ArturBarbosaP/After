@@ -115,4 +115,52 @@ class EventoRepository {
       throw EventoFailure("Não foi possível recuperar o evento pelo id. Tente novamente.");
     }
   }
+
+  Future<void> setFavorito(String userId, int eventoId, bool favorito) async {
+    try {
+      return await _eventoService.upsertFavorito(userId, eventoId, favorito);
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao setar evento como favorito - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível favoritar o evento. Tente novamente.");
+    }
+  }
+
+  Future<void> setPresenca(String userId, int eventoId, bool presenca) async {
+    try {
+      return await _eventoService.upsertPresenca(userId, eventoId, presenca);
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao setar presença no evento - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível marcar presença no evento. Tente novamente.");
+    }
+  }
+
+  Future<({bool favorito, bool presenca})> getStatusUsuarioEvento(String userId, int eventoId) async {
+    try {
+      final json = await _eventoService.fetchStatusUsuarioEvento(userId, eventoId);
+
+      return (
+        favorito: json?['favorito'] as bool? ?? false,
+        presenca: json?['presenca'] as bool? ?? false,
+      );
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar usuario evento - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar usuário pro evento. Tente novamente.");
+    }
+  }
+
 }

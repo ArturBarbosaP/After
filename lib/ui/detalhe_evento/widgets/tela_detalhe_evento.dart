@@ -1,5 +1,6 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
+import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
@@ -20,7 +21,7 @@ class TelaDetalheEvento extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DetalheEventoViewmodel(getIt<EventoRepository>(), eventoId),
+      create: (_) => DetalheEventoViewmodel(getIt<EventoRepository>(), getIt<UserRepository>(), eventoId),
       child: const _TelaDetalheEventoBody(),
     );
   }
@@ -37,14 +38,6 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
 
   void _handleComunidadeTap(){
     //TODO abrir tela da comunidade do evento
-  }
-
-  void _handleConfirmarPresencaTap(){
-    //TODO confirmar presença no evento
-  }
-
-  void _handleFavoritarEventoTap(){
-    //TODO marcar evento como favorito
   }
 
   @override
@@ -344,18 +337,25 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          IconButton.filled(
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStateProperty.all(AppColors.favoritoBackgroundColor),
+                          Container(
+                            height: 40,
+                            width: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: AppColors.favoritoBackgroundColor,
+                              borderRadius: BorderRadius.circular(10)
                             ),
-                            onPressed: _handleFavoritarEventoTap,
-                            icon: Icon(
-                              Icons.favorite_outline, //TODO preencher icon quando for favorito
-                              color: AppColors.favoritoIconColor,
+                            child: IconButton(
+                              onPressed: detalheEventoViewmodel.toggleFavorito,
+                              icon: Icon(
+                                size: 24,
+                                detalheEventoViewmodel.favorito ? Icons.favorite : Icons.favorite_outline,
+                                color: AppColors.favoritoIconColor,
+                              ),
                             ),
                           ),
                           GradientButton(
-                            text: 'Confirmar presença',
+                            text: detalheEventoViewmodel.presenca ? 'Desmarcar presença' : 'Confirmar presença',
                             textStyle: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
@@ -364,7 +364,7 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                             loading: false,
                             borderRadius: 10,
                             width: 250,
-                            onTap: _handleConfirmarPresencaTap,
+                            onTap: detalheEventoViewmodel.togglePresenca,
                             gradient: LinearGradient(
                               colors: [
                                 AppColors.btnPadraoGradA,

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseEventoService {
   final SupabaseClient _client;
   final String _nomeTabela = 'evento_detalhado';
+  final String _nomeTabelaUsuarioEvento = 'usuario_evento';
 
   SupabaseEventoService(this._client);
 
@@ -67,5 +68,32 @@ class SupabaseEventoService {
         .select()
         .eq('id', id)
         .maybeSingle();
+  }
+
+  Future<Map<String, dynamic>?> fetchStatusUsuarioEvento(String userId, int eventoId) async {
+    return await _client
+        .from(_nomeTabelaUsuarioEvento)
+        .select('favorito, presenca')
+        .eq('usuario_id', userId)
+        .eq('evento_id', eventoId)
+        .maybeSingle();
+  }
+
+  Future<void> upsertFavorito(String userId, int eventoId, bool favorito) async {
+    return await _client
+        .from(_nomeTabelaUsuarioEvento)
+        .upsert(
+          {'usuario_id': userId, 'evento_id': eventoId, 'favorito': favorito},
+          onConflict: 'usuario_id,evento_id',
+        );
+  }
+
+  Future<void> upsertPresenca(String userId, int eventoId, bool presenca) async {
+    return await _client
+        .from(_nomeTabelaUsuarioEvento)
+        .upsert(
+          {'usuario_id': userId, 'evento_id': eventoId, 'presenca': presenca},
+          onConflict: 'usuario_id,evento_id',
+        );
   }
 }
