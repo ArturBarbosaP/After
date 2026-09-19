@@ -1,5 +1,6 @@
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
+import 'package:after_project/domain/models/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -20,6 +21,9 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   EventoDetalhado? _evento;
   EventoDetalhado? get evento => _evento;
 
+  List<UserProfile> _amigosPresentes = [];
+  List<UserProfile> get amigosPresentes => _amigosPresentes;
+
   Future<void> _loadEvento() async {
     _loading = true;
     _mensagemErro = null;
@@ -27,6 +31,7 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
     try {
       _evento = await _eventoRepository.getEventoPorId(id);
+      _amigosPresentes = await _eventoRepository.getAmigosPresentes(id);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {

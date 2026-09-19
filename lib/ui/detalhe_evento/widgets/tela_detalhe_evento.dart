@@ -1,6 +1,7 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
+import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
@@ -48,6 +49,7 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
   Widget build(BuildContext context) {
     final detalheEventoViewmodel = context.watch<DetalheEventoViewmodel>();
     final evento = detalheEventoViewmodel.evento;
+    final amigos = detalheEventoViewmodel.amigosPresentes;
 
     if (detalheEventoViewmodel.isLoading) {
       return Scaffold(
@@ -305,17 +307,31 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Text( //TODO se nao tiver amigos sumir com esse campo
-                        'Amigos confirmados',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.white,
+                      if (amigos.isNotEmpty)...[
+                        const SizedBox(height: 20),
+                        Text(
+                          'Amigos confirmados',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      //TODO colocar avatar dos amigos
+                        const SizedBox(height: 15),
+                        Row(
+                          children: amigos.map((amigo) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: AppAvatar(
+                                size: 35,
+                                imageUrl: amigo.urlFotoPerfil,
+                                letter: amigo.nome[0],
+                                fontSize: 16,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
