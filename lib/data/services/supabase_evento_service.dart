@@ -48,4 +48,15 @@ class SupabaseEventoService {
 
     return List<Map<String, dynamic>>.from(response);
   }
+
+  Future<Map<String, dynamic>?> fetchEventoPerto(double lat, double lng) async {
+
+    final emAndamento = await _client.rpc(
+      'get_evento_proximo',
+      params: {'user_lat': lat, 'user_lng': lng},
+    );
+
+    final rows = List<Map<String, dynamic>>.from(emAndamento as List);
+    return rows.isEmpty ? null : rows.first;
+  }
 }

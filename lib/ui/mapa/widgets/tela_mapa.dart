@@ -1,7 +1,10 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/searchfield.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/mapa/view_models/mapa_viewmodel.dart';
+import 'package:after_project/utils/location_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +14,7 @@ class TelaMapa extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MapaViewmodel(),
+      create: (_) => MapaViewmodel(getIt<EventoRepository>()),
       child: const _TelaMapaBody(),
     );
   }
@@ -36,6 +39,9 @@ class _TelaMapaState extends State<_TelaMapaBody> {
 
   @override
   Widget build(BuildContext context) {
+    final mapaViewmodel = context.watch<MapaViewmodel>();
+    final eventoPerto = mapaViewmodel.eventoMaisProximo;
+
     return Scaffold(
       appBar: AppTopBar(
         title: 'Mapa de eventos!',
@@ -72,59 +78,62 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                   color: Colors.white,
                 ),
                 const SizedBox(height: 30),
-                Text(
-                  'Evento mais próximo',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                GestureDetector(
-                  onTap: _handleEventoProximoTap,
-                  child: Container(
-                    height: 64,
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.eventoProximoGradA, AppColors.eventoProximoGradB],
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.eventoProximoBorder, width: 1),
-                    ),
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'data.titulo', //TODO mudar pro titulo do evento
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'data.endereco', //TODO mudar pro endereço do evento
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
-                      ),
+                if (eventoPerto != null) ...[
+                  Text(
+                    'Evento mais próximo',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 5),
+                  GestureDetector(
+                    onTap: _handleEventoProximoTap,
+                    child: Container(
+                      height: 64,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.eventoProximoGradA, AppColors.eventoProximoGradB],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.eventoProximoBorder, width: 1),
+                      ),
+                      child: Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${eventoPerto.titulo} • ${formatarDistancia(eventoPerto.distancia!)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              eventoPerto.endereco,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ],
             ),
           ),

@@ -1,4 +1,4 @@
-String formatDistance(double meters) {
+String formatarDistancia(double meters) {
   if (meters < 1000) {
     return '${meters.round()} m';
   }

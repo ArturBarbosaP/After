@@ -81,4 +81,21 @@ class EventoRepository {
       throw EventoFailure("Não foi possível recuperar os próximos eventos. Tente novamente.");
     }
   }
+
+  Future<EventoDetalhado?> getEventoPerto(double lat, double lng) async {
+    try{
+      final json = await _eventoService.fetchEventoPerto(lat, lng);
+      if (json == null) return null;
+
+      return EventoDetalhadoDto.fromJson(json).toDomain();
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar evento perto - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar o evento mais próximo. Tente novamente.");
+    }
+  }
 }

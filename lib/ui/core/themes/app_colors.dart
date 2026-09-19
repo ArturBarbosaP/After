@@ -58,7 +58,7 @@ class AppColors {
   static const Color btnGradA = Color(0xFF8F1E8E);
   static const Color btnGradB = Color(0xFF242176);
 
-  //btn padrao
+  //btn padrão
   static const Color btnPadraoGradA = Color(0xFFE141EC);
   static const Color btnPadraoGradB = Color(0xFFAA1BF2);
   static const Color btnPadraoGradC = Color(0xFF4C0CCA);
