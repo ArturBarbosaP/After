@@ -33,6 +33,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
     //TODO abrir tela da comunidade do evento
   }
 
+  void _handleConfirmarPresencaTap(){
+    //TODO confirmar presença no evento
+  }
+
+  void _handleFavoritarEventoTap(){
+    //TODO marcar evento como favorito
+  }
+
   @override
   Widget build(BuildContext context) {
     final detalheEventoViewmodel = context.watch<DetalheEventoViewmodel>();
@@ -201,7 +209,6 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           color: Colors.white,
                         ),
                       ),
-
                       const SizedBox(height: 20),
                       Text(
                         'Sobre o evento',
@@ -211,6 +218,75 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           color: Colors.white,
                         ),
                       ),
+                      const SizedBox(height: 15),
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          evento.descricao,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text( //TODO se nao tiver amigos sumir com esse campo
+                        'Amigos confirmados',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      //TODO colocar avatar dos amigos
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton.filled(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(AppColors.favoritoBackgroundColor),
+                            ),
+                            onPressed: _handleFavoritarEventoTap,
+                            icon: Icon(
+                              Icons.favorite_outline, //TODO preencher icon quando for favorito
+                              color: AppColors.favoritoIconColor,
+                            ),
+                          ),
+                          GradientButton(
+                            text: 'Confirmar presença',
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                            loading: false,
+                            borderRadius: 10,
+                            width: 250,
+                            onTap: _handleConfirmarPresencaTap,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.btnPadraoGradA,
+                                AppColors.btnPadraoGradB,
+                                AppColors.btnPadraoGradC,
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ),
+                            border: Border.all(
+                                width: 1,
+                                color: Colors.transparent
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
                     ],
                   ),
                 ),
