@@ -21,7 +21,6 @@ class LoginViewmodel extends ChangeNotifier {
   Future<bool> loginEmailSenha({required String email, required String senha}) async {
     _loading = true;
     _mensagemErro = null;
-
     notifyListeners();
 
     try {
@@ -51,7 +50,6 @@ class LoginViewmodel extends ChangeNotifier {
   Future<bool> loginGoogle() async {
     _loading = true;
     _mensagemErro = null;
-
     notifyListeners();
 
     try {

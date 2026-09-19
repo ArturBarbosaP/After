@@ -44,26 +44,33 @@ class HomeViewmodel extends ChangeNotifier {
   List<EventoDetalhado> get proximosEventos => _proximosEventos;
 
   Future<void> _loadUsuario() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
     try {
       _usuario = await _userRepository.getUsuarioAtual();
-      notifyListeners();
     } on UserFailure catch (e) {
       _mensagemErro = e.message;
-      notifyListeners();
     } catch (e, stackTrace) {
-      _loading = false;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
-      notifyListeners();
       developer.log(
           'Falha ao recuperar usuário',
           name: 'HomeViewmodel',
           error: e,
           stackTrace: stackTrace
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
 
   Future<void> _loadEventoDestaque() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
     try {
       final locationService = getIt<LocationService>();
       final permission = await locationService.requestPermission();
@@ -74,24 +81,27 @@ class HomeViewmodel extends ChangeNotifier {
 
       final pos = await locationService.getCurrentPosition();
       _eventoDestaque = await _eventoRepository.getEventoDestaque(pos.latitude, pos.longitude);
-      notifyListeners();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
-      notifyListeners();
     } catch (e, stackTrace) {
-      _loading = false;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
-      notifyListeners();
       developer.log(
           'Falha ao recuperar evento destaque',
           name: 'HomeViewmodel',
           error: e,
           stackTrace: stackTrace
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
 
   Future<void> _loadEventosAoVivo() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
     try {
       final eventos = await _eventoRepository.getEventosAoVivo();
 
@@ -102,40 +112,42 @@ class HomeViewmodel extends ChangeNotifier {
         }),
       );
       _eventosAoVivo = comAmigos;
-      notifyListeners();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
-      notifyListeners();
     } catch (e, stackTrace) {
-      _loading = false;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
-      notifyListeners();
       developer.log(
           'Falha ao recuperar eventos ao vivo com amigos',
           name: 'HomeViewmodel',
           error: e,
           stackTrace: stackTrace
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
 
   Future<void> _loadProximosEventos() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
     try {
       _proximosEventos = await _eventoRepository.getProximosEventos();
-      notifyListeners();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
-      notifyListeners();
     } catch (e, stackTrace) {
-      _loading = false;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
-      notifyListeners();
       developer.log(
           'Falha ao recuperar próximos eventos',
           name: 'HomeViewmodel',
           error: e,
           stackTrace: stackTrace
       );
+    } finally {
+      _loading = false;
+      notifyListeners();
     }
   }
 
@@ -148,15 +160,17 @@ class HomeViewmodel extends ChangeNotifier {
   Future<bool> logout() async {
     _loading = true;
     _mensagemErro = null;
-
     notifyListeners();
 
     try {
       await _authRepository.logout();
+      _loading = false;
+      notifyListeners();
       return true;
     } on AuthFailure catch (e) {
       _loading = false;
       _mensagemErro = e.message;
+      notifyListeners();
       return false;
     } catch (e, stackTrace) {
       _loading = false;

@@ -22,7 +22,6 @@ class CadastroViewmodel extends ChangeNotifier {
   Future<bool> cadastro(SupabaseCadastroModel model) async {
     _loading = true;
     _mensagemErro = null;
-
     notifyListeners();
 
     try {
@@ -52,7 +51,6 @@ class CadastroViewmodel extends ChangeNotifier {
   Future<bool> loginGoogle() async {
     _loading = true;
     _mensagemErro = null;
-
     notifyListeners();
 
     try {
