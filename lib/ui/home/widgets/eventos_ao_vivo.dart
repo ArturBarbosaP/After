@@ -80,7 +80,7 @@ class EventosAoVivo extends StatelessWidget {
                             ),
                           ),
                           if (data.amigosPresentes.isNotEmpty)...[
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 10),
                             Row(
                               children: data.amigosPresentes.map((amigo) {
                                 return Padding(

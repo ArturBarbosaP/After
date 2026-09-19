@@ -1,3 +1,4 @@
+import 'package:after_project/ui/cadastro_usuario/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/core/ui/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/ui/login/view_models/login_viewmodel.dart';
-import 'package:after_project/ui/cadastro/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_text.dart';
 import 'package:after_project/ui/core/ui/logo.dart';
