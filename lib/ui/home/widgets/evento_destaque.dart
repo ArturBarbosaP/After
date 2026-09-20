@@ -65,6 +65,7 @@ class EventoDestaque extends StatelessWidget {
                   children: [
                     Text(
                       titulo,
+                      textAlign: TextAlign.start,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -76,7 +77,7 @@ class EventoDestaque extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       endereco,
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
