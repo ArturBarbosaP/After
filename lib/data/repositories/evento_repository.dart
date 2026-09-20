@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:after_project/data/model/evento_detalhado_dto.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/services/supabase_evento_service.dart';
@@ -170,18 +171,17 @@ class EventoRepository {
   Future<int> criarEvento({
     required SupabaseCadastroEventoModel dadosEvento,
     required String organizadorId,
-    XFile? imagemSelecionada,
+    Uint8List? imagemSelecionada,
   }) async {
     try {
-      final eventoCriado = await _eventoService.insertEvento(dadosEvento.toMap());
+      final eventoCriado = await _eventoService.insertEvento(dadosEvento.toMapSemId());
       final eventoId = eventoCriado['id'] as int;
 
       if (imagemSelecionada != null){
-        final bytes = await imagemSelecionada.readAsBytes();
         final url = await _storageService.uploadCapaEvento(
           organizadorId: organizadorId,
           eventoId: eventoId,
-          bytes: bytes
+          bytes: imagemSelecionada
         );
         await _eventoService.updateImagemCapa(eventoId, url);
       }
@@ -211,7 +211,7 @@ class EventoRepository {
           eventoId: eventoId,
           bytes: bytes
         );
-        dadosEvento.imagemCapa = url;
+        await _eventoService.updateImagemCapa(eventoId, url);
       }
 
       await _eventoService.updateEvento(eventoId, dadosEvento.toMap());

@@ -1,14 +1,17 @@
+import 'dart:typed_data';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
+import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
 class CadastroEventoViewmodel extends ChangeNotifier {
   final EventoRepository _eventoRepository;
+  final UserRepository _userRepository;
   final int id;
 
-  CadastroEventoViewmodel(this._eventoRepository, this.id){
+  CadastroEventoViewmodel(this._eventoRepository, this._userRepository, this.id){
     _edicao = id != 0;
     if (_edicao){
       _loadEvento();
@@ -55,11 +58,40 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<bool> cadastro(SupabaseCadastroEventoModel model) async {
+  Future<bool> cadastro(SupabaseCadastroEventoModel model, Uint8List? imagemSelecionada) async {
     _loading = true;
     _mensagemErro = null;
     notifyListeners();
 
-    return true;
+    try {
+      final organizador = await _userRepository.getOrganizadorAtual();
+      model.organizadorId = organizador!.id;
+
+      await _eventoRepository.criarEvento(
+        dadosEvento: model,
+        organizadorId: model.organizadorId,
+        imagemSelecionada: imagemSelecionada
+      );
+
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+      _loading = false;
+      notifyListeners();
+      return false;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+          'Falha ao cadastrar evento',
+          name: 'CadastroEventoViewmodel',
+          error: e,
+          stackTrace: stackTrace
+      );
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
   }
 }

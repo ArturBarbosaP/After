@@ -1,5 +1,5 @@
 class SupabaseCadastroEventoModel {
-  final int id;
+  final int? id;
   final String dataInicio;
   final String dataFim;
   final String endereco;
@@ -8,12 +8,11 @@ class SupabaseCadastroEventoModel {
   final String descricao;
   final String categoria;
   final String status;
-  String imagemCapa;
   final double? preco;
-  final String organizadorId;
+  String organizadorId;
 
   SupabaseCadastroEventoModel({
-    required this.id,
+    this.id,
     required this.dataInicio,
     required this.dataFim,
     required this.endereco,
@@ -22,10 +21,25 @@ class SupabaseCadastroEventoModel {
     required this.descricao,
     required this.categoria,
     required this.status,
-    required this.imagemCapa,
     this.preco,
     required this.organizadorId
   });
+
+  Map<String, dynamic> toMapSemId() {
+    return {
+      'data_inicio': dataInicio,
+      'data_fim': dataFim,
+      'endereco': endereco,
+      'localizacao': localizacao,
+      'titulo': titulo,
+      'descricao': descricao,
+      'categoria': categoria,
+      'status': status,
+      'preco': preco,
+      'organizador_id': organizadorId,
+      'imagem_capa': ''
+    };
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -37,10 +51,10 @@ class SupabaseCadastroEventoModel {
       'titulo': titulo,
       'descricao': descricao,
       'categoria': categoria,
-      'imagem_capa': status,
-      'imagemCapa': imagemCapa,
+      'status': status,
       'preco': preco,
-      'organizador_id': organizadorId
+      'organizador_id': organizadorId,
+      'imagem_capa': ''
     };
   }
 }

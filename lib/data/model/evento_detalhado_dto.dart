@@ -52,14 +52,14 @@ class EventoDetalhadoDto {
       categoria: json['categoria'] as String,
       status: json['status'] as String,
       imagemCapa: json['imagem_capa'] as String?,
-      preco: json['preco'] as double?,
+      preco: (json['preco'] as num?)?.toDouble(),
       organizadorId: json['organizador_id'] as String,
       organizadorSite: json['organizador_site'] as String,
       organizadorVerificado: json['organizador_verificado'] as bool,
       organizadorNome: json['organizador_nome'] as String,
       organizadorFoto: json['organizador_foto'] as String?,
       organizadorBio: json['organizador_bio'] as String?,
-      distancia: json['distancia_metros'] as double?
+      distancia: (json['distancia_metros'] as num?)?.toDouble() ?? 0.0
     );
   }
 
