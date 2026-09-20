@@ -1,5 +1,5 @@
 import 'package:after_project/ui/cadastro_usuario/widgets/tela_cadastro.dart';
-import 'package:after_project/ui/core/ui/shell.dart';
+import 'package:after_project/ui/shell/widgets/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
