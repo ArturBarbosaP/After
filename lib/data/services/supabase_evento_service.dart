@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseEventoService {
   final SupabaseClient _client;
   final String _nomeTabela = 'evento_detalhado';
+  final String _nomeTabelaEvento = 'evento';
   final String _nomeTabelaUsuarioEvento = 'usuario_evento';
 
   SupabaseEventoService(this._client);
@@ -95,5 +96,25 @@ class SupabaseEventoService {
           {'usuario_id': userId, 'evento_id': eventoId, 'presenca': presenca},
           onConflict: 'usuario_id,evento_id',
         );
+  }
+
+  Future<Map<String, dynamic>> insertEvento(Map<String, dynamic> dados) async {
+    final response = await _client
+        .from(_nomeTabelaEvento)
+        .insert(dados)
+        .select()
+        .single();
+    return response;
+  }
+
+  Future<void> updateImagemCapa(int eventoId, String url) async {
+    return await _client
+        .from(_nomeTabelaEvento)
+        .update({'imagem_capa': url})
+        .eq('id', eventoId);
+  }
+
+  Future<void> updateEvento(int eventoId, Map<String, dynamic> dados) async {
+    return await _client.from(_nomeTabelaEvento).update(dados).eq('id', eventoId);
   }
 }

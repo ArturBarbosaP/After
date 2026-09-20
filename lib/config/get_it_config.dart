@@ -49,7 +49,7 @@ void setUpGetIt(){
   );
   
   getIt.registerLazySingleton<EventoRepository>(
-      () => EventoRepository(getIt<SupabaseEventoService>())
+      () => EventoRepository(getIt<SupabaseEventoService>(), getIt<SupabaseStorageService>())
   );
 }
 

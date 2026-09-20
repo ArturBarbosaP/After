@@ -8,7 +8,7 @@ class SupabaseCadastroEventoModel {
   final String descricao;
   final String categoria;
   final String status;
-  final String imagemCapa;
+  String imagemCapa;
   final double? preco;
   final String organizadorId;
 
@@ -26,4 +26,21 @@ class SupabaseCadastroEventoModel {
     this.preco,
     required this.organizadorId
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'data_inicio': dataInicio,
+      'data_fim': dataFim,
+      'endereco': endereco,
+      'localizacao': localizacao,
+      'titulo': titulo,
+      'descricao': descricao,
+      'categoria': categoria,
+      'imagem_capa': status,
+      'imagemCapa': imagemCapa,
+      'preco': preco,
+      'organizador_id': organizadorId
+    };
+  }
 }

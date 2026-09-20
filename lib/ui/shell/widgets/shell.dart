@@ -71,7 +71,7 @@ class _AppShellState extends State<AppShell>{
   void _handleCriarEventoTap() {
     Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (context) => const TelaCadastroEvento(),
+          builder: (context) => const TelaCadastroEvento(eventoId: 0),
         )
     );
   }
