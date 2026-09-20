@@ -1,11 +1,11 @@
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
-import 'package:after_project/utils/greeting.dart';
+import 'package:after_project/utils/datetime_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class EventosProximos extends StatelessWidget {
-  final VoidCallback onTap;
+  final void Function(int eventId) onTap;
   final List<EventoDetalhado> proximosEventos;
 
   const EventosProximos({super.key, required this.onTap, required this.proximosEventos});
@@ -24,7 +24,7 @@ class EventosProximos extends StatelessWidget {
         final quando = relativeDayLabel(data.dataInicio);
 
         return GestureDetector(
-          onTap: onTap,
+          onTap: () => onTap(data.id),
           child: Container(
             height: 50,
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),

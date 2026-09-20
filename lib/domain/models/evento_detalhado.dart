@@ -6,18 +6,19 @@ class EventoDetalhado {
   final DateTime dataInicio;
   final DateTime dataFim;
   final String endereco;
-
   final String titulo;
   final String descricao;
   final Categoria categoria;
   final Status status;
   final String? imagemCapa;
+  final double? preco;
   final String organizadorId;
   final String organizadorSite;
   final bool organizadorVerificado;
   final String organizadorNome;
   final String? organizadorFoto;
   final String? organizadorBio;
+  final double? distancia;
 
   EventoDetalhado({
     required this.id,
@@ -29,11 +30,13 @@ class EventoDetalhado {
     required this.categoria,
     required this.status,
     this.imagemCapa,
+    this.preco,
     required this.organizadorId,
     required this.organizadorSite,
     required this.organizadorVerificado,
     required this.organizadorNome,
     this.organizadorFoto,
-    this.organizadorBio
+    this.organizadorBio,
+    this.distancia
   });
 }

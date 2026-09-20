@@ -1,11 +1,11 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/model/supabase_cadastro_model.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
-import 'package:after_project/ui/cadastro/view_models/cadastro_viewmodel.dart';
-import 'package:after_project/ui/cadastro/widgets/role.dart';
+import 'package:after_project/ui/cadastro_usuario/view_models/cadastro_viewmodel.dart';
+import 'package:after_project/ui/cadastro_usuario/widgets/role.dart';
 import 'package:after_project/ui/core/ui/checkbox.dart';
-import 'package:after_project/ui/core/ui/shell.dart';
 import 'package:after_project/ui/core/ui/tela_termos_uso.dart';
+import 'package:after_project/ui/shell/widgets/shell.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -78,10 +78,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     if (sucesso && mounted){
       navigatorHome();
     }
-  }
-
-  void _handleLoginFacebookTap(){
-    //TODO login com o facebook
   }
 
   void _handleLoginTap(){
@@ -322,14 +318,6 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                               height: 45,
                             ),
                             onPressed: _handleLoginGoogleTap,
-                          ),
-                          IconButton(
-                            icon: Image.asset(
-                              'assets/images/ic_facebook.png',
-                              width: 45,
-                              height: 45,
-                            ),
-                            onPressed: _handleLoginFacebookTap,
                           ),
                         ],
                       ),

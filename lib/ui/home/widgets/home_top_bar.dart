@@ -1,7 +1,7 @@
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_text.dart';
-import 'package:after_project/utils/greeting.dart';
+import 'package:after_project/utils/datetime_helper.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -9,12 +9,13 @@ class HomeTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String nomeUsuario;
   final String? fotoPerfilUrl;
   final VoidCallback onAvatarTap;
+  final VoidCallback onSairTap;
 
   static const double _contentHeight = 56;
   static const double _verticalPadding = 10;
   static const double _horizontalPadding = 30;
 
-  const HomeTopBar({super.key, required this.nomeUsuario, required this.fotoPerfilUrl, required this.onAvatarTap});
+  const HomeTopBar({super.key, required this.nomeUsuario, required this.fotoPerfilUrl, required this.onAvatarTap, required this.onSairTap});
 
   @override
   Widget build(BuildContext context) {
@@ -58,20 +59,33 @@ class HomeTopBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: onAvatarTap,
-                child: AppAvatar(
-                  imageUrl: fotoPerfilUrl,
-                  letter: nomeUsuario.isNotEmpty ? nomeUsuario[0].toUpperCase() : 'U',
-                  size: 45,
-                  fontSize: 20,
-                  borderRadius: 5,
-                  border: Border.all(
-                      color: AppColors.fotoBorder,
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignCenter
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: onAvatarTap,
+                    child: AppAvatar(
+                      imageUrl: fotoPerfilUrl,
+                      letter: nomeUsuario.isNotEmpty ? nomeUsuario[0].toUpperCase() : 'U',
+                      size: 45,
+                      fontSize: 20,
+                      borderRadius: 5,
+                      border: Border.all(
+                          color: AppColors.fotoBorder,
+                          width: 1,
+                          strokeAlign: BorderSide.strokeAlignCenter
+                      ),
+                    ),
                   ),
-                ),
+                  IconButton(
+                    onPressed: onSairTap,
+                    icon: Icon(
+                      Icons.logout_outlined,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

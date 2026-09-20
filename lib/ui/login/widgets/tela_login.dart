@@ -1,11 +1,11 @@
-import 'package:after_project/ui/core/ui/shell.dart';
+import 'package:after_project/ui/cadastro_usuario/widgets/tela_cadastro.dart';
+import 'package:after_project/ui/shell/widgets/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/ui/login/view_models/login_viewmodel.dart';
-import 'package:after_project/ui/cadastro/widgets/tela_cadastro.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_text.dart';
 import 'package:after_project/ui/core/ui/logo.dart';
@@ -62,10 +62,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
     if (sucesso && mounted){
       navigatorHome();
     }
-  }
-
-  void _handleLoginFacebookTap(){
-    //TODO login com o facebook
   }
 
   void _handleEsqueciSenhaTap(){
@@ -271,14 +267,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                                 height: 45,
                               ),
                               onPressed: _handleLoginGoogleTap,
-                            ),
-                            IconButton(
-                              icon: Image.asset(
-                                'assets/images/ic_facebook.png',
-                                width: 45,
-                                height: 45,
-                              ),
-                              onPressed: _handleLoginFacebookTap,
                             ),
                           ],
                         ),

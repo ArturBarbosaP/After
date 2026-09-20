@@ -12,7 +12,7 @@ class SupabaseAuthService {
     required String email,
     required bool organizador
   }) async {
-    final AuthResponse res = await _client.auth.signUp(
+    await _client.auth.signUp(
       email: email,
       password: senha,
       data: {
@@ -23,7 +23,7 @@ class SupabaseAuthService {
   }
 
   Future<void> loginEmailSenha({required String email, required String senha}) async {
-    final AuthResponse res = await _client.auth.signInWithPassword(
+    await _client.auth.signInWithPassword(
         email: email,
         password: senha
     );
@@ -45,10 +45,14 @@ class SupabaseAuthService {
       throw const AuthException('No ID Token found.');
     }
 
-    final AuthResponse res = await _client.auth.signInWithIdToken(
+    await _client.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
       accessToken: authorization.accessToken
     );
+  }
+
+  Future<void> logout() async {
+    await _client.auth.signOut(scope: SignOutScope.global);
   }
 }

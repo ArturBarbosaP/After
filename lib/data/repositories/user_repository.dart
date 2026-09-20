@@ -1,5 +1,7 @@
+import 'package:after_project/data/model/organizador_dto.dart';
 import 'package:after_project/data/model/user_profile_dto.dart';
 import 'package:after_project/data/services/supabase_user_service.dart';
+import 'package:after_project/domain/models/organizador.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'dart:developer' as developer;
 
@@ -30,6 +32,26 @@ class UserRepository {
           stackTrace: stackTrace
       );
       throw UserFailure("Não foi possível recuperar o usuário. Tente novamente.");
+    }
+  }
+
+  Future<Organizador?> getOrganizadorAtual() async {
+    try {
+      final userId = _userService.currentUserId;
+      if (userId == null) return null;
+
+      final json = await _userService.fetchOrganizador(userId);
+      if (json == null) return null;
+
+      return OrganizadorDto.fromJson(json).toDomain();
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar organizador - Exception',
+          name: 'UserRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw UserFailure("Não foi possível recuperar o organizador. Tente novamente.");
     }
   }
 }
