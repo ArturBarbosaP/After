@@ -4,6 +4,7 @@ import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.da
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/home/widgets/tela_home.dart';
 import 'package:after_project/ui/mapa/widgets/tela_mapa.dart';
+import 'package:after_project/ui/meus_eventos/widgets/tela_meus_eventos.dart';
 import 'package:after_project/ui/shell/view_models/shell_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,23 +19,24 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell>{
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    TelaHome(),
-    TelaMapa(),
-    /*TelaFavoritos(),
-    TelaPerfil(),*/
-  ];
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ShellViewmodel(getIt<UserRepository>()),
       child: Consumer<ShellViewmodel>(
         builder: (context, shellViewmodel, _) {
+          final screens = [
+            const TelaHome(),
+            const TelaMapa(),
+            shellViewmodel.isOrganizador ? TelaMeusEventos() : TelaCadastroEvento(eventoId: 0) //TODO trocar pra TelaFavoritos
+            //TelaPerfil
+          ];
+
+
           return Scaffold(
             body: IndexedStack(
               index: _currentIndex,
-              children: _screens,
+              children: screens,
             ),
             floatingActionButton: shellViewmodel.isOrganizador
               ? FloatingActionButton(
