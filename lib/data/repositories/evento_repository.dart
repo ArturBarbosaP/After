@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 import 'package:after_project/data/model/evento_detalhado_dto.dart';
+import 'package:after_project/data/model/evento_dto.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/services/supabase_evento_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
+import 'package:after_project/domain/models/evento.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:image_picker/image_picker.dart';
@@ -165,6 +167,21 @@ class EventoRepository {
           stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar usuário pro evento. Tente novamente.");
+    }
+  }
+
+  Future<List<Evento>> getMeusEventosOrganizador(String organizadorId) async {
+    try {
+      final rows = await _eventoService.fetchMeusEventosOrganizador(organizadorId);
+      return rows.map((json) => EventoDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar eventos do organizador - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar os eventos. Tente novamente.");
     }
   }
 

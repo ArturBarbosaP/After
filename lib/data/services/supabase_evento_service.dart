@@ -117,4 +117,14 @@ class SupabaseEventoService {
   Future<void> updateEvento(int eventoId, Map<String, dynamic> dados) async {
     return await _client.from(_nomeTabelaEvento).update(dados).eq('id', eventoId);
   }
+
+  Future<List<Map<String, dynamic>>> fetchMeusEventosOrganizador(String organizadorId) async {
+    final response = await _client
+        .from(_nomeTabelaEvento)
+        .select()
+        .eq('organizador_id', organizadorId)
+        .order('data_inicio', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
 }

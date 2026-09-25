@@ -51,7 +51,7 @@ class _TelaMapaState extends State<_TelaMapaBody> {
 
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Mapa de eventos!',
+        title: 'Mapa de eventos',
       ),
       body: Container(
         width: double.infinity,
