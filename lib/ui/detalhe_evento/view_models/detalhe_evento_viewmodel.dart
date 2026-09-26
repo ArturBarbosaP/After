@@ -45,6 +45,8 @@ class DetalheEventoViewmodel extends ChangeNotifier {
       _evento = await _eventoRepository.getEventoPorId(id);
       _amigosPresentes = await _eventoRepository.getAmigosPresentes(id);
       _podeEditar = await getPodeEditar();
+
+      _loading = false;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -56,7 +58,6 @@ class DetalheEventoViewmodel extends ChangeNotifier {
           stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }
@@ -74,6 +75,8 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
       _favorito = status.favorito;
       _presenca = status.presenca;
+
+      _loading = false;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -85,7 +88,6 @@ class DetalheEventoViewmodel extends ChangeNotifier {
           stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }

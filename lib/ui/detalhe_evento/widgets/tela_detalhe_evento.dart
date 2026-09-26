@@ -47,7 +47,7 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
     final evento = detalheEventoViewmodel.evento;
     final amigos = detalheEventoViewmodel.amigosPresentes;
 
-    if (detalheEventoViewmodel.isLoading) {
+    if (detalheEventoViewmodel.isLoading || evento == null) {
       return Scaffold(
         body: Container(
           width: double.infinity,
@@ -64,40 +64,22 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
               stops: [0.0, 0.519, 1.0],
             ),
           ),
-          child: Center(child: CircularProgressIndicator(color: Colors.white))
-        ),
-      );
-    }
-
-    if (evento == null) {
-      return Scaffold(
-        appBar: const AppTopBar(
-          title: 'Evento',
-          backIcon: true,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.bgTop,
-                  AppColors.bgMid,
-                  AppColors.bgBottom,
-                ],
-                stops: [0.0, 0.519, 1.0],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: CircularProgressIndicator(color: Colors.white)),
+              const SizedBox(height: 30),
+              Text(
+                detalheEventoViewmodel.mensagemErro ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            child: Center(child: Text(
-              '${detalheEventoViewmodel.mensagemErro}',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ))
+            ],
+          )
         ),
       );
     }
