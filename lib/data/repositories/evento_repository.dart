@@ -4,6 +4,7 @@ import 'package:after_project/data/model/evento_dto.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/services/supabase_evento_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
+import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/models/evento.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
@@ -37,9 +38,11 @@ class EventoRepository {
     }
   }
 
-  Future<List<EventoDetalhado>> getEventosAoVivo() async {
+  Future<List<EventoDetalhado>> getEventosAoVivo(Categoria? categoria) async {
     try{
-      final rows = await _eventoService.fetchEventosAoVivo();
+      final rows = categoria != null
+          ? await _eventoService.fetchEventosAoVivoPelaCategoria(categoria)
+          : await _eventoService.fetchEventosAoVivo();
       return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {
       developer.log(
@@ -72,9 +75,11 @@ class EventoRepository {
     }
   }
 
-  Future<List<EventoDetalhado>> getProximosEventos() async {
+  Future<List<EventoDetalhado>> getProximosEventos(Categoria? categoria) async {
     try {
-      final rows = await _eventoService.fetchProximosEventos();
+      final rows = categoria != null
+          ? await _eventoService.fetchProximosEventosPelaCategoria(categoria)
+          : await _eventoService.fetchProximosEventos();
 
       return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {

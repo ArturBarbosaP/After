@@ -1,3 +1,4 @@
+import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,6 +32,18 @@ class SupabaseEventoService {
     return List<Map<String, dynamic>>.from(response);
   }
 
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPelaCategoria(Categoria categoria) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('categoria', categoria.label)
+        .eq('status', Status.emAndamento.label)
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
   Future<List<Map<String, dynamic>>> fetchAmigosPresentes(int eventoId) async {
     final response = await _client.rpc(
       'get_amigos_presentes',
@@ -45,6 +58,19 @@ class SupabaseEventoService {
         .from(_nomeTabela)
         .select()
         .eq('status', Status.agendado.label)
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPelaCategoria(Categoria categoria) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .eq('categoria', categoria.label)
         .gte('data_inicio', DateTime.now().toIso8601String())
         .order('data_inicio', ascending: true)
         .limit(3);

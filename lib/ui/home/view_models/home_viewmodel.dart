@@ -104,7 +104,7 @@ class HomeViewmodel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final eventos = await _eventoRepository.getEventosAoVivo();
+      final eventos = await _eventoRepository.getEventosAoVivo(_categoriaSelecionadaFiltro);
 
       final comAmigos = await Future.wait(
         eventos.map((evento) async {
@@ -135,7 +135,7 @@ class HomeViewmodel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _proximosEventos = await _eventoRepository.getProximosEventos();
+      _proximosEventos = await _eventoRepository.getProximosEventos(_categoriaSelecionadaFiltro);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -154,8 +154,9 @@ class HomeViewmodel extends ChangeNotifier {
 
   void filtrarCategoria(Categoria? categoria) async {
     _categoriaSelecionadaFiltro = categoria;
+    _loadEventosAoVivo();
+    _loadProximosEventos();
     notifyListeners();
-    //TODO filtrar eventos pela categoria selecionada
   }
 
   Future<bool> logout() async {
