@@ -120,14 +120,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                   height: 250,
                   width: double.infinity,
                   child: evento.imagemCapa != null
-                      ? Image.network(
-                    evento.imagemCapa!,
-                    fit: BoxFit.cover,
-                  )
-                      : Container(
-                    color: Colors.grey.shade800,
-                    child: Icon(Icons.image_not_supported, color: Colors.white54),
-                  ),
+                    ? Image.network(
+                      evento.imagemCapa!,
+                      fit: BoxFit.cover,
+                    )
+                    : Container(
+                      color: Colors.grey.shade800,
+                      child: Icon(Icons.image_not_supported, color: Colors.white54),
+                    ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -205,13 +205,13 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             decoration: BoxDecoration(
-                                color: AppColors.categoriaEventoBackground,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    width: 1,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: AppColors.categoriaEventoBorder,
-                                )
+                              color: AppColors.categoriaEventoBackground,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignCenter,
+                                color: AppColors.categoriaEventoBorder,
+                              )
                             ),
                             child: Text(
                               evento.categoria.label,

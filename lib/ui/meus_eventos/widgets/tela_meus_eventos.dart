@@ -37,7 +37,7 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
   void _abrirDetalhesEvento(int eventoId) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-          builder: (context) => TelaDetalheEvento(eventoId: eventoId)
+        builder: (context) => TelaDetalheEvento(eventoId: eventoId)
       ),
     );
   }

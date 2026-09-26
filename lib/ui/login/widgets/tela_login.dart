@@ -211,13 +211,13 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                         RichText(
                           textAlign: TextAlign.end,
                           text: TextSpan(
-                              text: "Esqueci minha senha",
-                              recognizer: TapGestureRecognizer()..onTap = () => _handleEsqueciSenhaTap(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                color: Color(0xFFBA12F3),
-                              )
+                            text: "Esqueci minha senha",
+                            recognizer: TapGestureRecognizer()..onTap = () => _handleEsqueciSenhaTap(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Color(0xFFBA12F3),
+                            )
                           ),
                         ),
                         const SizedBox(height: 31),
@@ -243,13 +243,13 @@ class _TelaLoginState extends State<_TelaLoginBody> {
                             ),
                             children: [
                               TextSpan(
-                                  text: "Entrar sem login ",
-                                  recognizer: TapGestureRecognizer()..onTap = () => navigatorHome(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                    color: Color(0xFFBA12F3),
-                                  )
+                                text: "Entrar sem login ",
+                                recognizer: TapGestureRecognizer()..onTap = () => navigatorHome(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFFBA12F3),
+                                )
                               ),
                               TextSpan(text: "ou Entrar com:"),
                             ],

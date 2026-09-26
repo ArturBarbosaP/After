@@ -26,10 +26,10 @@ class UserRepository {
       return UserProfileDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar usuario - Exception',
-          name: 'UserRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar usuario - Exception',
+        name: 'UserRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw UserFailure("Não foi possível recuperar o usuário. Tente novamente.");
     }
@@ -46,10 +46,10 @@ class UserRepository {
       return OrganizadorDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar organizador - Exception',
-          name: 'UserRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar organizador - Exception',
+        name: 'UserRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw UserFailure("Não foi possível recuperar o organizador. Tente novamente.");
     }

@@ -139,7 +139,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
 
     if (sucesso && mounted){
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Evento salvo com sucesso!"))
+        const SnackBar(content: Text("Evento salvo com sucesso!"))
       );
       Navigator.pop(context);
       limparCampos();
@@ -244,21 +244,21 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     if (cadastroEventoViewmodel.screenLoading){
       return Scaffold(
         body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.bgTop,
-                  AppColors.bgMid,
-                  AppColors.bgBottom,
-                ],
-                stops: [0.0, 0.519, 1.0],
-              ),
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.bgTop,
+                AppColors.bgMid,
+                AppColors.bgBottom,
+              ],
+              stops: [0.0, 0.519, 1.0],
             ),
-            child: Center(child: CircularProgressIndicator(color: Colors.white))
+          ),
+          child: Center(child: CircularProgressIndicator(color: Colors.white))
         ),
       );
     }
@@ -421,7 +421,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         label: Text(
                           _latitude != null ? 'Utilizando localização atual' : 'Usar minha localização atual',
                           style: TextStyle(
-                              color: AppColors.textboxText
+                            color: AppColors.textboxText
                           ),
                         ),
                       ),
@@ -447,7 +447,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         child: Text(
                           _dataFim == null ? 'Selecione a data de término' : DateFormat('dd/MM/yyyy HH:mm').format(_dataFim!),
                           style: TextStyle(
-                              color: AppColors.textboxText
+                            color: AppColors.textboxText
                           ),
                         ),
                       ),
@@ -462,9 +462,9 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         cadastroEventoViewmodel.mensagemErro != null ? cadastroEventoViewmodel.mensagemErro! : "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            color: Colors.red
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.red
                         ),
                       ),
                       const SizedBox(height: 41),
@@ -472,7 +472,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         text: cadastroEventoViewmodel.edicao ? 'Salvar evento' : 'Cadastrar evento',
                         height: 40,
                         onTap: cadastroEventoViewmodel.isLoading ? null :
-                            cadastroEventoViewmodel.edicao ? _handleEdicaoClick : _handleCadastroClick,
+                          cadastroEventoViewmodel.edicao ? _handleEdicaoClick : _handleCadastroClick,
                         loading: cadastroEventoViewmodel.isLoading,
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w700,

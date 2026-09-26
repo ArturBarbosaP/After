@@ -56,10 +56,10 @@ class HomeViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar usuário',
-          name: 'HomeViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar usuário',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;
@@ -87,10 +87,10 @@ class HomeViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento destaque',
-          name: 'HomeViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento destaque',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;
@@ -118,10 +118,10 @@ class HomeViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar eventos ao vivo com amigos',
-          name: 'HomeViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar eventos ao vivo com amigos',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;
@@ -141,10 +141,10 @@ class HomeViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar próximos eventos',
-          name: 'HomeViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar próximos eventos',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;
@@ -179,10 +179,10 @@ class HomeViewmodel extends ChangeNotifier {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       notifyListeners();
       developer.log(
-          'Falha no logout',
-          name: 'HomeViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha no logout',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       return false;
     }

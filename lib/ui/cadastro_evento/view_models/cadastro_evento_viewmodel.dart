@@ -57,10 +57,10 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento pelo id',
-          name: 'CadastroEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento pelo id',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _screenLoading = false;
@@ -94,10 +94,10 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao cadastrar evento',
-          name: 'CadastroEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao cadastrar evento',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       _loading = false;
       notifyListeners();
@@ -133,10 +133,10 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao editar evento',
-          name: 'CadastroEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao editar evento',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       _loading = false;
       notifyListeners();

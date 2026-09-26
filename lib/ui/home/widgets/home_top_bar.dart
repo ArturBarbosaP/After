@@ -72,9 +72,9 @@ class HomeTopBar extends StatelessWidget implements PreferredSizeWidget {
                       fontSize: 20,
                       borderRadius: 5,
                       border: Border.all(
-                          color: AppColors.fotoBorder,
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignCenter
+                        color: AppColors.fotoBorder,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignCenter
                       ),
                     ),
                   ),

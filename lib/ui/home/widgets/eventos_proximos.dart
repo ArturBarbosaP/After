@@ -79,11 +79,11 @@ class EventosProximos extends StatelessWidget {
                     Text(
                       quando,
                       style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10,
-                          color: quando == 'Hoje' ? AppColors.textEventProximoHj :
-                          quando == 'Amanhã' ? AppColors.textEventProximoAmanha :
-                          AppColors.textEventProximoDepoisAmanha
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10,
+                        color: quando == 'Hoje' ? AppColors.textEventProximoHj :
+                        quando == 'Amanhã' ? AppColors.textEventProximoAmanha :
+                        AppColors.textEventProximoDepoisAmanha
                       ),
                     ),
                   ],

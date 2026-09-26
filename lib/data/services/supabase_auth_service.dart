@@ -24,8 +24,8 @@ class SupabaseAuthService {
 
   Future<void> loginEmailSenha({required String email, required String senha}) async {
     await _client.auth.signInWithPassword(
-        email: email,
-        password: senha
+      email: email,
+      password: senha
     );
   }
 

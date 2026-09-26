@@ -52,10 +52,10 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento pelo id',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento pelo id',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();
@@ -82,10 +82,10 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar usuario evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar usuario evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();
@@ -110,10 +110,10 @@ class DetalheEventoViewmodel extends ChangeNotifier {
       _favorito = !novoValor;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao favoritar evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao favoritar evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();
@@ -138,10 +138,10 @@ class DetalheEventoViewmodel extends ChangeNotifier {
       _presenca = !novoValor;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao marcar presença no evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao marcar presença no evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();

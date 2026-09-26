@@ -32,7 +32,6 @@ class _AppShellState extends State<AppShell>{
             //TelaPerfil
           ];
 
-
           return Scaffold(
             body: IndexedStack(
               index: _currentIndex,
@@ -72,10 +71,9 @@ class _AppShellState extends State<AppShell>{
 
   void _handleCriarEventoTap() {
     Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const TelaCadastroEvento(eventoId: 0),
-        )
+      MaterialPageRoute<void>(
+        builder: (context) => const TelaCadastroEvento(eventoId: 0),
+      )
     );
   }
-
 }

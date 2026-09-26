@@ -42,10 +42,10 @@ class MapaViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento perto',
-          name: 'MapaViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento perto',
+        name: 'MapaViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;
