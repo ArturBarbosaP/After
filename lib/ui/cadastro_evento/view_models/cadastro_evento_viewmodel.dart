@@ -18,7 +18,7 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     }
   }
 
-  bool _screenLoading = true;
+  bool _screenLoading = false;
   bool get screenLoading => _screenLoading;
 
   bool _loading = false;
