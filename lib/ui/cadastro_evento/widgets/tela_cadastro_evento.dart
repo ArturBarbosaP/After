@@ -139,6 +139,24 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     });
   }
 
+  void _carregarEvento() {
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+    final evento = cadastroEventoViewmodel.evento!;
+
+    _tituloController.text = evento.titulo;
+    _descricaoController.text = evento.descricao;
+    _enderecoController.text = evento.endereco;
+
+    if (evento.preco != null){
+      _precoController.text = evento.preco.toString();
+    }
+
+    _categoria = evento.categoria;
+    _dataInicio = evento.dataInicio;
+    _dataFim = evento.dataFim;
+    _imagemEvento = evento.imagemCapa;
+  }
+
   void limparCampos(){
     _formKey.currentState?.reset();
     _categoria = null;
@@ -149,16 +167,6 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _imagemSelecionada = null;
     _imagemEvento = null;
     context.read<CadastroEventoViewmodel>().limparErro();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
-
-    if (cadastroEventoViewmodel.edicao) {
-      //TODO pegar dados do evento
-    }
   }
 
   @override
@@ -179,9 +187,35 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
 
     final cadastroEventoViewmodel = context.watch<CadastroEventoViewmodel>();
 
+    if (cadastroEventoViewmodel.screenLoading){
+      return Scaffold(
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.bgTop,
+                  AppColors.bgMid,
+                  AppColors.bgBottom,
+                ],
+                stops: [0.0, 0.519, 1.0],
+              ),
+            ),
+            child: Center(child: CircularProgressIndicator(color: Colors.white))
+        ),
+      );
+    }
+
+    if (cadastroEventoViewmodel.edicao && cadastroEventoViewmodel.evento != null){
+      _carregarEvento();
+    }
+
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Cadastro de evento',
+        title: cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
         backIcon: true,
       ),
       body: Container(
@@ -215,7 +249,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                     children: [
                       const SizedBox(height: 35),
                       Text(
-                        'Cadastro de evento',
+                        cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
@@ -226,7 +260,9 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Preencha os campos para cadastrar seu evento!',
+                        cadastroEventoViewmodel.edicao
+                            ? 'Edite os detalhes do seu evento!'
+                            : 'Preencha os campos para cadastrar seu evento!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -379,7 +415,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 41),
                       GradientButton(
-                        text: 'Cadastrar evento',
+                        text: cadastroEventoViewmodel.edicao ? 'Salvar evento' : 'Cadastrar evento',
                         height: 40,
                         onTap: cadastroEventoViewmodel.isLoading ? null : _handleCadastroClick,
                         loading: cadastroEventoViewmodel.isLoading,

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
-import 'package:after_project/domain/models/evento_detalhado.dart';
+import 'package:after_project/domain/models/evento.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -18,6 +18,9 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     }
   }
 
+  bool _screenLoading = true;
+  bool get screenLoading => _screenLoading;
+
   bool _loading = false;
   bool get isLoading => _loading;
 
@@ -27,8 +30,8 @@ class CadastroEventoViewmodel extends ChangeNotifier {
   bool _edicao = false;
   bool get edicao => _edicao;
 
-  EventoDetalhado? _evento;
-  EventoDetalhado? get evento => _evento;
+  Evento? _evento;
+  Evento? get evento => _evento;
 
   void limparErro(){
     _mensagemErro = null;
@@ -36,12 +39,19 @@ class CadastroEventoViewmodel extends ChangeNotifier {
   }
 
   Future<void> _loadEvento() async {
-    _loading = true;
+    _screenLoading = true;
     _mensagemErro = null;
     notifyListeners();
 
     try {
-      _evento = await _eventoRepository.getEventoPorId(id);
+      final organizador = await _userRepository.getOrganizadorAtual();
+      if (organizador == null){
+        _mensagemErro = 'Usuário logado não é organizador';
+        _screenLoading = false;
+        notifyListeners();
+        return;
+      }
+      _evento = await _eventoRepository.getEventoOrganizadorPorId(organizador.id, id);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -53,7 +63,7 @@ class CadastroEventoViewmodel extends ChangeNotifier {
           stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
+      _screenLoading = false;
       notifyListeners();
     }
   }

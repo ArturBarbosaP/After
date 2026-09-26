@@ -185,6 +185,23 @@ class EventoRepository {
     }
   }
 
+  Future<Evento?> getEventoOrganizadorPorId(String organizadorId, int eventoId) async {
+    try {
+      final json = await _eventoService.fetchEventoOrganizadorPorId(organizadorId, eventoId);
+      if (json == null) return null;
+
+      return EventoDto.fromJson(json).toDomain();
+    } catch (ex, stackTrace) {
+      developer.log(
+          'Falha ao recuperar evento do organizador pelo id - Exception',
+          name: 'EventoRepository',
+          error: ex,
+          stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar o evento do organizador pelo id. Tente novamente.");
+    }
+  }
+
   Future<int> criarEvento({
     required SupabaseCadastroEventoModel dadosEvento,
     required String organizadorId,
