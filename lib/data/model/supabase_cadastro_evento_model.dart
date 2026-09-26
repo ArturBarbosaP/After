@@ -1,5 +1,5 @@
 class SupabaseCadastroEventoModel {
-  final int? id;
+  int? id;
   final String dataInicio;
   final String dataFim;
   final String endereco;
@@ -10,6 +10,7 @@ class SupabaseCadastroEventoModel {
   final String status;
   final double? preco;
   String organizadorId;
+  String? imagemCapa;
 
   SupabaseCadastroEventoModel({
     this.id,
@@ -22,7 +23,8 @@ class SupabaseCadastroEventoModel {
     required this.categoria,
     required this.status,
     this.preco,
-    required this.organizadorId
+    required this.organizadorId,
+    this.imagemCapa
   });
 
   Map<String, dynamic> toMapSemId() {
@@ -37,7 +39,7 @@ class SupabaseCadastroEventoModel {
       'status': status,
       'preco': preco,
       'organizador_id': organizadorId,
-      'imagem_capa': ''
+      'imagem_capa': imagemCapa ?? ''
     };
   }
 
@@ -54,7 +56,7 @@ class SupabaseCadastroEventoModel {
       'status': status,
       'preco': preco,
       'organizador_id': organizadorId,
-      'imagem_capa': ''
+      'imagem_capa': imagemCapa ?? ''
     };
   }
 }

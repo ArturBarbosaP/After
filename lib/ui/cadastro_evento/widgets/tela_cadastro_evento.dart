@@ -47,12 +47,15 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
   final _precoController = TextEditingController();
 
   Categoria? _categoria;
+  Status? _status;
   DateTime? _dataInicio;
   DateTime? _dataFim;
   double? _latitude;
   double? _longitude;
   Uint8List? _imagemSelecionada;
   String? _imagemEvento;
+
+  bool _camposPreenchidos = false;
 
   Future<void> _handleCadastroClick() async {
     if (!_formKey.currentState!.validate()) return;
@@ -92,6 +95,51 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     if (sucesso && mounted){
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Evento criado com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
+  }
+
+  Future<void> _handleEdicaoClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_categoria == null || _dataInicio == null || _dataFim == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha categoria, data de início e fim')),
+      );
+      return;
+    }
+    if (_dataFim!.isBefore(_dataInicio!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('A data de fim deve ser depois do início')),
+      );
+      return;
+    }
+
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+
+    final sucesso = await cadastroEventoViewmodel.editar(
+      SupabaseCadastroEventoModel(
+        id: null,
+        titulo: _tituloController.text,
+        descricao: _descricaoController.text,
+        categoria: _categoria!.label,
+        status: _status!.label,
+        endereco: _enderecoController.text,
+        localizacao: 'POINT($_longitude $_latitude)',
+        dataInicio: _dataInicio!.toIso8601String(),
+        dataFim: _dataFim!.toIso8601String(),
+        preco: double.tryParse(_precoController.text),
+        organizadorId: '',
+        imagemCapa: _imagemEvento
+      ),
+      _imagemSelecionada
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Evento salvo com sucesso!"))
       );
       Navigator.pop(context);
       limparCampos();
@@ -140,6 +188,8 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
   }
 
   void _carregarEvento() {
+    if (_camposPreenchidos) return;
+
     final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
     final evento = cadastroEventoViewmodel.evento!;
 
@@ -152,14 +202,18 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     }
 
     _categoria = evento.categoria;
+    _status = evento.status;
     _dataInicio = evento.dataInicio;
     _dataFim = evento.dataFim;
     _imagemEvento = evento.imagemCapa;
+
+    _camposPreenchidos = true;
   }
 
   void limparCampos(){
     _formKey.currentState?.reset();
     _categoria = null;
+    _status = null;
     _dataInicio = null;
     _dataFim = null;
     _latitude = null;
@@ -285,12 +339,12 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                             color: Colors.white10,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: (!cadastroEventoViewmodel.edicao && _imagemSelecionada != null) || (cadastroEventoViewmodel.edicao && _imagemEvento != null)
+                          child: _imagemSelecionada != null || _imagemEvento != null
                             ? ClipRRect(
                               borderRadius: BorderRadiusGeometry.circular(8),
-                              child: cadastroEventoViewmodel.edicao
-                                ? Image.network(_imagemEvento!, fit: BoxFit.cover)
-                                : Image.memory(_imagemSelecionada!, fit: BoxFit.cover)
+                              child: _imagemSelecionada != null
+                                ? Image.memory(_imagemSelecionada!, fit: BoxFit.cover)
+                                : Image.network(_imagemEvento!, fit: BoxFit.cover)
                             )
                             : const Center(
                               child: Column(
@@ -417,7 +471,8 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       GradientButton(
                         text: cadastroEventoViewmodel.edicao ? 'Salvar evento' : 'Cadastrar evento',
                         height: 40,
-                        onTap: cadastroEventoViewmodel.isLoading ? null : _handleCadastroClick,
+                        onTap: cadastroEventoViewmodel.isLoading ? null :
+                            cadastroEventoViewmodel.edicao ? _handleEdicaoClick : _handleCadastroClick,
                         loading: cadastroEventoViewmodel.isLoading,
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w700,

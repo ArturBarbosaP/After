@@ -7,7 +7,6 @@ import 'package:after_project/data/services/supabase_storage_service.dart';
 import 'package:after_project/domain/models/evento.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:developer' as developer;
 
 class EventoFailure implements Exception {
@@ -235,20 +234,19 @@ class EventoRepository {
     required int eventoId,
     required SupabaseCadastroEventoModel dadosEvento,
     required String organizadorId,
-    XFile? novaImagem
+    Uint8List? novaImagem
   }) async {
     try{
+      await _eventoService.updateEvento(eventoId, dadosEvento.toMap());
+
       if (novaImagem != null) {
-        final bytes = await novaImagem.readAsBytes();
         final url = await _storageService.uploadCapaEvento(
           organizadorId: organizadorId,
           eventoId: eventoId,
-          bytes: bytes
+          bytes: novaImagem
         );
         await _eventoService.updateImagemCapa(eventoId, url);
       }
-
-      await _eventoService.updateEvento(eventoId, dadosEvento.toMap());
     } catch (ex, stackTrace) {
       developer.log(
           'Falha ao editar evento - Exception',

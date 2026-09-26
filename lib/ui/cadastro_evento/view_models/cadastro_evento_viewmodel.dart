@@ -104,4 +104,43 @@ class CadastroEventoViewmodel extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> editar(SupabaseCadastroEventoModel model, Uint8List? imagemSelecionada) async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      final organizador = await _userRepository.getOrganizadorAtual();
+      model.organizadorId = organizador!.id;
+      model.id = id;
+
+      await _eventoRepository.editarEvento(
+        dadosEvento: model,
+        eventoId: id,
+        organizadorId: model.organizadorId,
+        novaImagem: imagemSelecionada
+      );
+
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+      _loading = false;
+      notifyListeners();
+      return false;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+          'Falha ao editar evento',
+          name: 'CadastroEventoViewmodel',
+          error: e,
+          stackTrace: stackTrace
+      );
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }
