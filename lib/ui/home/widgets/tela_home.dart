@@ -35,6 +35,7 @@ class _TelaHomeBody extends StatefulWidget {
 }
 
 class _TelaHomeState extends State<_TelaHomeBody> {
+  final _searchController = TextEditingController();
 
   void _handleSairTap() async {
     final homeViewModel = context.read<HomeViewmodel>();
@@ -108,6 +109,7 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                 const SizedBox(height: 25), //espaçamento
                 AppSearchField(
                   onPesquisarTap: _handlePesquisarTap,
+                  controller: _searchController,
                 ),
                 if (eventoDestaque != null)...[
                   const SizedBox(height: 15),

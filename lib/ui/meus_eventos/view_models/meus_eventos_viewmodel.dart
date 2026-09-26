@@ -18,6 +18,7 @@ class MeusEventosViewmodel extends ChangeNotifier {
   String? _mensagemErro;
   String? get mensagemErro => _mensagemErro;
 
+  List<Evento> _eventosOriginais = [];
   List<Evento> _eventos = [];
   List<Evento> get eventos => _eventos;
 
@@ -32,17 +33,59 @@ class MeusEventosViewmodel extends ChangeNotifier {
         _mensagemErro = 'Usuário logado não é organizador';
         _loading = false;
         notifyListeners();
+        return;
       }
-      _eventos = await _eventoRepository.getMeusEventosOrganizador(organizador!.id);
+      final eventos = await _eventoRepository.getMeusEventosOrganizador(organizador.id);
+      _eventos = eventos;
+      _eventosOriginais = eventos;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar eventos do organizador',
-          name: 'MeusEventosViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar eventos do organizador',
+        name: 'MeusEventosViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> pesquisar(String titulo) async {
+    final termo = titulo.trimRight();
+
+    if (termo.isEmpty) {
+      _eventos = List.from(_eventosOriginais);
+      _mensagemErro = null;
+      notifyListeners();
+      return;
+    }
+
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      final organizador = await _userRepository.getOrganizadorAtual();
+      if (organizador == null){
+        _mensagemErro = 'Usuário logado não é organizador';
+        _loading = false;
+        notifyListeners();
+        return;
+      }
+      _eventos = await _eventoRepository.getPesquisarMeusEventosOrganizador(organizador.id, termo);
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao pesquisar eventos do organizador',
+        name: 'MeusEventosViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;

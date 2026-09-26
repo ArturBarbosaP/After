@@ -9,6 +9,7 @@ import 'package:after_project/ui/meus_eventos/view_models/meus_eventos_viewmodel
 import 'package:after_project/utils/datetime_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class TelaMeusEventos extends StatelessWidget {
   const TelaMeusEventos({super.key});
@@ -30,6 +31,8 @@ class _TelaMeusEventosBody extends StatefulWidget {
 }
 
 class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
+  final _searchController = TextEditingController();
+  Timer? _debounce;
 
   void _abrirDetalhesEvento(int eventoId) {
     Navigator.of(context).push(
@@ -39,11 +42,32 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
     );
   }
 
-  void _handlePesquisarTap(){
-    //TODO pesquisar pelo evento digitado
+  void _handlePesquisarTap() {
+    context.read<MeusEventosViewmodel>().pesquisar(_searchController.text);
+  }
+
+  void _onSearchChanged() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      context.read<MeusEventosViewmodel>().pesquisar(_searchController.text);
+    });
   }
 
   void _handleEventoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +102,9 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
                 const SizedBox(height: 25),
                 AppSearchField(
                   onPesquisarTap: _handlePesquisarTap,
+                  controller: _searchController,
                 ),
                 const SizedBox(height: 45),
-
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),

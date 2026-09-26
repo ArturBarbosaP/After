@@ -29,10 +29,10 @@ class EventoRepository {
       return EventoDetalhadoDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar evento destaque - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento destaque - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar o evento destaque. Tente novamente.");
     }
@@ -46,10 +46,10 @@ class EventoRepository {
       return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar lista de eventos ao vivo - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar lista de eventos ao vivo - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar os eventos ao vivo. Tente novamente.");
     }
@@ -66,10 +66,10 @@ class EventoRepository {
       )).toList();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar lista de amigos presentes no evento - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar lista de amigos presentes no evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar os amigos presentes no evento. Tente novamente.");
     }
@@ -84,10 +84,10 @@ class EventoRepository {
       return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar próximos eventos - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar próximos eventos - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar os próximos eventos. Tente novamente.");
     }
@@ -101,10 +101,10 @@ class EventoRepository {
       return EventoDetalhadoDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar evento perto - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento perto - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar o evento mais próximo. Tente novamente.");
     }
@@ -118,10 +118,10 @@ class EventoRepository {
       return EventoDetalhadoDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar evento pelo id - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento pelo id - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar o evento pelo id. Tente novamente.");
     }
@@ -132,10 +132,10 @@ class EventoRepository {
       return await _eventoService.upsertFavorito(userId, eventoId, favorito);
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao setar evento como favorito - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao setar evento como favorito - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível favoritar o evento. Tente novamente.");
     }
@@ -146,10 +146,10 @@ class EventoRepository {
       return await _eventoService.upsertPresenca(userId, eventoId, presenca);
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao setar presença no evento - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao setar presença no evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível marcar presença no evento. Tente novamente.");
     }
@@ -165,10 +165,10 @@ class EventoRepository {
       );
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar usuario evento - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar usuario evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar usuário pro evento. Tente novamente.");
     }
@@ -180,10 +180,10 @@ class EventoRepository {
       return rows.map((json) => EventoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar eventos do organizador - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar eventos do organizador - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar os eventos. Tente novamente.");
     }
@@ -197,12 +197,27 @@ class EventoRepository {
       return EventoDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao recuperar evento do organizador pelo id - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento do organizador pelo id - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar o evento do organizador pelo id. Tente novamente.");
+    }
+  }
+
+  Future<List<Evento>> getPesquisarMeusEventosOrganizador(String organizadorId, String titulo) async {
+    try {
+      final rows = await _eventoService.fetchPesquisarMeusEventosOrganizador(organizadorId, titulo);
+      return rows.map((json) => EventoDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao pesquisar eventos do organizador - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar os eventos pesquisados. Tente novamente.");
     }
   }
 
@@ -226,10 +241,10 @@ class EventoRepository {
       return eventoId;
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao criar evento - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao criar evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível criar o evento. Tente novamente.");
     }
@@ -241,7 +256,7 @@ class EventoRepository {
     required String organizadorId,
     Uint8List? novaImagem
   }) async {
-    try{
+    try {
       await _eventoService.updateEvento(eventoId, dadosEvento.toMap());
 
       if (novaImagem != null) {
@@ -254,10 +269,10 @@ class EventoRepository {
       }
     } catch (ex, stackTrace) {
       developer.log(
-          'Falha ao editar evento - Exception',
-          name: 'EventoRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha ao editar evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível editar o evento. Tente novamente.");
     }

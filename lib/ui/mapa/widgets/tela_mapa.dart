@@ -29,6 +29,7 @@ class _TelaMapaBody extends StatefulWidget {
 }
 
 class _TelaMapaState extends State<_TelaMapaBody> {
+  final _searchController = TextEditingController();
 
   void _abrirDetalhesEvento(int eventoId) {
     Navigator.of(context).push(
@@ -77,6 +78,7 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                 const SizedBox(height: 25), //espaçamento
                 AppSearchField(
                   onPesquisarTap: _handlePesquisarTap,
+                  controller: _searchController,
                 ),
                 const SizedBox(height: 45),
                 Container( //TODO colocar mapa do maps aqui

@@ -162,4 +162,15 @@ class SupabaseEventoService {
         .eq('organizador_id', organizadorId)
         .maybeSingle();
   }
+
+  Future<List<Map<String, dynamic>>> fetchPesquisarMeusEventosOrganizador(String organizadorId, String titulo) async {
+    final response = await _client
+        .from(_nomeTabelaEvento)
+        .select()
+        .eq('organizador_id', organizadorId)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
 }
