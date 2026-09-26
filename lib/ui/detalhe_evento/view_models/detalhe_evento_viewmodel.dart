@@ -33,6 +33,9 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   bool _presenca = false;
   bool get presenca => _presenca;
 
+  bool _podeEditar = false;
+  bool get podeEditar => _podeEditar;
+
   Future<void> _loadEvento() async {
     _loading = true;
     _mensagemErro = null;
@@ -41,6 +44,7 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     try {
       _evento = await _eventoRepository.getEventoPorId(id);
       _amigosPresentes = await _eventoRepository.getAmigosPresentes(id);
+      _podeEditar = await getPodeEditar();
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -142,4 +146,8 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     }
   }
 
+  Future<bool> getPodeEditar() async {
+    final organizador = await _userRepository.getOrganizadorAtual();
+    return organizador != null && evento?.organizadorId == organizador.id;
+  }
 }

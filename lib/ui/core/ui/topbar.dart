@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final bool? backIcon;
+  final bool backIcon;
+  final bool actions;
+  final VoidCallback? onActionPressed;
 
-  const AppTopBar({super.key, required this.title, this.backIcon = false});
+  const AppTopBar({super.key, required this.title, this.backIcon = false, this.actions = false, this.onActionPressed});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.appBarBackground,
       centerTitle: true,
+      automaticallyImplyLeading: false,
       leading: backIcon == true
           ? IconButton(
               icon: const Icon(Icons.arrow_back_outlined, color: Colors.white),
@@ -26,6 +29,12 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           color: Colors.white,
         ),
       ),
+      actions: actions ? [
+        IconButton(
+          icon: Icon(Icons.edit, color: Colors.white),
+          onPressed: onActionPressed,
+        )
+      ] : null,
     );
   }
 

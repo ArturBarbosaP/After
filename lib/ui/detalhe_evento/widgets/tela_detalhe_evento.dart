@@ -2,6 +2,7 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
+import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
@@ -105,6 +106,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
       appBar: AppTopBar(
         title: evento.titulo,
         backIcon: true,
+        actions: detalheEventoViewmodel.podeEditar,
+        onActionPressed: (){
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => TelaCadastroEvento(eventoId: evento.id),
+            ),
+          );
+        },
       ),
       body: Container(
         width: double.infinity,
