@@ -44,6 +44,31 @@ class SupabaseEventoService {
     return List<Map<String, dynamic>>.from(response);
   }
 
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPorTitulo(String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.emAndamento.label)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPelaCategoriaETitulo(Categoria categoria, String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('categoria', categoria.label)
+        .eq('status', Status.emAndamento.label)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
   Future<List<Map<String, dynamic>>> fetchAmigosPresentes(int eventoId) async {
     final response = await _client.rpc(
       'get_amigos_presentes',
@@ -71,6 +96,33 @@ class SupabaseEventoService {
         .select()
         .eq('status', Status.agendado.label)
         .eq('categoria', categoria.label)
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPorTitulo(String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .ilike('titulo', '%$titulo%')
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPelaCategoriaETitulo(Categoria categoria, String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .eq('categoria', categoria.label)
+        .ilike('titulo', '%$titulo%')
         .gte('data_inicio', DateTime.now().toIso8601String())
         .order('data_inicio', ascending: true)
         .limit(3);

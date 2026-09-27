@@ -38,11 +38,15 @@ class HomeViewmodel extends ChangeNotifier {
   Categoria? _categoriaSelecionadaFiltro;
   Categoria? get categoriaSelecionadaFiltro => _categoriaSelecionadaFiltro;
 
+  List<EventosComAmigos> _eventosAoVivoOriginais = [];
   List<EventosComAmigos> _eventosAoVivo = [];
   List<EventosComAmigos> get eventosAoVivo => _eventosAoVivo;
 
+  List<EventoDetalhado> _proximosEventosOriginais = [];
   List<EventoDetalhado> _proximosEventos = [];
   List<EventoDetalhado> get proximosEventos => _proximosEventos;
+
+  String _termo = '';
 
   Future<void> _loadUsuario() async {
     _loading = true;
@@ -113,6 +117,7 @@ class HomeViewmodel extends ChangeNotifier {
         }),
       );
       _eventosAoVivo = comAmigos;
+      _eventosAoVivoOriginais = comAmigos;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -135,7 +140,9 @@ class HomeViewmodel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _proximosEventos = await _eventoRepository.getProximosEventos(_categoriaSelecionadaFiltro);
+      final proximosEventos = await _eventoRepository.getProximosEventos(_categoriaSelecionadaFiltro);
+      _proximosEventos = proximosEventos;
+      _proximosEventosOriginais = proximosEventos;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -154,9 +161,60 @@ class HomeViewmodel extends ChangeNotifier {
 
   void filtrarCategoria(Categoria? categoria) async {
     _categoriaSelecionadaFiltro = categoria;
-    _loadEventosAoVivo();
-    _loadProximosEventos();
+    if (_termo.isEmpty) {
+      _loadEventosAoVivo();
+      _loadProximosEventos();
+    }
+    else {
+      pesquisar(_termo);
+    }
+
     notifyListeners();
+  }
+
+  Future<void> pesquisar (String titulo) async {
+    final termo = titulo.trimRight();
+    _termo = termo;
+
+    if (termo.isEmpty) {
+      _eventosAoVivo = List.from(_eventosAoVivoOriginais);
+      _proximosEventos = List.from(_proximosEventosOriginais);
+      _mensagemErro = null;
+      notifyListeners();
+      return;
+    }
+
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      final eventos = await _eventoRepository.getEventosAoVivoPorTitulo(_categoriaSelecionadaFiltro, termo);
+
+      final comAmigos = await Future.wait(
+        eventos.map((evento) async {
+          final amigos = await _eventoRepository.getAmigosPresentes(evento.id);
+          return EventosComAmigos(evento: evento, amigosPresentes: amigos);
+        }),
+      );
+      _eventosAoVivo = comAmigos;
+
+      final proximosEventos = await _eventoRepository.getProximosEventosPorTitulo(_categoriaSelecionadaFiltro, termo);
+      _proximosEventos = proximosEventos;
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao pesquisar eventos',
+        name: 'HomeViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> logout() async {

@@ -55,6 +55,23 @@ class EventoRepository {
     }
   }
 
+  Future<List<EventoDetalhado>> getEventosAoVivoPorTitulo(Categoria? categoria, String titulo) async {
+    try{
+      final rows = categoria != null
+          ? await _eventoService.fetchEventosAoVivoPelaCategoriaETitulo(categoria, titulo)
+          : await _eventoService.fetchEventosAoVivoPorTitulo(titulo);
+      return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao recuperar lista de eventos ao vivo - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar os eventos ao vivo. Tente novamente.");
+    }
+  }
+
   Future<List<UserProfile>> getAmigosPresentes(int eventoId) async {
     try{
       final rows = await _eventoService.fetchAmigosPresentes(eventoId);
@@ -80,6 +97,24 @@ class EventoRepository {
       final rows = categoria != null
           ? await _eventoService.fetchProximosEventosPelaCategoria(categoria)
           : await _eventoService.fetchProximosEventos();
+
+      return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao recuperar próximos eventos - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar os próximos eventos. Tente novamente.");
+    }
+  }
+
+  Future<List<EventoDetalhado>> getProximosEventosPorTitulo(Categoria? categoria, String titulo) async {
+    try {
+      final rows = categoria != null
+          ? await _eventoService.fetchProximosEventosPelaCategoriaETitulo(categoria, titulo)
+          : await _eventoService.fetchProximosEventosPorTitulo(titulo);
 
       return rows.map((json) => EventoDetalhadoDto.fromJson(json).toDomain()).toList();
     } catch (ex, stackTrace) {
