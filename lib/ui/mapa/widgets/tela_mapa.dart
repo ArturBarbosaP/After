@@ -111,33 +111,32 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: AppColors.eventoProximoBorder, width: 1),
                       ),
-                      child: Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${eventoPerto.titulo} • ${formatarDistancia(eventoPerto.distancia!)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                                color: Colors.white,
-                              ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${eventoPerto.titulo} • ${formatarDistancia(eventoPerto.distancia!)}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              color: Colors.white,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              eventoPerto.endereco,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                                color: Colors.white,
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            eventoPerto.endereco,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
+                              color: Colors.white,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
