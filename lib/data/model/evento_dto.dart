@@ -1,4 +1,5 @@
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/classificacao_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/domain/models/evento.dart';
 
@@ -12,6 +13,7 @@ class EventoDto {
   final String descricao;
   final String categoria;
   final String status;
+  final String classificacao;
   final String? imagemCapa;
   final double? preco;
   final String organizadorId;
@@ -26,6 +28,7 @@ class EventoDto {
     required this.descricao,
     required this.categoria,
     required this.status,
+    required this.classificacao,
     this.imagemCapa,
     this.preco,
     required this.organizadorId
@@ -42,6 +45,7 @@ class EventoDto {
       descricao: json['descricao'] as String,
       categoria: json['categoria'] as String,
       status: json['status'] as String,
+      classificacao: json['classificacao'] as String,
       imagemCapa: json['imagem_capa'] as String?,
       preco: (json['preco'] as num?)?.toDouble(),
       organizadorId: json['organizador_id'] as String,
@@ -59,6 +63,7 @@ class EventoDto {
       descricao: descricao,
       categoria: Categoria.fromString(categoria),
       status: Status.fromString(status),
+      classificacao: Classificacao.fromString(classificacao),
       imagemCapa: imagemCapa == '' ? null : imagemCapa,
       preco: preco == 0 ? null : preco,
       organizadorId: organizadorId

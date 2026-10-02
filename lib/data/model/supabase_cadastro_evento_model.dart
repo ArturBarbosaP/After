@@ -8,6 +8,7 @@ class SupabaseCadastroEventoModel {
   final String descricao;
   final String categoria;
   final String status;
+  final String classificacao;
   final double? preco;
   String organizadorId;
   String? imagemCapa;
@@ -22,6 +23,7 @@ class SupabaseCadastroEventoModel {
     required this.descricao,
     required this.categoria,
     required this.status,
+    required this.classificacao,
     this.preco,
     required this.organizadorId,
     this.imagemCapa
@@ -37,6 +39,7 @@ class SupabaseCadastroEventoModel {
       'descricao': descricao,
       'categoria': categoria,
       'status': status,
+      'classificacao': classificacao,
       'preco': preco,
       'organizador_id': organizadorId,
       'imagem_capa': imagemCapa ?? ''
@@ -54,6 +57,7 @@ class SupabaseCadastroEventoModel {
       'descricao': descricao,
       'categoria': categoria,
       'status': status,
+      'classificacao': classificacao,
       'preco': preco,
       'organizador_id': organizadorId,
       'imagem_capa': imagemCapa ?? ''
