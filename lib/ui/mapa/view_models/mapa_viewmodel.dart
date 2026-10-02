@@ -6,6 +6,8 @@ import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
+import 'package:geolocator/geolocator.dart';
+
 class MapaViewmodel extends ChangeNotifier {
   final EventoRepository _eventoRepository;
 
@@ -22,6 +24,9 @@ class MapaViewmodel extends ChangeNotifier {
   EventoDetalhado? _eventoMaisProximo;
   EventoDetalhado? get eventoMaisProximo => _eventoMaisProximo;
 
+  Position? _position;
+  Position? get position => _position;
+
   Future<void> _loadEventoMaisProximo() async {
     _loading = true;
     _mensagemErro = null;
@@ -36,6 +41,7 @@ class MapaViewmodel extends ChangeNotifier {
       }
 
       final pos = await locationService.getCurrentPosition();
+      _position = pos;
       _eventoMaisProximo = await _eventoRepository.getEventoPerto(pos.latitude, pos.longitude);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;

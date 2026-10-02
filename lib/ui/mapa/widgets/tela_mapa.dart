@@ -7,6 +7,7 @@ import 'package:after_project/ui/detalhe_evento/widgets/tela_detalhe_evento.dart
 import 'package:after_project/ui/mapa/view_models/mapa_viewmodel.dart';
 import 'package:after_project/utils/location_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class TelaMapa extends StatelessWidget {
@@ -81,11 +82,40 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                   controller: _searchController,
                 ),
                 const SizedBox(height: 45),
-                Container( //TODO colocar mapa do maps aqui
-                  width: 331,
-                  height: 432,
-                  color: Colors.white,
-                ),
+                if (mapaViewmodel.position != null)...[
+                  SizedBox(
+                    height: 432,
+                    child: ClipRRect(
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(
+                            mapaViewmodel.position!.latitude,
+                            mapaViewmodel.position!.longitude
+                          ),
+                          zoom: 14
+                        ),
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                      ),
+                    ),
+                  ),
+                ]
+                else...[
+                  Container(
+                    height: 432,
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        'Ative a localização para ver o mapa',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ),
+                ],
                 const SizedBox(height: 30),
                 if (eventoPerto != null) ...[
                   Text(
