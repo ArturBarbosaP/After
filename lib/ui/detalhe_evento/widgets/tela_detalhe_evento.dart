@@ -13,6 +13,7 @@ import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:after_project/ui/comunidade/widgets/tela_comunidade.dart';
 
 class TelaDetalheEvento extends StatelessWidget {
   const TelaDetalheEvento({super.key, required this.eventoId});
@@ -37,9 +38,17 @@ class _TelaDetalheEventoBody extends StatefulWidget {
 
 class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
 
-  void _handleComunidadeTap(){
-    //TODO abrir tela da comunidade do evento
-  }
+  void _handleComunidadeTap() {
+  final vm = context.read<DetalheEventoViewmodel>();
+  final evento = vm.evento;
+  if (evento == null) return;
+
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => TelaComunidade(eventoId: evento.id, tituloEvento: evento.titulo),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
