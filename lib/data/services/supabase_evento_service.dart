@@ -7,6 +7,7 @@ class SupabaseEventoService {
   final String _nomeTabela = 'evento_detalhado';
   final String _nomeTabelaEvento = 'evento';
   final String _nomeTabelaUsuarioEvento = 'usuario_evento';
+  final String _nomeTabelaMapa = 'evento_mapa';
 
   SupabaseEventoService(this._client);
 
@@ -222,6 +223,15 @@ class SupabaseEventoService {
         .eq('organizador_id', organizadorId)
         .ilike('titulo', '%$titulo%')
         .order('data_inicio', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoMapa() async {
+    final response = await _client
+        .from(_nomeTabelaMapa)
+        .select()
+        .eq('status', 'Em andamento');
 
     return List<Map<String, dynamic>>.from(response);
   }

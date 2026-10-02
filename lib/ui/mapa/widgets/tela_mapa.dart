@@ -1,10 +1,12 @@
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
+import 'package:after_project/domain/models/evento_mapa.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/searchfield.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/widgets/tela_detalhe_evento.dart';
 import 'package:after_project/ui/mapa/view_models/mapa_viewmodel.dart';
+import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/location_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -42,6 +44,20 @@ class _TelaMapaState extends State<_TelaMapaBody> {
 
   void _handlePesquisarTap(){
     //TODO pesquisar pelo evento digitado
+  }
+
+  Set<Marker> _buildMarkers(List<EventoMapa> eventos) {
+    return eventos.map((evento) {
+      return Marker(
+        markerId: MarkerId('evento_${evento.id}'),
+        position: LatLng(evento.latitude, evento.longitude),
+        infoWindow: InfoWindow(
+          title: evento.titulo,
+          snippet: formatarPeriodo(evento.dataInicio, evento.dataFim),
+          onTap: () => _abrirDetalhesEvento(evento.id),
+        ),
+      );
+    }).toSet();
   }
 
   void _handleEventoProximoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
@@ -96,6 +112,7 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                         ),
                         myLocationEnabled: true,
                         myLocationButtonEnabled: true,
+                        markers: _buildMarkers(mapaViewmodel.eventosAoVivo),
                       ),
                     ),
                   ),
