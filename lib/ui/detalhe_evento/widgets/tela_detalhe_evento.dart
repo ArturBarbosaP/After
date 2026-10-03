@@ -173,45 +173,12 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '•  ${evento.organizadorNome}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                '•  ${evento.endereco}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              if (evento.preco != null) ...[
-                                const SizedBox(height: 5),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                  '•  ${evento.organizadorNome}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -220,8 +187,43 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                                     color: Colors.white,
                                   ),
                                 ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '•  ${evento.endereco}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                if (evento.preco != null) ...[
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                           AppClassificacao(classificacao: evento.classificacao, size: 50)
                         ],
