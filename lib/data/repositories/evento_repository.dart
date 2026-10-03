@@ -226,12 +226,12 @@ class EventoRepository {
     }
   }
 
-  Future<Evento?> getEventoOrganizadorPorId(String organizadorId, int eventoId) async {
+  Future<EventoDetalhado?> getEventoOrganizadorPorId(String organizadorId, int eventoId) async {
     try {
       final json = await _eventoService.fetchEventoOrganizadorPorId(organizadorId, eventoId);
       if (json == null) return null;
 
-      return EventoDto.fromJson(json).toDomain();
+      return EventoDetalhadoDto.fromJson(json).toDomain();
     } catch (ex, stackTrace) {
       developer.log(
         'Falha ao recuperar evento do organizador pelo id - Exception',

@@ -209,7 +209,7 @@ class SupabaseEventoService {
 
   Future<Map<String, dynamic>?> fetchEventoOrganizadorPorId(String organizadorId, int eventoId) async {
     return await _client
-        .from(_nomeTabelaEvento)
+        .from(_nomeTabela)
         .select()
         .eq('id', eventoId)
         .eq('organizador_id', organizadorId)

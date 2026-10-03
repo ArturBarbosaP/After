@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
@@ -14,8 +13,12 @@ import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/utils/location_helper.dart';
 import 'package:after_project/utils/validators.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -46,6 +49,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
   final _tituloController = TextEditingController();
   final _descricaoController = TextEditingController();
   final _precoController = TextEditingController();
+  GoogleMapController? _formMapController;
 
   Categoria? _categoria;
   Status? _status;
@@ -189,6 +193,10 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       _latitude = position.latitude;
       _longitude = position.longitude;
     });
+
+    await _formMapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 15)
+    );
   }
 
   void _carregarEvento() {
@@ -211,6 +219,11 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _dataInicio = evento.dataInicio;
     _dataFim = evento.dataFim;
     _imagemEvento = evento.imagemCapa;
+
+    if (evento.latitude != null && evento.longitude != null) {
+      _latitude = evento.latitude;
+      _longitude = evento.longitude;
+    }
 
     _camposPreenchidos = true;
   }
@@ -449,11 +462,45 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         tipoInput: TextInputType.text,
                       ),
                       const SizedBox(height: 37),
+                      SizedBox(
+                        height: 220,
+                        child: ClipRRect(
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: (_latitude != null && _longitude != null)
+                                  ? LatLng(_latitude!, _longitude!)
+                                  : localizacaoPadrao,
+                              zoom: (_latitude != null) ? 15 : 12,
+                            ),
+                            onMapCreated: (controller) => _formMapController = controller,
+                            onTap: (LatLng posicao) {
+                              setState(() {
+                                _latitude = posicao.latitude;
+                                _longitude = posicao.longitude;
+                              });
+                            },
+                            markers: (_latitude != null && _longitude != null)
+                                ? {
+                              Marker(
+                                markerId: const MarkerId('local_evento'),
+                                position: LatLng(_latitude!, _longitude!),
+                              ),
+                            }
+                                : {},
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: false, // já temos nosso próprio botão de "usar localização atual"
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
                       ElevatedButton.icon(
                         onPressed: _usarLocalizacaoAtual,
                         icon: Icon(Icons.location_pin, color: AppColors.textboxIcon),
                         label: Text(
-                          _latitude != null ? 'Utilizando localização atual' : 'Usar minha localização atual',
+                          'Usar minha localização atual',
                           style: TextStyle(
                             color: AppColors.textboxText
                           ),

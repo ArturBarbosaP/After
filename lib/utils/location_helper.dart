@@ -1,4 +1,7 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+final localizacaoPadrao = LatLng(-19.9305005, -43.9379331);
 
 String formatarDistancia(double meters) {
   if (meters < 1000) {

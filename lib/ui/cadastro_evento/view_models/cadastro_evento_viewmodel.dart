@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
-import 'package:after_project/domain/models/evento.dart';
+import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -30,8 +30,8 @@ class CadastroEventoViewmodel extends ChangeNotifier {
   bool _edicao = false;
   bool get edicao => _edicao;
 
-  Evento? _evento;
-  Evento? get evento => _evento;
+  EventoDetalhado? _evento;
+  EventoDetalhado? get evento => _evento;
 
   void limparErro(){
     _mensagemErro = null;
