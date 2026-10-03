@@ -17,8 +17,8 @@ class ComunidadeViewmodel extends ChangeNotifier {
   String? _mensagemErro;
   String? get mensagemErro => _mensagemErro;
  
-  int? _usuarioAtualId;
-  int? get usuarioAtualId => _usuarioAtualId;
+  String? _usuarioAtualId;
+  String? get usuarioAtualId => _usuarioAtualId;
  
   List<MensagemComunidade> _mensagens = [];
   List<MensagemComunidade> get mensagens => _mensagens;
