@@ -8,6 +8,8 @@ import 'package:after_project/ui/detalhe_evento/widgets/tela_detalhe_evento.dart
 import 'package:after_project/ui/mapa/view_models/mapa_viewmodel.dart';
 import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/location_helper.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +35,7 @@ class _TelaMapaBody extends StatefulWidget {
 
 class _TelaMapaState extends State<_TelaMapaBody> {
   final _searchController = TextEditingController();
+  GoogleMapController? _mapController;
 
   void _abrirDetalhesEvento(int eventoId) {
     Navigator.of(context).push(
@@ -42,8 +45,34 @@ class _TelaMapaState extends State<_TelaMapaBody> {
     );
   }
 
-  void _handlePesquisarTap(){
-    //TODO pesquisar pelo evento digitado
+  Future<void> _handlePesquisarTap() async {
+    final termo = _searchController.text.trim().toLowerCase();
+    if (termo.isEmpty) return;
+
+    final eventos = context.read<MapaViewmodel>().eventosAoVivo;
+
+    EventoMapa? encontrado;
+    for (final evento in eventos) {
+      if (evento.titulo.toLowerCase().contains(termo)) {
+        encontrado = evento;
+        break;
+      }
+    }
+
+    if (encontrado == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Nenhum evento ao vivo encontrado com esse título')),
+        );
+      }
+      return;
+    }
+
+    await _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(encontrado.latitude, encontrado.longitude), 16),
+    );
+
+    await _mapController?.showMarkerInfoWindow(MarkerId('evento_${encontrado.id}'));
   }
 
   Set<Marker> _buildMarkers(List<EventoMapa> eventos) {
@@ -113,6 +142,10 @@ class _TelaMapaState extends State<_TelaMapaBody> {
                         myLocationEnabled: true,
                         myLocationButtonEnabled: true,
                         markers: _buildMarkers(mapaViewmodel.eventosAoVivo),
+                        onMapCreated: (controller) => _mapController = controller,
+                        gestureRecognizers: {
+                          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                        },
                       ),
                     ),
                   ),
