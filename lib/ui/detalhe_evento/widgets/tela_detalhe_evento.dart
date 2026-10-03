@@ -2,6 +2,7 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
+import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
@@ -12,7 +13,12 @@ import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewm
 import 'package:after_project/ui/detalhe_evento/widgets/progressao_evento.dart';
 import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/helper.dart';
+import 'package:after_project/utils/location_helper.dart';
+import 'package:auto_scroll_text/auto_scroll_text.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class TelaDetalheEvento extends StatelessWidget {
@@ -40,6 +46,19 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
 
   void _handleComunidadeTap(){
     //TODO abrir tela da comunidade do evento
+  }
+
+  Set<Marker> _buildMarkers(EventoDetalhado evento) {
+    return {
+      Marker(
+        markerId: MarkerId('evento_${evento.id}'),
+        position: LatLng(evento.latitude!, evento.longitude!),
+        infoWindow: InfoWindow(
+          title: evento.titulo,
+          snippet: formatarPeriodo(evento.dataInicio, evento.dataFim),
+        ),
+      )
+    };
   }
 
   @override
@@ -136,6 +155,20 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 15),
+                      AutoScrollText(
+                        evento.titulo,
+                        mode: AutoScrollTextMode.bouncing,
+                        velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
+                        delayBefore: const Duration(milliseconds: 1500),
+                        pauseBetween: const Duration(milliseconds: 1500),
+                        pauseAtEnd: const Duration(milliseconds: 1500),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,17 +176,6 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                evento.titulo,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
                               Text(
                                 '•  ${evento.organizadorNome}',
                                 maxLines: 1,
@@ -204,7 +226,34 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           AppClassificacao(classificacao: evento.classificacao, size: 50)
                         ],
                       ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 215,
+                        child: ClipRRect(
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                evento.latitude!,
+                                evento.longitude!
+                              ),
+                              zoom: 14
+                            ),
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: true,
+                            markers: _buildMarkers(evento),
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                            },
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 15),
+                      ElevatedButton.icon(
+                        onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
+                        icon: const Icon(Icons.directions),
+                        label: const Text('Traçar rota'),
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
