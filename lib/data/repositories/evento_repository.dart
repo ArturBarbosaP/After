@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 import 'package:after_project/data/model/evento_detalhado_dto.dart';
 import 'package:after_project/data/model/evento_dto.dart';
+import 'package:after_project/data/model/evento_mapa_dto.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/services/supabase_evento_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/models/evento.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
+import 'package:after_project/domain/models/evento_mapa.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'dart:developer' as developer;
 
@@ -253,6 +255,21 @@ class EventoRepository {
         stackTrace: stackTrace
       );
       throw EventoFailure("Não foi possível recuperar os eventos pesquisados. Tente novamente.");
+    }
+  }
+
+  Future<List<EventoMapa>> getEventosAoVivoMapa() async {
+    try {
+      final rows = await _eventoService.fetchEventosAoVivoMapa();
+      return rows.map((json) => EventoMapaDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao buscar eventos ao vivo para o mapa - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace,
+      );
+      throw EventoFailure('Não foi possível carregar os eventos no mapa. Tente novamente.');
     }
   }
 

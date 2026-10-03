@@ -5,6 +5,7 @@ import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
+import 'package:after_project/ui/core/ui/classificacao.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
@@ -144,65 +145,72 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            evento.titulo,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${evento.organizadorNome}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${evento.endereco}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          if (evento.preco != null) ...[
-                            const SizedBox(height: 5),
-                            Text(
-                              '•  Valor: ${moedaFormat.format(evento.preco)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: Colors.white,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                evento.titulo,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 5),
+                              Text(
+                                '•  ${evento.organizadorNome}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                '•  ${evento.endereco}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (evento.preco != null) ...[
+                                const SizedBox(height: 5),
+                                Text(
+                                  '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          AppClassificacao(classificacao: evento.classificacao, size: 50)
                         ],
                       ),
                       const SizedBox(height: 15),

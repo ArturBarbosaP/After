@@ -20,6 +20,8 @@ class AppSearchField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      textInputAction: TextInputAction.search,
+      onFieldSubmitted: (_) => onPesquisarTap(),
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
       decoration: InputDecoration(

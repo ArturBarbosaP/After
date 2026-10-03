@@ -1,4 +1,5 @@
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/classificacao_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 
 class Evento {
@@ -11,6 +12,7 @@ class Evento {
   final String descricao;
   final Categoria categoria;
   final Status status;
+  final Classificacao classificacao;
   final String? imagemCapa;
   final double? preco;
   final String organizadorId;
@@ -25,6 +27,7 @@ class Evento {
     required this.descricao,
     required this.categoria,
     required this.status,
+    required this.classificacao,
     this.imagemCapa,
     this.preco,
     required this.organizadorId,

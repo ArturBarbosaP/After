@@ -6,6 +6,7 @@ import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/data/services/image_service.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/classificacao_enum.dart';
 import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/ui/cadastro_evento/view_models/cadastro_evento_viewmodel.dart';
@@ -48,6 +49,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
 
   Categoria? _categoria;
   Status? _status;
+  Classificacao? _classificacao;
   DateTime? _dataInicio;
   DateTime? _dataFim;
   double? _latitude;
@@ -82,6 +84,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
         descricao: _descricaoController.text,
         categoria: _categoria!.label,
         status: Status.agendado.label,
+        classificacao: _classificacao!.label,
         endereco: _enderecoController.text,
         localizacao: 'POINT($_longitude $_latitude)',
         dataInicio: _dataInicio!.toIso8601String(),
@@ -126,6 +129,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
         descricao: _descricaoController.text,
         categoria: _categoria!.label,
         status: _status!.label,
+        classificacao: _classificacao!.label,
         endereco: _enderecoController.text,
         localizacao: 'POINT($_longitude $_latitude)',
         dataInicio: _dataInicio!.toIso8601String(),
@@ -203,6 +207,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
 
     _categoria = evento.categoria;
     _status = evento.status;
+    _classificacao = evento.classificacao;
     _dataInicio = evento.dataInicio;
     _dataFim = evento.dataFim;
     _imagemEvento = evento.imagemCapa;
@@ -214,6 +219,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _formKey.currentState?.reset();
     _categoria = null;
     _status = null;
+    _classificacao = null;
     _dataInicio = null;
     _dataFim = null;
     _latitude = null;
@@ -401,11 +407,39 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                             value: c, child: Text(
                               c.label,
                               style: TextStyle(
-                                  color: AppColors.textboxText
+                                color: AppColors.textboxText
                               ),
                           )))
                           .toList(),
                         onChanged: (v) => setState(() => _categoria = v),
+                      ),
+                      const SizedBox(height: 37),
+                      DropdownButtonFormField<Classificacao>(
+                        initialValue: _classificacao,
+                        dropdownColor: AppColors.textboxBackground,
+                        decoration: InputDecoration(
+                          labelText: 'Classificação indicativa',
+                          labelStyle: TextStyle(
+                            color: AppColors.textboxText
+                          ),
+                          filled: true,
+                          fillColor: AppColors.textboxBackground,
+                          border: borderStyle,
+                          enabledBorder: borderStyle,
+                          focusedBorder: borderStyle.copyWith(
+                            borderSide: const BorderSide(color: AppColors.textboxBorder, width: 2)
+                          )
+                        ),
+                        items: Classificacao.values
+                          .map((c) => DropdownMenuItem(
+                            value: c, child: Text(
+                              c.label == Classificacao.alivre.label ? c.label : '${c.label} anos',
+                              style: TextStyle(
+                                color: AppColors.textboxText
+                              ),
+                          )))
+                            .toList(),
+                        onChanged: (v) => setState(() => _classificacao = v),
                       ),
                       const SizedBox(height: 37),
                       AppTextField(
