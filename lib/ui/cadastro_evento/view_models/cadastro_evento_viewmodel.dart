@@ -18,6 +18,9 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     }
   }
 
+  bool _screenLoading = false;
+  bool get screenLoading => _screenLoading;
+
   bool _loading = false;
   bool get isLoading => _loading;
 
@@ -36,24 +39,31 @@ class CadastroEventoViewmodel extends ChangeNotifier {
   }
 
   Future<void> _loadEvento() async {
-    _loading = true;
+    _screenLoading = true;
     _mensagemErro = null;
     notifyListeners();
 
     try {
-      _evento = await _eventoRepository.getEventoPorId(id);
+      final organizador = await _userRepository.getOrganizadorAtual();
+      if (organizador == null){
+        _mensagemErro = 'Usuário logado não é organizador';
+        _screenLoading = false;
+        notifyListeners();
+        return;
+      }
+      _evento = await _eventoRepository.getEventoOrganizadorPorId(organizador.id, id);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento pelo id',
-          name: 'CadastroEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento pelo id',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
+      _screenLoading = false;
       notifyListeners();
     }
   }
@@ -84,10 +94,49 @@ class CadastroEventoViewmodel extends ChangeNotifier {
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao cadastrar evento',
-          name: 'CadastroEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao cadastrar evento',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> editar(SupabaseCadastroEventoModel model, Uint8List? imagemSelecionada) async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      final organizador = await _userRepository.getOrganizadorAtual();
+      model.organizadorId = organizador!.id;
+      model.id = id;
+
+      await _eventoRepository.editarEvento(
+        dadosEvento: model,
+        eventoId: id,
+        organizadorId: model.organizadorId,
+        novaImagem: imagemSelecionada
+      );
+
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+      _loading = false;
+      notifyListeners();
+      return false;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao editar evento',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       _loading = false;
       notifyListeners();

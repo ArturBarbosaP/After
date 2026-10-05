@@ -1,3 +1,4 @@
+import 'package:after_project/domain/enums/categoria_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -6,6 +7,7 @@ class SupabaseEventoService {
   final String _nomeTabela = 'evento_detalhado';
   final String _nomeTabelaEvento = 'evento';
   final String _nomeTabelaUsuarioEvento = 'usuario_evento';
+  final String _nomeTabelaMapa = 'evento_mapa';
 
   SupabaseEventoService(this._client);
 
@@ -31,6 +33,43 @@ class SupabaseEventoService {
     return List<Map<String, dynamic>>.from(response);
   }
 
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPelaCategoria(Categoria categoria) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('categoria', categoria.label)
+        .eq('status', Status.emAndamento.label)
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPorTitulo(String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.emAndamento.label)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoPelaCategoriaETitulo(Categoria categoria, String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('categoria', categoria.label)
+        .eq('status', Status.emAndamento.label)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: true)
+        .limit(10);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
   Future<List<Map<String, dynamic>>> fetchAmigosPresentes(int eventoId) async {
     final response = await _client.rpc(
       'get_amigos_presentes',
@@ -45,6 +84,46 @@ class SupabaseEventoService {
         .from(_nomeTabela)
         .select()
         .eq('status', Status.agendado.label)
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPelaCategoria(Categoria categoria) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .eq('categoria', categoria.label)
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPorTitulo(String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .ilike('titulo', '%$titulo%')
+        .gte('data_inicio', DateTime.now().toIso8601String())
+        .order('data_inicio', ascending: true)
+        .limit(3);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProximosEventosPelaCategoriaETitulo(Categoria categoria, String titulo) async {
+    final response = await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('status', Status.agendado.label)
+        .eq('categoria', categoria.label)
+        .ilike('titulo', '%$titulo%')
         .gte('data_inicio', DateTime.now().toIso8601String())
         .order('data_inicio', ascending: true)
         .limit(3);
@@ -116,5 +195,44 @@ class SupabaseEventoService {
 
   Future<void> updateEvento(int eventoId, Map<String, dynamic> dados) async {
     return await _client.from(_nomeTabelaEvento).update(dados).eq('id', eventoId);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchMeusEventosOrganizador(String organizadorId) async {
+    final response = await _client
+        .from(_nomeTabelaEvento)
+        .select()
+        .eq('organizador_id', organizadorId)
+        .order('data_inicio', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<Map<String, dynamic>?> fetchEventoOrganizadorPorId(String organizadorId, int eventoId) async {
+    return await _client
+        .from(_nomeTabela)
+        .select()
+        .eq('id', eventoId)
+        .eq('organizador_id', organizadorId)
+        .maybeSingle();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchPesquisarMeusEventosOrganizador(String organizadorId, String titulo) async {
+    final response = await _client
+        .from(_nomeTabelaEvento)
+        .select()
+        .eq('organizador_id', organizadorId)
+        .ilike('titulo', '%$titulo%')
+        .order('data_inicio', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosAoVivoMapa() async {
+    final response = await _client
+        .from(_nomeTabelaMapa)
+        .select()
+        .eq('status', 'Em andamento');
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }

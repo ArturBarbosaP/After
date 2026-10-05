@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
@@ -35,6 +36,8 @@ class _TelaHomeBody extends StatefulWidget {
 }
 
 class _TelaHomeState extends State<_TelaHomeBody> {
+  final _searchController = TextEditingController();
+  Timer? _debounce;
 
   void _handleSairTap() async {
     final homeViewModel = context.read<HomeViewmodel>();
@@ -47,6 +50,13 @@ class _TelaHomeState extends State<_TelaHomeBody> {
             (route) => false,
       );
     }
+  }
+
+  void _onSearchChanged() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      context.read<HomeViewmodel>().pesquisar(_searchController.text);
+    });
   }
 
   void _abrirDetalhesEvento(int eventoId) {
@@ -62,12 +72,26 @@ class _TelaHomeState extends State<_TelaHomeBody> {
   }
 
   void _handlePesquisarTap(){
-    //TODO pesquisar pelo evento digitado
+    context.read<HomeViewmodel>().pesquisar(_searchController.text);
   }
 
   void _handleEmDestaqueTap(int eventoId) => _abrirDetalhesEvento(eventoId);
   void _handleEventoAoVivoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
   void _handleEventoProximoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +132,7 @@ class _TelaHomeState extends State<_TelaHomeBody> {
                 const SizedBox(height: 25), //espaçamento
                 AppSearchField(
                   onPesquisarTap: _handlePesquisarTap,
+                  controller: _searchController,
                 ),
                 if (eventoDestaque != null)...[
                   const SizedBox(height: 15),

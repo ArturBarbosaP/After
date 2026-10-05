@@ -17,10 +17,10 @@ class EventoDestaque extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(17),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: LinearGradient(
-              colors: [AppColors.emDestaqueGradA, AppColors.emDestaqueGradB],
-            )
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            colors: [AppColors.emDestaqueGradA, AppColors.emDestaqueGradB],
+          )
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,17 +33,17 @@ class EventoDestaque extends StatelessWidget {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 17, vertical: 8),
                   decoration: BoxDecoration(
+                    color: status == 'Em andamento'
+                        ? AppColors.aoVivoBackground
+                        : AppColors.agendadoBackground,
+                    borderRadius: BorderRadius.circular(33),
+                    border: Border.all(
+                      width: 1,
+                      strokeAlign: BorderSide.strokeAlignCenter,
                       color: status == 'Em andamento'
-                          ? AppColors.aoVivoBackground
-                          : AppColors.agendadoBackground,
-                      borderRadius: BorderRadius.circular(33),
-                      border: Border.all(
-                          width: 1,
-                          strokeAlign: BorderSide.strokeAlignCenter,
-                          color: status == 'Em andamento'
-                              ? AppColors.aoVivoBorder
-                              : AppColors.agendadoBorder
-                      )
+                          ? AppColors.aoVivoBorder
+                          : AppColors.agendadoBorder
+                    )
                   ),
                   child: Text(
                     status,
@@ -65,6 +65,7 @@ class EventoDestaque extends StatelessWidget {
                   children: [
                     Text(
                       titulo,
+                      textAlign: TextAlign.start,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -76,7 +77,7 @@ class EventoDestaque extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       endereco,
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

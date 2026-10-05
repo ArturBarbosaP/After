@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class AppSearchField extends StatelessWidget {
   final VoidCallback onPesquisarTap;
+  final TextEditingController controller;
 
   const AppSearchField({
     super.key,
-    required this.onPesquisarTap
+    required this.onPesquisarTap,
+    required this.controller
   });
 
   @override
@@ -17,23 +19,26 @@ class AppSearchField extends StatelessWidget {
     );
 
     return TextFormField(
+      controller: controller,
+      textInputAction: TextInputAction.search,
+      onFieldSubmitted: (_) => onPesquisarTap(),
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
       decoration: InputDecoration(
-          hintText: 'Procurar eventos',
-          hintStyle: const TextStyle(color: Colors.white),
-          filled: true,
-          fillColor: AppColors.searchBackground,
-          suffixIcon: IconButton(
-            icon: Icon(Icons.search_outlined),
-            onPressed: () => onPesquisarTap
-          ),
-          suffixIconColor: Colors.white,
-          border: borderStyle,
-          enabledBorder: borderStyle,
-          focusedBorder: borderStyle.copyWith(
-              borderSide: const BorderSide(color: AppColors.textboxBorder, width: 2)
-          )
+        hintText: 'Procurar eventos',
+        hintStyle: const TextStyle(color: Colors.white),
+        filled: true,
+        fillColor: AppColors.searchBackground,
+        suffixIcon: IconButton(
+          icon: Icon(Icons.search_outlined),
+          onPressed: onPesquisarTap
+        ),
+        suffixIconColor: Colors.white,
+        border: borderStyle,
+        enabledBorder: borderStyle,
+        focusedBorder: borderStyle.copyWith(
+          borderSide: const BorderSide(color: AppColors.textboxBorder, width: 2)
+        )
       ),
     );
   }

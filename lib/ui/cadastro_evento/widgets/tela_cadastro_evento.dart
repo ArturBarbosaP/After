@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
@@ -6,6 +5,7 @@ import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/data/services/image_service.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/classificacao_enum.dart';
 import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/ui/cadastro_evento/view_models/cadastro_evento_viewmodel.dart';
@@ -13,8 +13,12 @@ import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/utils/location_helper.dart';
 import 'package:after_project/utils/validators.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -45,14 +49,19 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
   final _tituloController = TextEditingController();
   final _descricaoController = TextEditingController();
   final _precoController = TextEditingController();
+  GoogleMapController? _formMapController;
 
   Categoria? _categoria;
+  Status? _status;
+  Classificacao? _classificacao;
   DateTime? _dataInicio;
   DateTime? _dataFim;
   double? _latitude;
   double? _longitude;
   Uint8List? _imagemSelecionada;
   String? _imagemEvento;
+
+  bool _camposPreenchidos = false;
 
   Future<void> _handleCadastroClick() async {
     if (!_formKey.currentState!.validate()) return;
@@ -79,6 +88,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
         descricao: _descricaoController.text,
         categoria: _categoria!.label,
         status: Status.agendado.label,
+        classificacao: _classificacao!.label,
         endereco: _enderecoController.text,
         localizacao: 'POINT($_longitude $_latitude)',
         dataInicio: _dataInicio!.toIso8601String(),
@@ -92,6 +102,52 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     if (sucesso && mounted){
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Evento criado com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
+  }
+
+  Future<void> _handleEdicaoClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_categoria == null || _dataInicio == null || _dataFim == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha categoria, data de início e fim')),
+      );
+      return;
+    }
+    if (_dataFim!.isBefore(_dataInicio!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('A data de fim deve ser depois do início')),
+      );
+      return;
+    }
+
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+
+    final sucesso = await cadastroEventoViewmodel.editar(
+      SupabaseCadastroEventoModel(
+        id: null,
+        titulo: _tituloController.text,
+        descricao: _descricaoController.text,
+        categoria: _categoria!.label,
+        status: _status!.label,
+        classificacao: _classificacao!.label,
+        endereco: _enderecoController.text,
+        localizacao: 'POINT($_longitude $_latitude)',
+        dataInicio: _dataInicio!.toIso8601String(),
+        dataFim: _dataFim!.toIso8601String(),
+        preco: double.tryParse(_precoController.text),
+        organizadorId: '',
+        imagemCapa: _imagemEvento
+      ),
+      _imagemSelecionada
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Evento salvo com sucesso!"))
       );
       Navigator.pop(context);
       limparCampos();
@@ -137,11 +193,46 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       _latitude = position.latitude;
       _longitude = position.longitude;
     });
+
+    await _formMapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(position.latitude, position.longitude), 15)
+    );
+  }
+
+  void _carregarEvento() {
+    if (_camposPreenchidos) return;
+
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+    final evento = cadastroEventoViewmodel.evento!;
+
+    _tituloController.text = evento.titulo;
+    _descricaoController.text = evento.descricao;
+    _enderecoController.text = evento.endereco;
+
+    if (evento.preco != null){
+      _precoController.text = evento.preco.toString();
+    }
+
+    _categoria = evento.categoria;
+    _status = evento.status;
+    _classificacao = evento.classificacao;
+    _dataInicio = evento.dataInicio;
+    _dataFim = evento.dataFim;
+    _imagemEvento = evento.imagemCapa;
+
+    if (evento.latitude != null && evento.longitude != null) {
+      _latitude = evento.latitude;
+      _longitude = evento.longitude;
+    }
+
+    _camposPreenchidos = true;
   }
 
   void limparCampos(){
     _formKey.currentState?.reset();
     _categoria = null;
+    _status = null;
+    _classificacao = null;
     _dataInicio = null;
     _dataFim = null;
     _latitude = null;
@@ -149,16 +240,6 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _imagemSelecionada = null;
     _imagemEvento = null;
     context.read<CadastroEventoViewmodel>().limparErro();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
-
-    if (cadastroEventoViewmodel.edicao) {
-      //TODO pegar dados do evento
-    }
   }
 
   @override
@@ -179,9 +260,35 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
 
     final cadastroEventoViewmodel = context.watch<CadastroEventoViewmodel>();
 
+    if (cadastroEventoViewmodel.screenLoading){
+      return Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.bgTop,
+                AppColors.bgMid,
+                AppColors.bgBottom,
+              ],
+              stops: [0.0, 0.519, 1.0],
+            ),
+          ),
+          child: Center(child: CircularProgressIndicator(color: Colors.white))
+        ),
+      );
+    }
+
+    if (cadastroEventoViewmodel.edicao && cadastroEventoViewmodel.evento != null){
+      _carregarEvento();
+    }
+
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Cadastro de evento',
+        title: cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
         backIcon: true,
       ),
       body: Container(
@@ -215,7 +322,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                     children: [
                       const SizedBox(height: 35),
                       Text(
-                        'Cadastro de evento',
+                        cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
@@ -226,7 +333,9 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Preencha os campos para cadastrar seu evento!',
+                        cadastroEventoViewmodel.edicao
+                            ? 'Edite os detalhes do seu evento!'
+                            : 'Preencha os campos para cadastrar seu evento!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -249,12 +358,12 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                             color: Colors.white10,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: (!cadastroEventoViewmodel.edicao && _imagemSelecionada != null) || (cadastroEventoViewmodel.edicao && _imagemEvento != null)
+                          child: _imagemSelecionada != null || _imagemEvento != null
                             ? ClipRRect(
                               borderRadius: BorderRadiusGeometry.circular(8),
-                              child: cadastroEventoViewmodel.edicao
-                                ? Image.network(_imagemEvento!, fit: BoxFit.cover)
-                                : Image.memory(_imagemSelecionada!, fit: BoxFit.cover)
+                              child: _imagemSelecionada != null
+                                ? Image.memory(_imagemSelecionada!, fit: BoxFit.cover)
+                                : Image.network(_imagemEvento!, fit: BoxFit.cover)
                             )
                             : const Center(
                               child: Column(
@@ -311,11 +420,39 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                             value: c, child: Text(
                               c.label,
                               style: TextStyle(
-                                  color: AppColors.textboxText
+                                color: AppColors.textboxText
                               ),
                           )))
                           .toList(),
                         onChanged: (v) => setState(() => _categoria = v),
+                      ),
+                      const SizedBox(height: 37),
+                      DropdownButtonFormField<Classificacao>(
+                        initialValue: _classificacao,
+                        dropdownColor: AppColors.textboxBackground,
+                        decoration: InputDecoration(
+                          labelText: 'Classificação indicativa',
+                          labelStyle: TextStyle(
+                            color: AppColors.textboxText
+                          ),
+                          filled: true,
+                          fillColor: AppColors.textboxBackground,
+                          border: borderStyle,
+                          enabledBorder: borderStyle,
+                          focusedBorder: borderStyle.copyWith(
+                            borderSide: const BorderSide(color: AppColors.textboxBorder, width: 2)
+                          )
+                        ),
+                        items: Classificacao.values
+                          .map((c) => DropdownMenuItem(
+                            value: c, child: Text(
+                              c.label == Classificacao.alivre.label ? c.label : '${c.label} anos',
+                              style: TextStyle(
+                                color: AppColors.textboxText
+                              ),
+                          )))
+                            .toList(),
+                        onChanged: (v) => setState(() => _classificacao = v),
                       ),
                       const SizedBox(height: 37),
                       AppTextField(
@@ -325,13 +462,47 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         tipoInput: TextInputType.text,
                       ),
                       const SizedBox(height: 37),
+                      SizedBox(
+                        height: 220,
+                        child: ClipRRect(
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: (_latitude != null && _longitude != null)
+                                  ? LatLng(_latitude!, _longitude!)
+                                  : localizacaoPadrao,
+                              zoom: (_latitude != null) ? 15 : 12,
+                            ),
+                            onMapCreated: (controller) => _formMapController = controller,
+                            onTap: (LatLng posicao) {
+                              setState(() {
+                                _latitude = posicao.latitude;
+                                _longitude = posicao.longitude;
+                              });
+                            },
+                            markers: (_latitude != null && _longitude != null)
+                                ? {
+                              Marker(
+                                markerId: const MarkerId('local_evento'),
+                                position: LatLng(_latitude!, _longitude!),
+                              ),
+                            }
+                                : {},
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: false, // já temos nosso próprio botão de "usar localização atual"
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
                       ElevatedButton.icon(
                         onPressed: _usarLocalizacaoAtual,
                         icon: Icon(Icons.location_pin, color: AppColors.textboxIcon),
                         label: Text(
-                          _latitude != null ? 'Utilizando localização atual' : 'Usar minha localização atual',
+                          'Usar minha localização atual',
                           style: TextStyle(
-                              color: AppColors.textboxText
+                            color: AppColors.textboxText
                           ),
                         ),
                       ),
@@ -357,7 +528,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         child: Text(
                           _dataFim == null ? 'Selecione a data de término' : DateFormat('dd/MM/yyyy HH:mm').format(_dataFim!),
                           style: TextStyle(
-                              color: AppColors.textboxText
+                            color: AppColors.textboxText
                           ),
                         ),
                       ),
@@ -372,16 +543,17 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                         cadastroEventoViewmodel.mensagemErro != null ? cadastroEventoViewmodel.mensagemErro! : "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            color: Colors.red
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.red
                         ),
                       ),
                       const SizedBox(height: 41),
                       GradientButton(
-                        text: 'Cadastrar evento',
+                        text: cadastroEventoViewmodel.edicao ? 'Salvar evento' : 'Cadastrar evento',
                         height: 40,
-                        onTap: cadastroEventoViewmodel.isLoading ? null : _handleCadastroClick,
+                        onTap: cadastroEventoViewmodel.isLoading ? null :
+                          cadastroEventoViewmodel.edicao ? _handleEdicaoClick : _handleCadastroClick,
                         loading: cadastroEventoViewmodel.isLoading,
                         textStyle: TextStyle(
                           fontWeight: FontWeight.w700,

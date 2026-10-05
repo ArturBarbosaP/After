@@ -33,6 +33,9 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   bool _presenca = false;
   bool get presenca => _presenca;
 
+  bool _podeEditar = false;
+  bool get podeEditar => _podeEditar;
+
   Future<void> _loadEvento() async {
     _loading = true;
     _mensagemErro = null;
@@ -41,18 +44,20 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     try {
       _evento = await _eventoRepository.getEventoPorId(id);
       _amigosPresentes = await _eventoRepository.getAmigosPresentes(id);
+      _podeEditar = await getPodeEditar();
+
+      _loading = false;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento pelo id',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento pelo id',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }
@@ -70,18 +75,19 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
       _favorito = status.favorito;
       _presenca = status.presenca;
+
+      _loading = false;
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar usuario evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar usuario evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }
@@ -104,10 +110,10 @@ class DetalheEventoViewmodel extends ChangeNotifier {
       _favorito = !novoValor;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao favoritar evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao favoritar evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();
@@ -132,14 +138,18 @@ class DetalheEventoViewmodel extends ChangeNotifier {
       _presenca = !novoValor;
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao marcar presença no evento',
-          name: 'DetalheEventoViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao marcar presença no evento',
+        name: 'DetalheEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       notifyListeners();
     }
   }
 
+  Future<bool> getPodeEditar() async {
+    final organizador = await _userRepository.getOrganizadorAtual();
+    return organizador != null && evento?.organizadorId == organizador.id;
+  }
 }

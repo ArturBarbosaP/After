@@ -38,10 +38,10 @@ class LoginViewmodel extends ChangeNotifier {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       notifyListeners();
       developer.log(
-          'Falha no login com email e senha',
-          name: 'LoginViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha no login com email e senha',
+        name: 'LoginViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       return false;
     }
@@ -67,10 +67,10 @@ class LoginViewmodel extends ChangeNotifier {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       notifyListeners();
       developer.log(
-          'Falha no login google',
-          name: 'LoginViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha no login google',
+        name: 'LoginViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
       return false;
     }

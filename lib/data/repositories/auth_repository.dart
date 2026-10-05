@@ -33,10 +33,10 @@ class AuthRepository {
     }
     catch (ex, stackTrace) {
       developer.log(
-          'Falha no cadastro - Exception',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no cadastro - Exception',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure("Não foi possível fazer o cadastro. Tente novamente.");
     }
@@ -48,19 +48,19 @@ class AuthRepository {
     }
     on AuthException catch (ex, stackTrace) {
       developer.log(
-          'Falha no login com email e senha - AuthException',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no login com email e senha - AuthException',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure(_traduzirAuthError(ex));
     }
     catch (ex, stackTrace) {
       developer.log(
-          'Falha no login com email e senha - Exception',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no login com email e senha - Exception',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure("Não foi possível fazer o login. Tente novamente.");
     }
@@ -72,28 +72,28 @@ class AuthRepository {
     }
     on GoogleSignInException catch (ex, stackTrace) {
       developer.log(
-          'Falha no login com Google - GoogleSignInException',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no login com Google - GoogleSignInException',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure('Login com o Google cancelado');
     }
     on AuthException catch (ex, stackTrace) {
       developer.log(
-          'Falha no login com Google - AuthException',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no login com Google - AuthException',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure(_traduzirAuthError(ex));
     }
     catch (ex, stackTrace) {
       developer.log(
-          'Falha no login com Google - Exception',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no login com Google - Exception',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure('Não foi possível entrar com o Google. Tente novamente.');
     }
@@ -105,25 +105,24 @@ class AuthRepository {
     }
     on AuthException catch (ex, stackTrace) {
       developer.log(
-          'Falha no logout - AuthException',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no logout - AuthException',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure(_traduzirAuthError(ex));
     }
     catch (ex, stackTrace) {
       developer.log(
-          'Falha no logout - Exception',
-          name: 'AuthRepository',
-          error: ex,
-          stackTrace: stackTrace
+        'Falha no logout - Exception',
+        name: 'AuthRepository',
+        error: ex,
+        stackTrace: stackTrace
       );
       throw AuthFailure("Não foi possível fazer o logout. Tente novamente.");
     }
   }
-
-
+  
   String _traduzirAuthError(AuthException e) {
     switch (e.message) {
       case 'User already registered':

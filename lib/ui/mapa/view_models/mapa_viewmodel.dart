@@ -3,14 +3,18 @@ import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/domain/enums/permissao_localizacao_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
+import 'package:after_project/domain/models/evento_mapa.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
+import 'package:geolocator/geolocator.dart';
 
 class MapaViewmodel extends ChangeNotifier {
   final EventoRepository _eventoRepository;
 
   MapaViewmodel(this._eventoRepository){
     _loadEventoMaisProximo();
+    _carregarEventosAoVivo();
   }
 
   bool _loading = false;
@@ -21,6 +25,12 @@ class MapaViewmodel extends ChangeNotifier {
 
   EventoDetalhado? _eventoMaisProximo;
   EventoDetalhado? get eventoMaisProximo => _eventoMaisProximo;
+
+  List<EventoMapa> _eventosAoVivo = [];
+  List<EventoMapa> get eventosAoVivo => _eventosAoVivo;
+
+  Position? _position;
+  Position? get position => _position;
 
   Future<void> _loadEventoMaisProximo() async {
     _loading = true;
@@ -36,16 +46,40 @@ class MapaViewmodel extends ChangeNotifier {
       }
 
       final pos = await locationService.getCurrentPosition();
+      _position = pos;
       _eventoMaisProximo = await _eventoRepository.getEventoPerto(pos.latitude, pos.longitude);
     } on EventoFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
-          'Falha ao recuperar evento perto',
-          name: 'MapaViewmodel',
-          error: e,
-          stackTrace: stackTrace
+        'Falha ao recuperar evento perto',
+        name: 'MapaViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _carregarEventosAoVivo() async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      _eventosAoVivo = await _eventoRepository.getEventosAoVivoMapa();
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao recuperar eventos para o mapa',
+        name: 'MapaViewmodel',
+        error: e,
+        stackTrace: stackTrace
       );
     } finally {
       _loading = false;

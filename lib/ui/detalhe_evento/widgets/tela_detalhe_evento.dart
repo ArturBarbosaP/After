@@ -2,16 +2,25 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
+import 'package:after_project/domain/models/evento_detalhado.dart';
+import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
+import 'package:after_project/ui/core/ui/classificacao.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
 import 'package:after_project/ui/detalhe_evento/widgets/progressao_evento.dart';
 import 'package:after_project/utils/datetime_helper.dart';
 import 'package:after_project/utils/helper.dart';
+import 'package:after_project/utils/location_helper.dart';
+import 'package:auto_scroll_text/auto_scroll_text.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:after_project/ui/comunidade/widgets/tela_comunidade.dart';
 
 class TelaDetalheEvento extends StatelessWidget {
   const TelaDetalheEvento({super.key, required this.eventoId});
@@ -36,8 +45,29 @@ class _TelaDetalheEventoBody extends StatefulWidget {
 
 class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
 
-  void _handleComunidadeTap(){
-    //TODO abrir tela da comunidade do evento
+  void _handleComunidadeTap() {
+  final vm = context.read<DetalheEventoViewmodel>();
+  final evento = vm.evento;
+  if (evento == null) return;
+
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => TelaComunidade(eventoId: evento.id, tituloEvento: evento.titulo),
+    ),
+  );
+}
+
+  Set<Marker> _buildMarkers(EventoDetalhado evento) {
+    return {
+      Marker(
+        markerId: MarkerId('evento_${evento.id}'),
+        position: LatLng(evento.latitude!, evento.longitude!),
+        infoWindow: InfoWindow(
+          title: evento.titulo,
+          snippet: formatarPeriodo(evento.dataInicio, evento.dataFim),
+        ),
+      )
+    };
   }
 
   @override
@@ -46,7 +76,7 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
     final evento = detalheEventoViewmodel.evento;
     final amigos = detalheEventoViewmodel.amigosPresentes;
 
-    if (detalheEventoViewmodel.isLoading) {
+    if (detalheEventoViewmodel.isLoading || evento == null) {
       return Scaffold(
         body: Container(
           width: double.infinity,
@@ -63,40 +93,22 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
               stops: [0.0, 0.519, 1.0],
             ),
           ),
-          child: Center(child: CircularProgressIndicator(color: Colors.white))
-        ),
-      );
-    }
-
-    if (evento == null) {
-      return Scaffold(
-        appBar: const AppTopBar(
-          title: 'Evento',
-          backIcon: true,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.bgTop,
-                  AppColors.bgMid,
-                  AppColors.bgBottom,
-                ],
-                stops: [0.0, 0.519, 1.0],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: CircularProgressIndicator(color: Colors.white)),
+              const SizedBox(height: 30),
+              Text(
+                detalheEventoViewmodel.mensagemErro ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            child: Center(child: Text(
-              '${detalheEventoViewmodel.mensagemErro}',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ))
+            ],
+          )
         ),
       );
     }
@@ -105,6 +117,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
       appBar: AppTopBar(
         title: evento.titulo,
         backIcon: true,
+        actions: detalheEventoViewmodel.podeEditar,
+        onActionPressed: (){
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => TelaCadastroEvento(eventoId: evento.id),
+            ),
+          );
+        },
       ),
       body: Container(
         width: double.infinity,
@@ -129,14 +149,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                   height: 250,
                   width: double.infinity,
                   child: evento.imagemCapa != null
-                      ? Image.network(
-                    evento.imagemCapa!,
-                    fit: BoxFit.cover,
-                  )
-                      : Container(
-                    color: Colors.grey.shade800,
-                    child: Icon(Icons.image_not_supported, color: Colors.white54),
-                  ),
+                    ? Image.network(
+                      evento.imagemCapa!,
+                      fit: BoxFit.cover,
+                    )
+                    : Container(
+                      color: Colors.grey.shade800,
+                      child: Icon(Icons.image_not_supported, color: Colors.white54),
+                    ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -144,68 +164,107 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      AutoScrollText(
+                        evento.titulo,
+                        mode: AutoScrollTextMode.bouncing,
+                        velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
+                        delayBefore: const Duration(milliseconds: 1500),
+                        pauseBetween: const Duration(milliseconds: 1500),
+                        pauseAtEnd: const Duration(milliseconds: 1500),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            evento.titulo,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              color: Colors.white,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '•  ${evento.organizadorNome}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '•  ${evento.endereco}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                if (evento.preco != null) ...[
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${evento.organizadorNome}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '•  ${evento.endereco}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          if (evento.preco != null) ...[
-                            const SizedBox(height: 5),
-                            Text(
-                              '•  Valor: ${moedaFormat.format(evento.preco)}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                          AppClassificacao(classificacao: evento.classificacao, size: 50)
                         ],
                       ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 215,
+                        child: ClipRRect(
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                evento.latitude!,
+                                evento.longitude!
+                              ),
+                              zoom: 14
+                            ),
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: true,
+                            markers: _buildMarkers(evento),
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                            },
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 15),
+                      ElevatedButton.icon(
+                        onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
+                        icon: const Icon(Icons.directions),
+                        label: const Text('Traçar rota'),
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,13 +273,13 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                             decoration: BoxDecoration(
-                                color: AppColors.categoriaEventoBackground,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    width: 1,
-                                    strokeAlign: BorderSide.strokeAlignCenter,
-                                    color: AppColors.categoriaEventoBorder,
-                                )
+                              color: AppColors.categoriaEventoBackground,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignCenter,
+                                color: AppColors.categoriaEventoBorder,
+                              )
                             ),
                             child: Text(
                               evento.categoria.label,

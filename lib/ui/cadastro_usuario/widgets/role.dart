@@ -18,21 +18,21 @@ class RoleToggle extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _seg("Sou usuário", !organizador, () => onChanged(false), 137),
-          _seg("Sou organizador(a)", organizador, () => onChanged(true), 156),
+          _seg("Sou usuário", !organizador, () => onChanged(false), 137, Color(0xFFC758AF)),
+          _seg("Sou organizador(a)", organizador, () => onChanged(true), 156, Color(0xFF7953B3)),
         ],
       ),
     );
   }
 
-  Widget _seg(String label, bool active, VoidCallback onTap, double w) {
+  Widget _seg(String label, bool active, VoidCallback onTap, double w, Color activeColor) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: w,
         height: 29,
         alignment: Alignment.center,
-        color: active ? const Color(0xFFC758AF) : Colors.transparent,
+        color: active ? activeColor : Colors.transparent,
         child: Text(
           label,
           style: const TextStyle(

@@ -1,4 +1,5 @@
 import 'package:after_project/domain/enums/categoria_enum.dart';
+import 'package:after_project/domain/enums/classificacao_enum.dart';
 import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 
@@ -11,8 +12,11 @@ class EventoDetalhadoDto {
   final String descricao;
   final String categoria;
   final String status;
+  final String classificacao;
   final String? imagemCapa;
   final double? preco;
+  final double? latitude;
+  final double? longitude;
   final String organizadorId;
   final String organizadorSite;
   final bool organizadorVerificado;
@@ -30,8 +34,11 @@ class EventoDetalhadoDto {
     required this.descricao,
     required this.categoria,
     required this.status,
+    required this.classificacao,
     this.imagemCapa,
     this.preco,
+    this.latitude,
+    this.longitude,
     required this.organizadorId,
     required this.organizadorSite,
     required this.organizadorVerificado,
@@ -51,8 +58,11 @@ class EventoDetalhadoDto {
       descricao: json['descricao'] as String,
       categoria: json['categoria'] as String,
       status: json['status'] as String,
+      classificacao: json['classificacao'] as String,
       imagemCapa: json['imagem_capa'] as String?,
       preco: (json['preco'] as num?)?.toDouble(),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
       organizadorId: json['organizador_id'] as String,
       organizadorSite: json['organizador_site'] as String,
       organizadorVerificado: json['organizador_verificado'] as bool,
@@ -73,8 +83,11 @@ class EventoDetalhadoDto {
       descricao: descricao,
       categoria: Categoria.fromString(categoria),
       status: Status.fromString(status),
+      classificacao: Classificacao.fromString(classificacao),
       imagemCapa: imagemCapa == '' ? null : imagemCapa,
       preco: preco == 0 ? null : preco,
+      latitude: latitude,
+      longitude: longitude,
       organizadorId: organizadorId,
       organizadorSite: organizadorSite,
       organizadorVerificado: organizadorVerificado,

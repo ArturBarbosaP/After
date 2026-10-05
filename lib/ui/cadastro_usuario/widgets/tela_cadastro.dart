@@ -53,12 +53,12 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
     final cadastroViewModel = context.read<CadastroViewmodel>();
 
     final sucesso = await cadastroViewModel.cadastro(
-        SupabaseCadastroModel(
-          nome: _nomeController.text,
-          email: _emailController.text,
-          senha: _senhaController.text,
-          organizador: _organizador
-        )
+      SupabaseCadastroModel(
+        nome: _nomeController.text,
+        email: _emailController.text,
+        senha: _senhaController.text,
+        organizador: _organizador
+      )
     );
 
     if (sucesso && mounted){
@@ -87,9 +87,9 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
 
   void _handleMostrarTermos(){
     Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const TelaTermosUso(),
-        )
+      MaterialPageRoute<void>(
+        builder: (context) => const TelaTermosUso(),
+      )
     );
   }
 
@@ -263,13 +263,13 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                             children: [
                               TextSpan(text: "Li e concordo com os "),
                               TextSpan(
-                                  text: "Termos de Uso",
-                                  recognizer: TapGestureRecognizer()..onTap = () => _handleMostrarTermos(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                    color: Color(0xFFBA12F3),
-                                  )
+                                text: "Termos de Uso",
+                                recognizer: TapGestureRecognizer()..onTap = () => _handleMostrarTermos(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFFBA12F3),
+                                )
                               ),
                             ],
                           ),
@@ -280,9 +280,9 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                         cadastroViewModel.mensagemErro != null ? cadastroViewModel.mensagemErro! : "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 13,
-                            color: Colors.red
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.red
                         ),
                       ),
                       const SizedBox(height: 41),
@@ -333,13 +333,13 @@ class _TelaCadastroState extends State<_TelaCadastroBody> {
                           children: [
                             TextSpan(text: "Ja tem uma conta? "),
                             TextSpan(
-                                text: "Faça login aqui!",
-                                recognizer: TapGestureRecognizer()..onTap = () => _handleLoginTap(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
-                                  color: Color(0xFFBA12F3),
-                                )
+                              text: "Faça login aqui!",
+                              recognizer: TapGestureRecognizer()..onTap = () => _handleLoginTap(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                                color: Color(0xFFBA12F3),
+                              )
                             ),
                           ],
                         ),

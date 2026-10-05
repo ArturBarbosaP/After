@@ -29,7 +29,7 @@ class AppAvatar extends StatelessWidget {
         image: DecorationImage(
           fit: BoxFit.cover,
           image: NetworkImage(
-              imageUrl != null && imageUrl!.isNotEmpty ? imageUrl! : '',
+            imageUrl != null && imageUrl!.isNotEmpty ? imageUrl! : '',
           )
         ),
         gradient: LinearGradient(

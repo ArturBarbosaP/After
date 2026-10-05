@@ -41,14 +41,14 @@ class EventosAoVivo extends StatelessWidget {
                         height: 50,
                         width: double.infinity,
                         child: evento.imagemCapa != null
-                            ? Image.network(
-                          evento.imagemCapa!,
-                          fit: BoxFit.cover,
-                        )
-                            : Container(
-                          color: Colors.grey.shade800,
-                          child: Icon(Icons.image_not_supported, color: Colors.white54),
-                        ),
+                          ? Image.network(
+                            evento.imagemCapa!,
+                            fit: BoxFit.cover,
+                          )
+                          : Container(
+                            color: Colors.grey.shade800,
+                            child: Icon(Icons.image_not_supported, color: Colors.white54),
+                          ),
                       )
                     ),
                     Padding(
