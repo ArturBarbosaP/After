@@ -273,6 +273,21 @@ class EventoRepository {
     }
   }
 
+  Future<List<Evento>> getEventosFavoritos(String usuarioId, {String? titulo}) async {
+    try {
+      final rows = await _eventoService.fetchEventosFavoritos(usuarioId, titulo: titulo);
+      return rows.map((json) => EventoDto.fromJson(json).toDomain()).toList();
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao recuperar eventos favoritos do usuario - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível recuperar os eventos favoritos. Tente novamente.");
+    }
+  }
+
   Future<int> criarEvento({
     required SupabaseCadastroEventoModel dadosEvento,
     required String organizadorId,

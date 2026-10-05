@@ -235,4 +235,16 @@ class SupabaseEventoService {
 
     return List<Map<String, dynamic>>.from(response);
   }
+
+  Future<List<Map<String, dynamic>>> fetchEventosFavoritos(String usuarioId, {String? titulo}) async {
+    final response = await _client.rpc(
+      'get_eventos_favoritos',
+      params: {
+        'p_usuario_id': usuarioId,
+        if (titulo != null) 'p_titulo': titulo,
+      },
+    );
+
+    return List<Map<String, dynamic>>.from(response);
+  }
 }

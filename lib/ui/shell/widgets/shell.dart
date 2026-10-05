@@ -2,6 +2,7 @@ import 'package:after_project/config/get_it_config.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/cadastro_evento/widgets/tela_cadastro_evento.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
+import 'package:after_project/ui/eventos_favoritos/widgets/tela_eventos_favoritos.dart';
 import 'package:after_project/ui/home/widgets/tela_home.dart';
 import 'package:after_project/ui/mapa/widgets/tela_mapa.dart';
 import 'package:after_project/ui/meus_eventos/widgets/tela_meus_eventos.dart';
@@ -28,7 +29,7 @@ class _AppShellState extends State<AppShell>{
           final screens = [
             const TelaHome(),
             const TelaMapa(),
-            shellViewmodel.isOrganizador ? TelaMeusEventos() : TelaCadastroEvento(eventoId: 0) //TODO trocar pra TelaFavoritos
+            shellViewmodel.isOrganizador ? TelaMeusEventos() : TelaEventosFavoritos()
             //TelaPerfil
           ];
 
