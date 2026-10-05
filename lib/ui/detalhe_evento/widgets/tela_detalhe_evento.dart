@@ -43,7 +43,7 @@ class _TelaDetalheEventoBody extends StatefulWidget {
   State<StatefulWidget> createState() => _TelaDetalheEventoState();
 }
 
-class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
+class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with WidgetsBindingObserver {
 
   void _handleComunidadeTap() {
   final vm = context.read<DetalheEventoViewmodel>();
@@ -68,6 +68,25 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
         ),
       )
     };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<DetalheEventoViewmodel>().refresh();
+    }
   }
 
   @override
@@ -142,86 +161,57 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 250,
-                  width: double.infinity,
-                  child: evento.imagemCapa != null
-                    ? Image.network(
-                      evento.imagemCapa!,
-                      fit: BoxFit.cover,
-                    )
-                    : Container(
-                      color: Colors.grey.shade800,
-                      child: Icon(Icons.image_not_supported, color: Colors.white54),
-                    ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 15),
-                      AutoScrollText(
-                        evento.titulo,
-                        mode: AutoScrollTextMode.bouncing,
-                        velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                        delayBefore: const Duration(milliseconds: 1500),
-                        pauseBetween: const Duration(milliseconds: 1500),
-                        pauseAtEnd: const Duration(milliseconds: 1500),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
+          child: RefreshIndicator(
+            color: AppColors.textboxIcon,
+            backgroundColor: AppColors.textboxBackground,
+            onRefresh: () => detalheEventoViewmodel.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 250,
+                    width: double.infinity,
+                    child: evento.imagemCapa != null
+                      ? Image.network(
+                        evento.imagemCapa!,
+                        fit: BoxFit.cover,
+                      )
+                      : Container(
+                        color: Colors.grey.shade800,
+                        child: Icon(Icons.image_not_supported, color: Colors.white54),
                       ),
-                      const SizedBox(height: 5),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '•  ${evento.organizadorNome}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  '•  ${evento.endereco}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                if (evento.preco != null) ...[
-                                  const SizedBox(height: 5),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 15),
+                        AutoScrollText(
+                          evento.titulo,
+                          mode: AutoScrollTextMode.bouncing,
+                          velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
+                          delayBefore: const Duration(milliseconds: 1500),
+                          pauseBetween: const Duration(milliseconds: 1500),
+                          pauseAtEnd: const Duration(milliseconds: 1500),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                    '•  ${evento.organizadorNome}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -230,147 +220,130 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                                       color: Colors.white,
                                     ),
                                   ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '•  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '•  ${evento.endereco}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  if (evento.preco != null) ...[
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      '•  Valor: ${moedaFormat.format(evento.preco)}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
-                            ),
-                          ),
-                          AppClassificacao(classificacao: evento.classificacao, size: 50)
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.categoriaEventoBackground,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                width: 1,
-                                strokeAlign: BorderSide.strokeAlignCenter,
-                                color: AppColors.categoriaEventoBorder,
-                              )
-                            ),
-                            child: Text(
-                              evento.categoria.label,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: Colors.white,
                               ),
                             ),
-                          ),
-                          if (detalheEventoViewmodel.usuarioLogado)
-                            GradientButton(
-                              text: 'Entrar na comunidade',
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white,
+                            AppClassificacao(classificacao: evento.classificacao, size: 50)
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.categoriaEventoBackground,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  width: 1,
+                                  strokeAlign: BorderSide.strokeAlignCenter,
+                                  color: AppColors.categoriaEventoBorder,
+                                )
                               ),
-                              loading: false,
-                              borderRadius: 10,
-                              width: 185,
-                              onTap: _handleComunidadeTap,
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.btnPadraoGradA,
-                                  AppColors.btnPadraoGradB,
-                                  AppColors.btnPadraoGradC,
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.transparent
+                              child: Text(
+                                evento.categoria.label,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        height: 215,
-                        child: ClipRRect(
-                          child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(
-                                evento.latitude!,
-                                evento.longitude!
+                            if (detalheEventoViewmodel.usuarioLogado)
+                              GradientButton(
+                                text: 'Entrar na comunidade',
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                                loading: false,
+                                borderRadius: 10,
+                                width: 185,
+                                onTap: _handleComunidadeTap,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.btnPadraoGradA,
+                                    AppColors.btnPadraoGradB,
+                                    AppColors.btnPadraoGradC,
+                                  ],
+                                  stops: [0.0, 0.5, 1.0],
+                                ),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.transparent
+                                ),
                               ),
-                              zoom: 14
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: 215,
+                          child: ClipRRect(
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(
+                                  evento.latitude!,
+                                  evento.longitude!
+                                ),
+                                zoom: 14
+                              ),
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: true,
+                              markers: _buildMarkers(evento),
+                              gestureRecognizers: {
+                                Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                              },
                             ),
-                            myLocationEnabled: true,
-                            myLocationButtonEnabled: true,
-                            markers: _buildMarkers(evento),
-                            gestureRecognizers: {
-                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
-                            },
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      ElevatedButton.icon(
-                        onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
-                        icon: const Icon(Icons.directions),
-                        label: const Text('Traçar rota'),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Progresso do evento',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.white,
+                        const SizedBox(height: 15),
+                        ElevatedButton.icon(
+                          onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
+                          icon: const Icon(Icons.directions),
+                          label: const Text('Traçar rota'),
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      if (evento.status == Status.emAndamento)...[
-                        BarraProgressaoEvento(
-                          dataInicio: evento.dataInicio,
-                          dataFim: evento.dataFim,
-                        ),
-                      ] else
-                        Text(
-                          'O evento não ainda não começou!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                            color: Colors.white,
-                          ),
-                        ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Sobre o evento',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          evento.descricao,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      if (amigos.isNotEmpty)...[
                         const SizedBox(height: 20),
                         Text(
-                          'Amigos confirmados',
+                          'Progresso do evento',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -378,75 +351,127 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        Row(
-                          children: amigos.map((amigo) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: AppAvatar(
-                                size: 35,
-                                imageUrl: amigo.urlFotoPerfil,
-                                letter: amigo.nome[0],
-                                fontSize: 16,
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                      if (detalheEventoViewmodel.usuarioLogado)...[
+                        if (evento.status == Status.emAndamento)...[
+                          BarraProgressaoEvento(
+                            dataInicio: evento.dataInicio,
+                            dataFim: evento.dataFim,
+                          ),
+                        ] else
+                          Text(
+                            'O evento não ainda não começou!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                         const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: AppColors.favoritoBackgroundColor,
-                                borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: IconButton(
-                                onPressed: detalheEventoViewmodel.toggleFavorito,
-                                icon: Icon(
-                                  size: 24,
-                                  detalheEventoViewmodel.favorito ? Icons.favorite : Icons.favorite_outline,
-                                  color: AppColors.favoritoIconColor,
+                        Text(
+                          'Sobre o evento',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            evento.descricao,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        if (amigos.isNotEmpty)...[
+                          const SizedBox(height: 20),
+                          Text(
+                            'Amigos confirmados',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: amigos.map((amigo) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: AppAvatar(
+                                  size: 35,
+                                  imageUrl: amigo.urlFotoPerfil,
+                                  letter: amigo.nome[0],
+                                  fontSize: 16,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                        if (detalheEventoViewmodel.usuarioLogado)...[
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.favoritoBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: IconButton(
+                                  onPressed: detalheEventoViewmodel.toggleFavorito,
+                                  icon: Icon(
+                                    size: 24,
+                                    detalheEventoViewmodel.favorito ? Icons.favorite : Icons.favorite_outline,
+                                    color: AppColors.favoritoIconColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                            GradientButton(
-                              text: detalheEventoViewmodel.presenca ? 'Desmarcar presença' : 'Confirmar presença',
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white,
+                              GradientButton(
+                                text: detalheEventoViewmodel.presenca ? 'Desmarcar presença' : 'Confirmar presença',
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                                loading: false,
+                                borderRadius: 10,
+                                width: 250,
+                                onTap: detalheEventoViewmodel.togglePresenca,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.btnPadraoGradA,
+                                    AppColors.btnPadraoGradB,
+                                    AppColors.btnPadraoGradC,
+                                  ],
+                                  stops: [0.0, 0.5, 1.0],
+                                ),
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.transparent
+                                ),
                               ),
-                              loading: false,
-                              borderRadius: 10,
-                              width: 250,
-                              onTap: detalheEventoViewmodel.togglePresenca,
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.btnPadraoGradA,
-                                  AppColors.btnPadraoGradB,
-                                  AppColors.btnPadraoGradC,
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                              border: Border.all(
-                                width: 1,
-                                color: Colors.transparent
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 25),
                       ],
-                      const SizedBox(height: 25),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

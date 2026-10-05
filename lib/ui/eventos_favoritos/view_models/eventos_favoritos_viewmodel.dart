@@ -25,6 +25,8 @@ class EventosFavoritosViewmodel extends ChangeNotifier {
   List<Evento> _eventos = [];
   List<Evento> get eventos => _eventos;
 
+  String _termo = '';
+
   Future<void> _loadEventos() async {
     _loading = true;
     _mensagemErro = null;
@@ -62,6 +64,7 @@ class EventosFavoritosViewmodel extends ChangeNotifier {
 
   Future<void> pesquisar(String titulo) async {
     final termo = titulo.trimRight();
+    _termo = termo;
 
     if (termo.isEmpty) {
       _eventos = List.from(_eventosOriginais);
@@ -97,5 +100,13 @@ class EventosFavoritosViewmodel extends ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> refresh() async {
+    await Future.wait([
+      _loadEventos(),
+      if (_termo.isNotEmpty)
+        pesquisar(_termo),
+    ]);
   }
 }

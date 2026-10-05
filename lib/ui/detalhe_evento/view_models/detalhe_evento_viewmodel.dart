@@ -159,4 +159,11 @@ class DetalheEventoViewmodel extends ChangeNotifier {
     final organizador = await _userRepository.getOrganizadorAtual();
     return organizador != null && evento?.organizadorId == organizador.id;
   }
+
+  Future<void> refresh() async {
+    await Future.wait([
+      _loadEvento(),
+      _loadUsuarioEvento(),
+    ]);
+  }
 }
