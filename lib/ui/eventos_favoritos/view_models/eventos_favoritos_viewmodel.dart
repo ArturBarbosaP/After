@@ -15,6 +15,9 @@ class EventosFavoritosViewmodel extends ChangeNotifier {
   bool _loading = false;
   bool get isLoading => _loading;
 
+  bool _logado = true;
+  bool get usuarioLogado => _logado;
+
   String? _mensagemErro;
   String? get mensagemErro => _mensagemErro;
 
@@ -32,9 +35,11 @@ class EventosFavoritosViewmodel extends ChangeNotifier {
       if (usuario == null){
         _mensagemErro = 'Você precisa fazer login para ver os eventos favoritados.';
         _loading = false;
+        _logado = false;
         notifyListeners();
         return;
       }
+      _logado = true;
 
       final eventos = await _eventoRepository.getEventosFavoritos(usuario.id);
       _eventos = eventos;

@@ -238,33 +238,6 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      SizedBox(
-                        height: 215,
-                        child: ClipRRect(
-                          child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(
-                                evento.latitude!,
-                                evento.longitude!
-                              ),
-                              zoom: 14
-                            ),
-                            myLocationEnabled: true,
-                            myLocationButtonEnabled: true,
-                            markers: _buildMarkers(evento),
-                            gestureRecognizers: {
-                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      ElevatedButton.icon(
-                        onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
-                        icon: const Icon(Icons.directions),
-                        label: const Text('Traçar rota'),
-                      ),
-                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -290,31 +263,59 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                               ),
                             ),
                           ),
-                          GradientButton(
-                            text: 'Entrar na comunidade',
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.white,
+                          if (detalheEventoViewmodel.usuarioLogado)
+                            GradientButton(
+                              text: 'Entrar na comunidade',
+                              textStyle: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                              loading: false,
+                              borderRadius: 10,
+                              width: 185,
+                              onTap: _handleComunidadeTap,
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.btnPadraoGradA,
+                                  AppColors.btnPadraoGradB,
+                                  AppColors.btnPadraoGradC,
+                                ],
+                                stops: [0.0, 0.5, 1.0],
+                              ),
+                              border: Border.all(
+                                width: 1,
+                                color: Colors.transparent
+                              ),
                             ),
-                            loading: false,
-                            borderRadius: 10,
-                            width: 185,
-                            onTap: _handleComunidadeTap,
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.btnPadraoGradA,
-                                AppColors.btnPadraoGradB,
-                                AppColors.btnPadraoGradC,
-                              ],
-                              stops: [0.0, 0.5, 1.0],
-                            ),
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.transparent
-                            ),
-                          ),
                         ],
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 215,
+                        child: ClipRRect(
+                          child: GoogleMap(
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                evento.latitude!,
+                                evento.longitude!
+                              ),
+                              zoom: 14
+                            ),
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: true,
+                            markers: _buildMarkers(evento),
+                            gestureRecognizers: {
+                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      ElevatedButton.icon(
+                        onPressed: () => abrirRota(evento.latitude!, evento.longitude!),
+                        icon: const Icon(Icons.directions),
+                        label: const Text('Traçar rota'),
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -391,55 +392,57 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> {
                           }).toList(),
                         ),
                       ],
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 40,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: AppColors.favoritoBackgroundColor,
-                              borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: IconButton(
-                              onPressed: detalheEventoViewmodel.toggleFavorito,
-                              icon: Icon(
-                                size: 24,
-                                detalheEventoViewmodel.favorito ? Icons.favorite : Icons.favorite_outline,
-                                color: AppColors.favoritoIconColor,
+                      if (detalheEventoViewmodel.usuarioLogado)...[
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.favoritoBackgroundColor,
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: IconButton(
+                                onPressed: detalheEventoViewmodel.toggleFavorito,
+                                icon: Icon(
+                                  size: 24,
+                                  detalheEventoViewmodel.favorito ? Icons.favorite : Icons.favorite_outline,
+                                  color: AppColors.favoritoIconColor,
+                                ),
                               ),
                             ),
-                          ),
-                          GradientButton(
-                            text: detalheEventoViewmodel.presenca ? 'Desmarcar presença' : 'Confirmar presença',
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                            loading: false,
-                            borderRadius: 10,
-                            width: 250,
-                            onTap: detalheEventoViewmodel.togglePresenca,
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.btnPadraoGradA,
-                                AppColors.btnPadraoGradB,
-                                AppColors.btnPadraoGradC,
-                              ],
-                              stops: [0.0, 0.5, 1.0],
-                            ),
-                            border: Border.all(
+                            GradientButton(
+                              text: detalheEventoViewmodel.presenca ? 'Desmarcar presença' : 'Confirmar presença',
+                              textStyle: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                              loading: false,
+                              borderRadius: 10,
+                              width: 250,
+                              onTap: detalheEventoViewmodel.togglePresenca,
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.btnPadraoGradA,
+                                  AppColors.btnPadraoGradB,
+                                  AppColors.btnPadraoGradC,
+                                ],
+                                stops: [0.0, 0.5, 1.0],
+                              ),
+                              border: Border.all(
                                 width: 1,
                                 color: Colors.transparent
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 25),
                     ],
                   ),
                 ),

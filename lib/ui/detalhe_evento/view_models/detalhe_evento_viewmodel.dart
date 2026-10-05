@@ -36,6 +36,9 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   bool _podeEditar = false;
   bool get podeEditar => _podeEditar;
 
+  bool _logado = false;
+  bool get usuarioLogado => _logado;
+
   Future<void> _loadEvento() async {
     _loading = true;
     _mensagemErro = null;
@@ -69,7 +72,11 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
     try {
       final user = await _userRepository.getUsuarioAtual();
-      if (user == null) return;
+      if (user == null){
+        _logado = false;
+        return;
+      }
+      _logado = true;
 
       final status = await _eventoRepository.getStatusUsuarioEvento(user.id, id);
 

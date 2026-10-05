@@ -74,6 +74,46 @@ class _TelaEventosFavoritosState extends State<_TelaEventosFavoritosBody> {
     final meusEventosViewmodel = context.watch<EventosFavoritosViewmodel>();
     final eventos = meusEventosViewmodel.eventos;
 
+    if (meusEventosViewmodel.isLoading) {
+      return Scaffold(
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.bgTop,
+                  AppColors.bgMid,
+                  AppColors.bgBottom,
+                ],
+                stops: [0.0, 0.519, 1.0],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(child: CircularProgressIndicator(color: Colors.white)),
+                const SizedBox(height: 30),
+                Center(
+                  child: Text(
+                    meusEventosViewmodel.mensagemErro ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
+            )
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppTopBar(
         title: 'Eventos favoritados',
@@ -93,7 +133,20 @@ class _TelaEventosFavoritosState extends State<_TelaEventosFavoritosBody> {
             stops: [0.0, 0.519, 1.0],
           ),
         ),
-        child: SafeArea(
+        child: !meusEventosViewmodel.usuarioLogado ?
+        Center(
+          child: Text(
+            meusEventosViewmodel.mensagemErro ?? '',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        )
+        :
+        SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(

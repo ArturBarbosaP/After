@@ -145,6 +145,7 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 25),
                   ],
                 ),
         ),
