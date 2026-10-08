@@ -1,4 +1,5 @@
 import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/mensagem_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/comunidade/view_models/comunidade_viewmodel.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -16,7 +17,7 @@ class TelaComunidade extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ComunidadeViewmodel(getIt<UserRepository>(), eventoId),
+      create: (_) => ComunidadeViewmodel(getIt<UserRepository>(), getIt<MensagemRepository>(), eventoId),
       child: _TelaComunidadeBody(tituloEvento: tituloEvento),
     );
   }
@@ -69,85 +70,99 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
             stops: [0.0, 0.519, 1.0],
           ),
         ),
-        child: SafeArea(
-          child: viewmodel.isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white))
-              : Column(
-                  children: [
-                    Expanded(
-                      child: viewmodel.mensagens.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'Ninguém falou nada ainda. Seja o primeiro!',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                              itemCount: viewmodel.mensagens.length,
-                              itemBuilder: (context, index) {
-                                final msg = viewmodel.mensagens[index];
-                                final minha = msg.autorId == viewmodel.usuarioAtualId;
-                                return _BalaoMensagem(
-                                  nome: msg.autorNome,
-                                  urlFoto: msg.autorUrlFoto,
-                                  texto: msg.texto,
-                                  minha: minha,
-                                );
-                              },
-                            ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              style: const TextStyle(color: Colors.black, fontSize: 14),
-                              onSubmitted: (_) => _enviar(),
-                              decoration: InputDecoration(
-                                hintText: 'Mensagem',
-                                filled: true,
-                                fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            height: 44,
-                            width: 44,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.btnPadraoGradA,
-                                  AppColors.btnPadraoGradB,
-                                  AppColors.btnPadraoGradC,
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                            ),
-                            child: IconButton(
-                              onPressed: _enviar,
-                              icon: const Icon(Icons.send, color: Colors.white, size: 20),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                  ],
+        child: viewmodel.isLoading ?
+          const Center(child: CircularProgressIndicator(color: Colors.white))
+          :
+          SafeArea(
+            child: !viewmodel.usuarioLogado
+              ? Center(
+                child: Text(
+                viewmodel.mensagemErro ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
                 ),
+              )
+              : Column(
+                children: [
+                  Expanded(
+                    child: viewmodel.mensagens.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'Ninguém falou nada ainda. Seja o primeiro!',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                        )
+                      : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        itemCount: viewmodel.mensagens.length,
+                        itemBuilder: (context, index) {
+                          final msg = viewmodel.mensagens[index];
+                          final minha = msg.autorId == viewmodel.usuarioAtual.id;
+                          return _BalaoMensagem(
+                            nome: msg.autorNome,
+                            urlFoto: msg.autorUrlFoto,
+                            texto: msg.texto,
+                            minha: minha,
+                          );
+                        },
+                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            style: const TextStyle(color: Colors.black, fontSize: 14),
+                            onSubmitted: (_) => _enviar(),
+                            textInputAction: TextInputAction.send,
+                            decoration: InputDecoration(
+                              hintText: 'Mensagem',
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.btnPadraoGradA,
+                                AppColors.btnPadraoGradB,
+                                AppColors.btnPadraoGradC,
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ),
+                          ),
+                          child: IconButton(
+                            onPressed: _enviar,
+                            icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                ],
+              ),
         ),
       ),
     );
