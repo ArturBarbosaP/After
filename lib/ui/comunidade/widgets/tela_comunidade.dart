@@ -34,18 +34,91 @@ class _TelaComunidadeBody extends StatefulWidget {
  
 class _TelaComunidadeState extends State<_TelaComunidadeBody> {
   final _controller = TextEditingController();
- 
+  final _focusNode = FocusNode();
+  final _scrollController = ScrollController();
+  late final ComunidadeViewmodel _viewmodel;
+  int _totalAnterior = 0;
+  int _novasMensagens = 0;
+
+  bool get _estaNoFinal {
+    if (!_scrollController.hasClients) return true;
+    final posicao = _scrollController.position;
+    return posicao.maxScrollExtent - posicao.pixels <= 80;
+  }
+
+  void _onScroll() {
+    if (_novasMensagens > 0 && _estaNoFinal) {
+      setState(() => _novasMensagens = 0);
+    }
+  }
+
+  Future<void> _rolarParaOFinal({bool animado = true}) async {
+    if (!_scrollController.hasClients) return;
+
+    if (animado) {
+      await _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    }
+
+    for (var i = 0; i < 8; i++) {
+      if (!mounted || !_scrollController.hasClients) return;
+
+      final alvo = _scrollController.position.maxScrollExtent;
+      _scrollController.jumpTo(alvo);
+
+      await WidgetsBinding.instance.endOfFrame;
+
+      if (!mounted || !_scrollController.hasClients) return;
+      if ((_scrollController.position.maxScrollExtent - alvo).abs() < 1) break;
+    }
+
+    if (mounted && _novasMensagens > 0) {
+      setState(() => _novasMensagens = 0);
+    }
+  }
+
+  void _onViewmodelChanged() {
+    final total = _viewmodel.mensagens.length;
+    if (total <= _totalAnterior) return;
+
+    final quantidadeNovas = total - _totalAnterior;
+    final primeiraCarga = _totalAnterior == 0;
+    final estavaNoFinal = _estaNoFinal;
+    final foiMinha = _viewmodel.mensagens.last.autorId == _viewmodel.usuarioAtual.id;
+    _totalAnterior = total;
+
+    if (primeiraCarga || foiMinha || estavaNoFinal) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _rolarParaOFinal(animado: !primeiraCarga);
+      });
+    } else {
+      setState(() => _novasMensagens += quantidadeNovas);
+    }
+  }
+
+  void _enviar() {
+    context.read<ComunidadeViewmodel>().enviarMensagem(_controller.text);
+    _controller.clear();
+    _focusNode.requestFocus();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _viewmodel = context.read<ComunidadeViewmodel>();
+    _viewmodel.addListener(_onViewmodelChanged);
+    _scrollController.addListener(_onScroll);
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
- 
-  void _enviar() {
-    context.read<ComunidadeViewmodel>().enviarMensagem(_controller.text);
-    _controller.clear();
-  }
- 
+
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<ComunidadeViewmodel>();
@@ -89,31 +162,57 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
               : Column(
                 children: [
                   Expanded(
-                    child: viewmodel.mensagens.isEmpty
-                      ? const Center(
-                        child: Text(
-                          'Ninguém falou nada ainda. Seja o primeiro!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                            color: Colors.white,
+                    child: Stack(
+                      children: [
+                        viewmodel.mensagens.isEmpty
+                          ? const Center(
+                            child: Text(
+                              'Ninguém falou nada ainda. Seja o primeiro!',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                          : ListView.builder(
+                          controller: _scrollController,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            itemCount: viewmodel.mensagens.length,
+                            itemBuilder: (context, index) {
+                              final msg = viewmodel.mensagens[index];
+                              final minha = msg.autorId == viewmodel.usuarioAtual.id;
+                              return _BalaoMensagem(
+                                nome: msg.autorNome,
+                                urlFoto: msg.autorUrlFoto,
+                                texto: msg.texto,
+                                minha: minha,
+                              );
+                            },
                           ),
-                        ),
-                        )
-                      : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        itemCount: viewmodel.mensagens.length,
-                        itemBuilder: (context, index) {
-                          final msg = viewmodel.mensagens[index];
-                          final minha = msg.autorId == viewmodel.usuarioAtual.id;
-                          return _BalaoMensagem(
-                            nome: msg.autorNome,
-                            urlFoto: msg.autorUrlFoto,
-                            texto: msg.texto,
-                            minha: minha,
-                          );
-                        },
-                      ),
+                        if (_novasMensagens > 0)
+                          Positioned(
+                            right: 20,
+                            bottom: 10,
+                            child: Badge(
+                              label: Text('$_novasMensagens'),
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  color: AppColors.textboxBackground,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppColors.textboxBorder, width: 1)
+                                ),
+                                child: IconButton(
+                                  onPressed: () => _rolarParaOFinal(),
+                                  icon: const Icon(Icons.keyboard_arrow_down_outlined, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
@@ -122,9 +221,10 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
                         Expanded(
                           child: TextField(
                             controller: _controller,
+                            focusNode: _focusNode,
                             style: const TextStyle(color: Colors.black, fontSize: 14),
-                            onSubmitted: (_) => _enviar(),
                             textInputAction: TextInputAction.send,
+                            onEditingComplete: _enviar,
                             decoration: InputDecoration(
                               hintText: 'Mensagem',
                               filled: true,
