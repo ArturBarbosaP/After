@@ -10,8 +10,7 @@ class SupabaseMensagemService {
     final response = await _client
         .from(_nomeTabela)
         .select()
-        .eq('evento_id', eventoId)
-        .order('enviado_em');
+        .eq('evento_id', eventoId);
 
     return List<Map<String, dynamic>>.from(response);
   }
