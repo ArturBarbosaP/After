@@ -5,9 +5,10 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool backIcon;
   final bool actions;
+  final IconData iconActions;
   final VoidCallback? onActionPressed;
 
-  const AppTopBar({super.key, required this.title, this.backIcon = false, this.actions = false, this.onActionPressed});
+  const AppTopBar({super.key, required this.title, this.backIcon = false, this.actions = false, this.iconActions = Icons.edit, this.onActionPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: actions ? [
         IconButton(
-          icon: Icon(Icons.edit, color: Colors.white),
+          icon: Icon(iconActions, color: Colors.white),
           onPressed: onActionPressed,
         )
       ] : null,

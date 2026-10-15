@@ -197,6 +197,10 @@ class SupabaseEventoService {
     return await _client.from(_nomeTabelaEvento).update(dados).eq('id', eventoId);
   }
 
+  Future<void> cancelEvento(int eventoId) async {
+    return await _client.from(_nomeTabelaEvento).update({'status': Status.cancelado.label}).eq('id', eventoId);
+  }
+
   Future<List<Map<String, dynamic>>> fetchMeusEventosOrganizador(String organizadorId) async {
     final response = await _client
         .from(_nomeTabelaEvento)

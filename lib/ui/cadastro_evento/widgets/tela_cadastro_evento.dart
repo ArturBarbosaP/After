@@ -228,6 +228,45 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _camposPreenchidos = true;
   }
 
+  Future<void> _handleAbrirCancelarDialog() async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cancelar evento?'),
+        content: const Text('Deseja cancelar o evento? Ação irreversível!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Não'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Sim'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmou == true && mounted) {
+      _handleCancelarClick();
+    }
+  }
+
+  void _handleCancelarClick() async {
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+
+    final sucesso = await cadastroEventoViewmodel.cancelar();
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Evento cancelado com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
+  }
+
   void limparCampos(){
     _formKey.currentState?.reset();
     _categoria = null;
@@ -290,6 +329,9 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       appBar: AppTopBar(
         title: cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
         backIcon: true,
+        actions: cadastroEventoViewmodel.edicao,
+        iconActions: Icons.block,
+        onActionPressed: _handleAbrirCancelarDialog,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -522,7 +564,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 37),
                       ElevatedButton(
-                        onPressed: cadastroEventoViewmodel.podeEditarDataInicio ?
+                        onPressed: cadastroEventoViewmodel.podeEditarDataFim ?
                           () async {
                             final resultado = await _selecionarDataHora(_dataFim);
                             if (resultado != null) setState(() => _dataFim = resultado);

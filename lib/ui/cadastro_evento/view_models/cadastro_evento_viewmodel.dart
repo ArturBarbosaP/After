@@ -163,4 +163,33 @@ class CadastroEventoViewmodel extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> cancelar () async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      await _eventoRepository.cancelarEvento(eventoId: id);
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on EventoFailure catch (e) {
+      _mensagemErro = e.message;
+      _loading = false;
+      notifyListeners();
+      return false;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao cancelar evento',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }

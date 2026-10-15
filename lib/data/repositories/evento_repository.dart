@@ -344,4 +344,18 @@ class EventoRepository {
       throw EventoFailure("Não foi possível editar o evento. Tente novamente.");
     }
   }
+
+  Future<void> cancelarEvento({ required int eventoId }) async {
+    try {
+      await _eventoService.cancelEvento(eventoId);
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao cancelar evento - Exception',
+        name: 'EventoRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw EventoFailure("Não foi possível cancelar o evento. Tente novamente.");
+    }
+  }
 }
