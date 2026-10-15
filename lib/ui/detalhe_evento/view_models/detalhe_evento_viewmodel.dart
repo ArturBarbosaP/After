@@ -1,5 +1,6 @@
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,19 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
   bool _logado = false;
   bool get usuarioLogado => _logado;
+
+  String get mensagemProgresso {
+    switch (_evento?.statusEfetivo) {
+      case Status.finalizado:
+        return 'O evento já acabou!';
+      case Status.cancelado:
+        return 'O evento foi cancelado!';
+      case Status.agendado:
+        return 'O evento ainda não começou!';
+      default:
+        return '';
+    }
+  }
 
   Future<void> _loadEvento() async {
     _loading = true;

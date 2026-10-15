@@ -351,14 +351,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
                           ),
                         ),
                         const SizedBox(height: 15),
-                        if (evento.status == Status.emAndamento)...[
+                        if (evento.statusEfetivo == Status.emAndamento)...[
                           BarraProgressaoEvento(
                             dataInicio: evento.dataInicio,
                             dataFim: evento.dataFim,
                           ),
                         ] else
                           Text(
-                            'O evento não ainda não começou!',
+                            detalheEventoViewmodel.mensagemProgresso,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
