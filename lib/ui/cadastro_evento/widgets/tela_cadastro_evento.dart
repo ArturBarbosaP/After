@@ -117,7 +117,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       );
       return;
     }
-    if (_dataFim!.isBefore(_dataInicio!)) {
+    if (!_dataFim!.isAfter(_dataInicio!)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('A data de fim deve ser depois do início')),
       );
@@ -508,10 +508,11 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 37),
                       ElevatedButton(
-                        onPressed: () async {
-                          final resultado = await _selecionarDataHora(_dataInicio);
-                          if (resultado != null) setState(() => _dataInicio = resultado);
-                        },
+                        onPressed: cadastroEventoViewmodel.podeEditarDataInicio ?
+                          () async {
+                            final resultado = await _selecionarDataHora(_dataInicio);
+                            if (resultado != null) setState(() => _dataInicio = resultado);
+                          } : null,
                         child: Text(
                           _dataInicio == null ? 'Selecione a data de início' : DateFormat('dd/MM/yyyy HH:mm').format(_dataInicio!),
                           style: TextStyle(
@@ -521,10 +522,11 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 37),
                       ElevatedButton(
-                        onPressed: () async {
-                          final resultado = await _selecionarDataHora(_dataFim);
-                          if (resultado != null) setState(() => _dataFim = resultado);
-                        },
+                        onPressed: cadastroEventoViewmodel.podeEditarDataInicio ?
+                          () async {
+                            final resultado = await _selecionarDataHora(_dataFim);
+                            if (resultado != null) setState(() => _dataFim = resultado);
+                          } : null,
                         child: Text(
                           _dataFim == null ? 'Selecione a data de término' : DateFormat('dd/MM/yyyy HH:mm').format(_dataFim!),
                           style: TextStyle(
@@ -532,6 +534,18 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                           ),
                         ),
                       ),
+                      if (cadastroEventoViewmodel.avisoDatas != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          cadastroEventoViewmodel.avisoDatas!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.white70
+                        ),
+                        ),
+                      ],
                       const SizedBox(height: 37),
                       AppTextField(
                         label: 'Preço (opicional)',

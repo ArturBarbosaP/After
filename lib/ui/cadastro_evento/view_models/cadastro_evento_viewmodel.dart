@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:after_project/data/model/supabase_cadastro_evento_model.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
@@ -32,6 +33,25 @@ class CadastroEventoViewmodel extends ChangeNotifier {
 
   EventoDetalhado? _evento;
   EventoDetalhado? get evento => _evento;
+
+  String? get avisoDatas {
+    if (!edicao) return null;
+    switch (_evento?.statusEfetivo) {
+      case Status.emAndamento:
+        return 'Evento em andamento: só a data de término pode ser alterada.';
+      case Status.finalizado:
+      case Status.cancelado:
+        return 'Eventos finalizados ou cancelados não podem ter as datas alteradas.';
+      default:
+        return null;
+    }
+  }
+
+  bool get podeEditarDataInicio => !edicao || _evento?.statusEfetivo == Status.agendado;
+
+  bool get podeEditarDataFim => !edicao ||
+          _evento?.statusEfetivo == Status.agendado ||
+          _evento?.statusEfetivo == Status.emAndamento;
 
   void limparErro(){
     _mensagemErro = null;
