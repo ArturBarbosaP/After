@@ -9,6 +9,7 @@ import 'package:after_project/ui/meus_eventos/widgets/tela_meus_eventos.dart';
 import 'package:after_project/ui/shell/view_models/shell_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:after_project/ui/perfil/widgets/tela_perfil.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -29,8 +30,8 @@ class _AppShellState extends State<AppShell>{
           final screens = [
             const TelaHome(),
             const TelaMapa(),
-            shellViewmodel.isOrganizador ? TelaMeusEventos() : TelaEventosFavoritos()
-            //TelaPerfil
+            shellViewmodel.isOrganizador ? TelaMeusEventos() : TelaEventosFavoritos(),
+            const TelaPerfil(),
           ];
 
           return Scaffold(
