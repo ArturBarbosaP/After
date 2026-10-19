@@ -13,6 +13,7 @@ import 'package:after_project/ui/home/widgets/eventos_ao_vivo.dart';
 import 'package:after_project/ui/home/widgets/eventos_proximos.dart';
 import 'package:after_project/ui/home/widgets/home_top_bar.dart';
 import 'package:after_project/ui/login/widgets/tela_login.dart';
+import 'package:after_project/ui/perfil/widgets/tela_perfil.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -68,7 +69,11 @@ class _TelaHomeState extends State<_TelaHomeBody> with WidgetsBindingObserver {
   }
 
   void _handlePerfilTap() {
-    //TODO abrir tela de edição de perfil
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => TelaPerfil()
+      ),
+    );
   }
 
   void _handlePesquisarTap(){
