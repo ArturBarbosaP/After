@@ -33,7 +33,7 @@ class _TelaMapaBody extends StatefulWidget {
   State<StatefulWidget> createState() => _TelaMapaState();
 }
 
-class _TelaMapaState extends State<_TelaMapaBody> {
+class _TelaMapaState extends State<_TelaMapaBody> with WidgetsBindingObserver {
   final _searchController = TextEditingController();
   GoogleMapController? _mapController;
 
@@ -92,6 +92,25 @@ class _TelaMapaState extends State<_TelaMapaBody> {
   void _handleEventoProximoTap(int eventoId) => _abrirDetalhesEvento(eventoId);
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<MapaViewmodel>().refresh();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mapaViewmodel = context.watch<MapaViewmodel>();
     final eventoPerto = mapaViewmodel.eventoMaisProximo;
@@ -116,113 +135,119 @@ class _TelaMapaState extends State<_TelaMapaBody> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 25), //espaçamento
-                AppSearchField(
-                  onPesquisarTap: _handlePesquisarTap,
-                  controller: _searchController,
-                ),
-                const SizedBox(height: 45),
-                if (mapaViewmodel.position != null)...[
-                  SizedBox(
-                    height: 432,
-                    child: ClipRRect(
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                            mapaViewmodel.position!.latitude,
-                            mapaViewmodel.position!.longitude
+          child: RefreshIndicator(
+            color: AppColors.textboxIcon,
+            backgroundColor: AppColors.textboxBackground,
+            onRefresh: () => mapaViewmodel.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 25), //espaçamento
+                  AppSearchField(
+                    onPesquisarTap: _handlePesquisarTap,
+                    controller: _searchController,
+                  ),
+                  const SizedBox(height: 45),
+                  if (mapaViewmodel.position != null)...[
+                    SizedBox(
+                      height: 432,
+                      child: ClipRRect(
+                        child: GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              mapaViewmodel.position!.latitude,
+                              mapaViewmodel.position!.longitude
+                            ),
+                            zoom: 14
                           ),
-                          zoom: 14
+                          myLocationEnabled: true,
+                          myLocationButtonEnabled: true,
+                          markers: _buildMarkers(mapaViewmodel.eventosAoVivo),
+                          onMapCreated: (controller) => _mapController = controller,
+                          gestureRecognizers: {
+                            Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
+                          },
                         ),
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: true,
-                        markers: _buildMarkers(mapaViewmodel.eventosAoVivo),
-                        onMapCreated: (controller) => _mapController = controller,
-                        gestureRecognizers: {
-                          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
-                        },
                       ),
                     ),
-                  ),
-                ]
-                else...[
-                  Container(
-                    height: 432,
-                    color: Colors.white,
-                    child: Center(
-                      child: Text(
-                        'Ative a localização para ver o mapa',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )
-                  ),
-                ],
-                const SizedBox(height: 30),
-                if (eventoPerto != null) ...[
-                  Text(
-                    'Evento mais próximo',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                  ]
+                  else...[
+                    Container(
+                      height: 432,
                       color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  GestureDetector(
-                    onTap: () => _handleEventoProximoTap(eventoPerto.id),
-                    child: Container(
-                      height: 64,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColors.eventoProximoGradA, AppColors.eventoProximoGradB],
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.eventoProximoBorder, width: 1),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${eventoPerto.titulo} • ${formatarDistancia(eventoPerto.distancia!)}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'Ative a localização para ver o mapa',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: Colors.black,
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            eventoPerto.endereco,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 10,
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
+                        ),
+                      )
+                    ),
+                  ],
+                  const SizedBox(height: 30),
+                  if (eventoPerto != null) ...[
+                    Text(
+                      'Evento mais próximo',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 5),
+                    GestureDetector(
+                      onTap: () => _handleEventoProximoTap(eventoPerto.id),
+                      child: Container(
+                        height: 64,
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.eventoProximoGradA, AppColors.eventoProximoGradB],
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.eventoProximoBorder, width: 1),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${eventoPerto.titulo} • ${formatarDistancia(eventoPerto.distancia!)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              eventoPerto.endereco,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10,
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

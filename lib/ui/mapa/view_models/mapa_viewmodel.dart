@@ -86,4 +86,11 @@ class MapaViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> refresh() async {
+    await Future.wait([
+      _loadEventoMaisProximo(),
+      _carregarEventosAoVivo(),
+    ]);
+  }
 }

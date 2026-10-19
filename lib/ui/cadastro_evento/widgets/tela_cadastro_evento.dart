@@ -117,7 +117,7 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       );
       return;
     }
-    if (_dataFim!.isBefore(_dataInicio!)) {
+    if (!_dataFim!.isAfter(_dataInicio!)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('A data de fim deve ser depois do início')),
       );
@@ -228,6 +228,45 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
     _camposPreenchidos = true;
   }
 
+  Future<void> _handleAbrirCancelarDialog() async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cancelar evento?'),
+        content: const Text('Deseja cancelar o evento? Ação irreversível!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Não'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Sim'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmou == true && mounted) {
+      _handleCancelarClick();
+    }
+  }
+
+  void _handleCancelarClick() async {
+    final cadastroEventoViewmodel = context.read<CadastroEventoViewmodel>();
+
+    final sucesso = await cadastroEventoViewmodel.cancelar();
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Evento cancelado com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
+  }
+
   void limparCampos(){
     _formKey.currentState?.reset();
     _categoria = null;
@@ -290,6 +329,9 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
       appBar: AppTopBar(
         title: cadastroEventoViewmodel.edicao ? 'Edição de evento' : 'Cadastro de evento',
         backIcon: true,
+        actions: cadastroEventoViewmodel.edicao,
+        iconActions: Icons.block,
+        onActionPressed: _handleAbrirCancelarDialog,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -508,10 +550,11 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 37),
                       ElevatedButton(
-                        onPressed: () async {
-                          final resultado = await _selecionarDataHora(_dataInicio);
-                          if (resultado != null) setState(() => _dataInicio = resultado);
-                        },
+                        onPressed: cadastroEventoViewmodel.podeEditarDataInicio ?
+                          () async {
+                            final resultado = await _selecionarDataHora(_dataInicio);
+                            if (resultado != null) setState(() => _dataInicio = resultado);
+                          } : null,
                         child: Text(
                           _dataInicio == null ? 'Selecione a data de início' : DateFormat('dd/MM/yyyy HH:mm').format(_dataInicio!),
                           style: TextStyle(
@@ -521,10 +564,11 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                       ),
                       const SizedBox(height: 37),
                       ElevatedButton(
-                        onPressed: () async {
-                          final resultado = await _selecionarDataHora(_dataFim);
-                          if (resultado != null) setState(() => _dataFim = resultado);
-                        },
+                        onPressed: cadastroEventoViewmodel.podeEditarDataFim ?
+                          () async {
+                            final resultado = await _selecionarDataHora(_dataFim);
+                            if (resultado != null) setState(() => _dataFim = resultado);
+                          } : null,
                         child: Text(
                           _dataFim == null ? 'Selecione a data de término' : DateFormat('dd/MM/yyyy HH:mm').format(_dataFim!),
                           style: TextStyle(
@@ -532,6 +576,18 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
                           ),
                         ),
                       ),
+                      if (cadastroEventoViewmodel.avisoDatas != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          cadastroEventoViewmodel.avisoDatas!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 13,
+                            color: Colors.white70
+                        ),
+                        ),
+                      ],
                       const SizedBox(height: 37),
                       AppTextField(
                         label: 'Preço (opicional)',

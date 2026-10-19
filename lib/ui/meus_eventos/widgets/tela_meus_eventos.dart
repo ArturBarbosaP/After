@@ -30,7 +30,7 @@ class _TelaMeusEventosBody extends StatefulWidget {
   State<StatefulWidget> createState() => _TelaMeusEventosState();
 }
 
-class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
+class _TelaMeusEventosState extends State<_TelaMeusEventosBody> with WidgetsBindingObserver {
   final _searchController = TextEditingController();
   Timer? _debounce;
 
@@ -59,6 +59,7 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -66,13 +67,61 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
     _debounce?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<MeusEventosViewmodel>().refresh();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final meusEventosViewmodel = context.watch<MeusEventosViewmodel>();
     final eventos = meusEventosViewmodel.eventos;
+
+    if (meusEventosViewmodel.isLoading) {
+      return Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.bgTop,
+                AppColors.bgMid,
+                AppColors.bgBottom,
+              ],
+              stops: [0.0, 0.519, 1.0],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: CircularProgressIndicator(color: Colors.white)),
+              const SizedBox(height: 30),
+              Center(
+                child: Text(
+                  meusEventosViewmodel.mensagemErro ?? '',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+          )
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppTopBar(
@@ -94,36 +143,41 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 25),
-                AppSearchField(
-                  onPesquisarTap: _handlePesquisarTap,
-                  controller: _searchController,
-                ),
-                const SizedBox(height: 45),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  itemCount: eventos.length,
-                  separatorBuilder: (_,_) => const SizedBox(height: 15),
-                  itemBuilder: (context, index) {
-                    final data = eventos[index];
-                    return GestureDetector(
-                      onTap: () => _handleEventoTap(data.id),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: AppColors.cardEventProximosBackground,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.cardEventProximosBorder, width: 1),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+          child: RefreshIndicator(
+            color: AppColors.textboxIcon,
+            backgroundColor: AppColors.textboxBackground,
+            onRefresh: () => meusEventosViewmodel.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 25),
+                  AppSearchField(
+                    onPesquisarTap: _handlePesquisarTap,
+                    controller: _searchController,
+                  ),
+                  const SizedBox(height: 45),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: eventos.length,
+                    separatorBuilder: (_,_) => const SizedBox(height: 15),
+                    itemBuilder: (context, index) {
+                      final data = eventos[index];
+                      return GestureDetector(
+                        onTap: () => _handleEventoTap(data.id),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardEventProximosBackground,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.cardEventProximosBorder, width: 1),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 data.titulo,
@@ -159,12 +213,13 @@ class _TelaMeusEventosState extends State<_TelaMeusEventosBody> {
                               ),
                             ],
                           ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 35),
-              ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                ],
+              ),
             ),
           ),
         ),

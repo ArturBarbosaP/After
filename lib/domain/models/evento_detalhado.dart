@@ -24,6 +24,15 @@ class EventoDetalhado {
   final String? organizadorBio;
   final double? distancia;
 
+  Status get statusEfetivo {
+    if (status == Status.cancelado || status == Status.finalizado) return status;
+
+    final agora = DateTime.now();
+    if (!agora.isBefore(dataFim)) return Status.finalizado;
+    if (!agora.isBefore(dataInicio)) return Status.emAndamento;
+    return Status.agendado;
+  }
+
   EventoDetalhado({
     required this.id,
     required this.dataInicio,

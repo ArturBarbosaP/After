@@ -1,5 +1,5 @@
 class MensagemComunidade {
-  final int id;
+  final String id;
   final String autorId;
   final String autorNome;
   final String? autorUrlFoto;

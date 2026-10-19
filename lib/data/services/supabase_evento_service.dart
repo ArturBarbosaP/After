@@ -197,6 +197,10 @@ class SupabaseEventoService {
     return await _client.from(_nomeTabelaEvento).update(dados).eq('id', eventoId);
   }
 
+  Future<void> cancelEvento(int eventoId) async {
+    return await _client.from(_nomeTabelaEvento).update({'status': Status.cancelado.label}).eq('id', eventoId);
+  }
+
   Future<List<Map<String, dynamic>>> fetchMeusEventosOrganizador(String organizadorId) async {
     final response = await _client
         .from(_nomeTabelaEvento)
@@ -232,6 +236,18 @@ class SupabaseEventoService {
         .from(_nomeTabelaMapa)
         .select()
         .eq('status', 'Em andamento');
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEventosFavoritos(String usuarioId, {String? titulo}) async {
+    final response = await _client.rpc(
+      'get_eventos_favoritos',
+      params: {
+        'p_usuario_id': usuarioId,
+        if (titulo != null) 'p_titulo': titulo,
+      },
+    );
 
     return List<Map<String, dynamic>>.from(response);
   }

@@ -1,5 +1,6 @@
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/domain/enums/status_enum.dart';
 import 'package:after_project/domain/models/evento_detalhado.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,22 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   bool _podeEditar = false;
   bool get podeEditar => _podeEditar;
 
+  bool _logado = false;
+  bool get usuarioLogado => _logado;
+
+  String get mensagemProgresso {
+    switch (_evento?.statusEfetivo) {
+      case Status.finalizado:
+        return 'O evento já acabou!';
+      case Status.cancelado:
+        return 'O evento foi cancelado!';
+      case Status.agendado:
+        return 'O evento ainda não começou!';
+      default:
+        return '';
+    }
+  }
+
   Future<void> _loadEvento() async {
     _loading = true;
     _mensagemErro = null;
@@ -69,7 +86,11 @@ class DetalheEventoViewmodel extends ChangeNotifier {
 
     try {
       final user = await _userRepository.getUsuarioAtual();
-      if (user == null) return;
+      if (user == null){
+        _logado = false;
+        return;
+      }
+      _logado = true;
 
       final status = await _eventoRepository.getStatusUsuarioEvento(user.id, id);
 
@@ -151,5 +172,12 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   Future<bool> getPodeEditar() async {
     final organizador = await _userRepository.getOrganizadorAtual();
     return organizador != null && evento?.organizadorId == organizador.id;
+  }
+
+  Future<void> refresh() async {
+    await Future.wait([
+      _loadEvento(),
+      _loadUsuarioEvento(),
+    ]);
   }
 }

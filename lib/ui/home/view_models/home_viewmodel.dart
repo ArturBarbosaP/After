@@ -159,6 +159,17 @@ class HomeViewmodel extends ChangeNotifier {
     }
   }
 
+  Future<void> refresh() async {
+    await Future.wait([
+      _loadUsuario(),
+      _loadEventoDestaque(),
+      _loadEventosAoVivo(),
+      _loadProximosEventos(),
+      if (_termo.isNotEmpty)
+        pesquisar(_termo),
+    ]);
+  }
+
   void filtrarCategoria(Categoria? categoria) async {
     _categoriaSelecionadaFiltro = categoria;
     if (_termo.isEmpty) {
