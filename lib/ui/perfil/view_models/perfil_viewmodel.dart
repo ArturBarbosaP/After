@@ -44,4 +44,8 @@ class PerfilViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> refresh() async {
+    await _load();
+  }
 }
