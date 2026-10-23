@@ -18,4 +18,16 @@ class SupabaseStorageService {
 
     return _client.storage.from(_storageName).getPublicUrl(path);
   }
+
+  Future<String> uploadFotoPerfil({required String usuarioId, required Uint8List bytes}) async {
+    final path = 'fotosPerfil/$usuarioId';
+
+    await _client.storage.from(_storageName).uploadBinary(
+      path,
+      bytes,
+      fileOptions: const FileOptions(upsert: true)
+    );
+
+    return _client.storage.from(_storageName).getPublicUrl(path);
+  }
 }

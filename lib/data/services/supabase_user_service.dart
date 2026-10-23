@@ -24,4 +24,19 @@ class SupabaseUserService {
         .eq('id', id)
         .maybeSingle();
   }
+
+  Future<void> updateImagemPerfil(String id, String url) async {
+    return await _client
+        .from(_nomeTabela)
+        .update({'foto_perfil': url})
+        .eq('id', id);
+  }
+
+  Future<void> updateUsuario(String id, Map<String, dynamic> dados) async {
+    return await _client.from(_nomeTabela).update(dados).eq('id', id);
+  }
+
+  Future<void> updateOrganizador(String id, String site) async {
+    return await _client.from(_nomeTabelaOrganizador).update({'site': site}).eq('id', id);
+  }
 }

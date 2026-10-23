@@ -51,7 +51,7 @@ void setUpGetIt(){
   );
   
   getIt.registerLazySingleton<UserRepository>(
-      () => UserRepository(getIt<SupabaseUserService>())
+      () => UserRepository(getIt<SupabaseUserService>(), getIt<SupabaseStorageService>())
   );
   
   getIt.registerLazySingleton<EventoRepository>(

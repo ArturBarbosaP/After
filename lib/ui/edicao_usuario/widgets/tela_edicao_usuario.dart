@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/model/supabase_edicao_usuario_model.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/data/services/image_service.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
@@ -37,18 +38,81 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
   final _siteController = TextEditingController();
 
   Uint8List? _imagemSelecionada;
+  String? _imagemUsuario;
 
-  void _handleEdicaoClick() {
+  bool _camposPreenchidos = false;
 
+  Future<void> _handleEdicaoClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final edicaoUsuarioViewmodel = context.read<EdicaoUsuarioViewmodel>();
+
+    if (edicaoUsuarioViewmodel.isOrganizador && _siteController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha o site!')),
+      );
+      return;
+    }
+
+    final sucesso = await edicaoUsuarioViewmodel.editar(
+      SupabaseEdicaoUsuarioModel(
+       nome: _nomeController.text,
+       bio: _bioController.text,
+       site: _siteController.text,
+        fotoPerfil: _imagemUsuario
+      ),
+      _imagemSelecionada
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Perfil salvo com sucesso!"))
+      );
+      Navigator.pop(context);
+      _limparCampos();
+    }
+  }
+
+  void _carregarUsuario() {
+    if (_camposPreenchidos) return;
+
+    final edicaoUsuarioViewmodel = context.read<EdicaoUsuarioViewmodel>();
+    final usuario = edicaoUsuarioViewmodel.usuario!;
+
+    _nomeController.text = usuario.nome;
+    if (usuario.bio != null){
+      _bioController.text = usuario.bio!;
+    }
+
+    if (usuario.site != null){
+      _siteController.text = usuario.site!;
+    }
+
+    _imagemUsuario = usuario.urlFotoPerfil;
+
+    _camposPreenchidos = true;
+  }
+
+  void _limparCampos(){
+    _formKey.currentState?.reset();
+    _imagemSelecionada = null;
+    _imagemUsuario = null;
+    context.read<EdicaoUsuarioViewmodel>().limparErro();
+  }
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _bioController.dispose();
+    _siteController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final edicaoUsuarioViewmodel = context.watch<EdicaoUsuarioViewmodel>();
-    final usuario = edicaoUsuarioViewmodel.usuario;
-    final imagemUsuario = usuario?.urlFotoPerfil;
 
-    if (edicaoUsuarioViewmodel.isLoading || usuario == null){
+    if (edicaoUsuarioViewmodel.screenLoading) {
       return Scaffold(
         body: Container(
           width: double.infinity,
@@ -83,6 +147,10 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
           )
         ),
       );
+    }
+
+    if (edicaoUsuarioViewmodel.usuario != null){
+      _carregarUsuario();
     }
 
     return Scaffold(
@@ -161,7 +229,7 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
                                 image: _imagemSelecionada != null
                                   ? MemoryImage(_imagemSelecionada!)
                                   : NetworkImage(
-                                  imagemUsuario != null && imagemUsuario.isNotEmpty ? imagemUsuario : '',
+                                  _imagemUsuario != null && _imagemUsuario!.isNotEmpty ? _imagemUsuario! : '',
                                 )
                               ),
                               borderRadius: BorderRadius.circular(55),
@@ -171,7 +239,7 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  if (imagemUsuario == null && _imagemSelecionada == null)...[
+                                  if (_imagemUsuario == null && _imagemSelecionada == null)...[
                                     Text(
                                       'Selecione uma \nfoto de perfil',
                                       textAlign: TextAlign.center,
@@ -208,11 +276,20 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
                         AppTextField(
                           label: 'Site',
                           controller: _siteController,
-                          validator: (value) => Validators.required(value, campo: 'Site'),
                           tipoInput: TextInputType.text,
                         ),
                         const SizedBox(height: 37),
                       ],
+                      const SizedBox(height: 10),
+                      Text(
+                        edicaoUsuarioViewmodel.mensagemErro != null ? edicaoUsuarioViewmodel.mensagemErro! : "",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13,
+                          color: Colors.red
+                        ),
+                      ),
                       GradientButton(
                         text: 'Salvar perfil',
                         height: 40,

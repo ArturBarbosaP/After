@@ -3,6 +3,7 @@ class UserProfile {
   final String nome;
   final String? urlFotoPerfil;
   final String? bio;
+  String? site;
 
-  UserProfile({required this.id, required this.nome, this.urlFotoPerfil, this.bio});
+  UserProfile({required this.id, required this.nome, this.urlFotoPerfil, this.bio, this.site});
 }
