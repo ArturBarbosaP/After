@@ -4,6 +4,7 @@ import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/ui/edicao_usuario/widgets/tela_edicao_usuario.dart';
 import 'package:after_project/ui/perfil/view_models/perfil_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,12 +20,22 @@ class TelaPerfil extends StatelessWidget {
     );
   }
 }
- 
-class _TelaPerfilBody extends StatelessWidget {
+
+class _TelaPerfilBody extends StatefulWidget {
   const _TelaPerfilBody();
+
+  @override
+  State<StatefulWidget> createState() => _TelaPerfilState();
+}
+
+class _TelaPerfilState extends State<_TelaPerfilBody> {
  
   void _handleEditarPerfil() {
-    // TODO abrir tela de edição do perfil
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+          builder: (context) => TelaEdicaoUsuario()
+      ),
+    );
   }
  
   @override
