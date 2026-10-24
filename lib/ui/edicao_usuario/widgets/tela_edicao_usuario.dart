@@ -280,7 +280,6 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
                         ),
                         const SizedBox(height: 37),
                       ],
-                      const SizedBox(height: 10),
                       Text(
                         edicaoUsuarioViewmodel.mensagemErro != null ? edicaoUsuarioViewmodel.mensagemErro! : "",
                         textAlign: TextAlign.center,
@@ -290,6 +289,7 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
                           color: Colors.red
                         ),
                       ),
+                      const SizedBox(height: 10),
                       GradientButton(
                         text: 'Salvar perfil',
                         height: 40,

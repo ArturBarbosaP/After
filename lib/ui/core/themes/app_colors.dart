@@ -31,6 +31,7 @@ class AppColors {
   static const Color categoriaEventoBorder = Color(0xFFDE09BE);
   static const Color favoritoIconColor = Color(0xFF740C0E);
   static const Color favoritoBackgroundColor = Color(0xFFD228CC);
+  static const Color organizadorNaoVerificadoBackgroundColor = Color(0xFFF75151);
 
   //gradients
   //bem vindo - login e cadastro

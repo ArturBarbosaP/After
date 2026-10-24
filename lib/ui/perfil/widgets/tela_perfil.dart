@@ -6,6 +6,8 @@ import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/edicao_usuario/widgets/tela_edicao_usuario.dart';
 import 'package:after_project/ui/perfil/view_models/perfil_viewmodel.dart';
+import 'package:after_project/ui/verificacao/widgets/tela_verificacao.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
  
@@ -33,7 +35,15 @@ class _TelaPerfilState extends State<_TelaPerfilBody> {
   void _handleEditarPerfil() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-          builder: (context) => TelaEdicaoUsuario()
+        builder: (context) => TelaEdicaoUsuario()
+      ),
+    );
+  }
+
+  void _handleVerificarOrganizador() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => TelaVerificacao()
       ),
     );
   }
@@ -111,72 +121,107 @@ class _TelaPerfilState extends State<_TelaPerfilBody> {
             onRefresh: () => viewmodel.refresh(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-                    AppAvatar(
-                      size: 110,
-                      imageUrl: usuario.urlFotoPerfil,
-                      letter: usuario.nome.isEmpty ? '?' : usuario.nome[0],
-                      fontSize: 48,
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      usuario.nome,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                    if (usuario.bio != null && usuario.bio!.isNotEmpty)...[
-                      const SizedBox(height: 15),
+                    if (!viewmodel.verificado)...[
                       Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          usuario.bio!,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: Colors.black,
+                        height: 18,
+                        alignment: Alignment.center,
+                        color: AppColors.organizadorNaoVerificadoBackgroundColor,
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(text: 'Organizador não verificado! Faça sua verificação '),
+                              TextSpan(
+                                text: 'clicando aqui!',
+                                recognizer: TapGestureRecognizer()..onTap = () => _handleVerificarOrganizador(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFF8B0D0D),
+                                )
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
-                    const SizedBox(height: 20),
-                    GradientButton(
-                      text: 'Editar perfil',
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                      loading: false,
-                      borderRadius: 10,
-                      width: 185,
-                      onTap: _handleEditarPerfil,
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.btnPadraoGradA,
-                          AppColors.btnPadraoGradB,
-                          AppColors.btnPadraoGradC,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 40),
+                          AppAvatar(
+                            size: 110,
+                            imageUrl: usuario.urlFotoPerfil,
+                            letter: usuario.nome.isEmpty ? '?' : usuario.nome[0],
+                            fontSize: 48,
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            usuario.nome,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          if (usuario.bio != null && usuario.bio!.isNotEmpty)...[
+                            const SizedBox(height: 15),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                usuario.bio!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                          GradientButton(
+                            text: 'Editar perfil',
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                            loading: false,
+                            borderRadius: 10,
+                            width: 185,
+                            onTap: _handleEditarPerfil,
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.btnPadraoGradA,
+                                AppColors.btnPadraoGradB,
+                                AppColors.btnPadraoGradC,
+                              ],
+                              stops: [0.0, 0.5, 1.0],
+                            ),
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          const SizedBox(height: 30),
                         ],
-                        stops: [0.0, 0.5, 1.0],
-                      ),
-                      border: Border.all(
-                        width: 1,
-                        color: Colors.transparent,
                       ),
                     ),
-                    const SizedBox(height: 30),
                   ],
                 ),
               ),
