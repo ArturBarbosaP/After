@@ -117,6 +117,7 @@ class UserRepository {
           return (ok: false, mensagem: empresa.erro);
         }
 
+        await _userService.verificarUsuario(id);
         mensagem = null;
         ok = true;
       }
