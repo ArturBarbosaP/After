@@ -32,9 +32,7 @@ class PerfilViewmodel extends ChangeNotifier {
       if (_usuario == null) {
         _mensagemErro = 'Faça login para ver o seu perfil.';
       }
-
-      final organizador = await _userRepository.getOrganizadorAtual();
-      _verificado = (organizador == null) || (organizador.verificado);
+      _verificado = _usuario!.verificado;
     } on UserFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {

@@ -82,6 +82,7 @@ class EventoRepository {
         id: json['usuario_id'] as String,
         nome: json['nome'] as String,
         urlFotoPerfil: json['foto_perfil'] as String?,
+        verificado: json['verificado'] as bool
       )).toList();
     } catch (ex, stackTrace) {
       developer.log(

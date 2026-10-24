@@ -39,6 +39,7 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
 
   Uint8List? _imagemSelecionada;
   String? _imagemUsuario;
+  bool _verificado = false;
 
   bool _camposPreenchidos = false;
 
@@ -56,9 +57,10 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
 
     final sucesso = await edicaoUsuarioViewmodel.editar(
       SupabaseEdicaoUsuarioModel(
-       nome: _nomeController.text,
-       bio: _bioController.text,
-       site: _siteController.text,
+        nome: _nomeController.text,
+        bio: _bioController.text,
+        site: _siteController.text,
+        verificado: _verificado,
         fotoPerfil: _imagemUsuario
       ),
       _imagemSelecionada
@@ -89,6 +91,7 @@ class _TelaEdicaoUsuarioState extends State<_TelaEdicaoUsuarioBody> {
     }
 
     _imagemUsuario = usuario.urlFotoPerfil;
+    _verificado = usuario.verificado;
 
     _camposPreenchidos = true;
   }

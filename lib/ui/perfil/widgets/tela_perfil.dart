@@ -139,7 +139,7 @@ class _TelaPerfilState extends State<_TelaPerfilBody> {
                               color: Colors.white,
                             ),
                             children: [
-                              TextSpan(text: 'Organizador não verificado! Faça sua verificação '),
+                              TextSpan(text: 'Você não está verificado! Faça sua verificação '),
                               TextSpan(
                                 text: 'clicando aqui!',
                                 recognizer: TapGestureRecognizer()..onTap = () => _handleVerificarOrganizador(),

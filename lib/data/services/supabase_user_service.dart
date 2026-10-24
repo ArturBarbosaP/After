@@ -12,7 +12,7 @@ class SupabaseUserService {
   Future<Map<String, dynamic>?> fetchUsuario(String id) async {
     return await _client
         .from(_nomeTabela)
-        .select('id, nome, foto_perfil, bio')
+        .select('id, nome, foto_perfil, bio, verificado')
         .eq('id', id)
         .maybeSingle();
   }

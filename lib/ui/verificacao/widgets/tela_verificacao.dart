@@ -1,3 +1,5 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/user_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
@@ -12,7 +14,7 @@ class TelaVerificacao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => VerificacaoViewmodel(),
+      create: (_) => VerificacaoViewmodel(getIt<UserRepository>()),
       child: const _TelaVerificacaoBody(),
     );
   }
@@ -91,25 +93,28 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
                     ),
                   ),
                   const SizedBox(height: 37),
-                  AppTextField(
-                    label: 'CNPJ',
-                    controller: _cnpjController,
-                    tipoInput: TextInputType.text,
-                  ),
-                  const SizedBox(height: 37),
-                  AppTextField(
-                    label: 'CPF',
-                    controller: _cpfController,
-                    tipoInput: TextInputType.text,
-                  ),
+                  if (verificacaoViewmodel.isOrganizador)...[
+                    AppTextField(
+                      label: 'CNPJ',
+                      controller: _cnpjController,
+                      tipoInput: TextInputType.text,
+                    ),
+                  ]
+                  else ...[
+                    AppTextField(
+                      label: 'CPF',
+                      controller: _cpfController,
+                      tipoInput: TextInputType.text,
+                    ),
+                  ],
                   const SizedBox(height: 37),
                   Text(
                     verificacaoViewmodel.mensagemErro != null ? verificacaoViewmodel.mensagemErro! : "",
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        color: Colors.red
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13,
+                      color: Colors.red
                     ),
                   ),
                   const SizedBox(height: 10),
