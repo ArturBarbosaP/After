@@ -47,6 +47,14 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
 
   void _handleComunidadeTap() {
   final vm = context.read<DetalheEventoViewmodel>();
+
+  if (!vm.verificado){
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Verifique sua conta para entrar na comunidade do evento!')),
+    );
+    return;
+  }
+
   final evento = vm.evento;
   if (evento == null) return;
 

@@ -40,6 +40,9 @@ class DetalheEventoViewmodel extends ChangeNotifier {
   bool _logado = false;
   bool get usuarioLogado => _logado;
 
+  bool _verificado = false;
+  bool get verificado => _verificado;
+
   String get mensagemProgresso {
     switch (_evento?.statusEfetivo) {
       case Status.finalizado:
@@ -91,6 +94,7 @@ class DetalheEventoViewmodel extends ChangeNotifier {
         return;
       }
       _logado = true;
+      _verificado = user.verificado;
 
       final status = await _eventoRepository.getStatusUsuarioEvento(user.id, id);
 
