@@ -5,6 +5,7 @@ import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/verificacao/view_models/verificacao_viewmodel.dart';
+import 'package:after_project/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -96,6 +97,7 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
                   if (verificacaoViewmodel.isOrganizador)...[
                     AppTextField(
                       label: 'CNPJ',
+                      validator: (value) => Validators.cnpj(value),
                       controller: _cnpjController,
                       tipoInput: TextInputType.text,
                     ),
@@ -103,6 +105,7 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
                   else ...[
                     AppTextField(
                       label: 'CPF',
+                      validator: (value) => Validators.cpf(value),
                       controller: _cpfController,
                       tipoInput: TextInputType.text,
                     ),

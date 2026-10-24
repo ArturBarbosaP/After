@@ -45,6 +45,7 @@ dependencies:
   google_maps_flutter: ^2.18.1
   url_launcher: ^6.3.3
   auto_scroll_text: ^1.0.0
+  cpf_cnpj_validator: ^2.0.0
 
 dev_dependencies:
   flutter_test:
