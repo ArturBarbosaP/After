@@ -75,7 +75,7 @@ class Validators {
       return obrigatorio;
     }
 
-    if (CNPJValidator.isValid(value)){
+    if (!CNPJValidator.isValid(value)){
       return "O CNPJ digitado é inválido!";
     }
     return null;
@@ -87,7 +87,7 @@ class Validators {
       return obrigatorio;
     }
 
-    if (CPFValidator.isValid(value)){
+    if (!CPFValidator.isValid(value)){
       return "O CPF digitado é inválido!";
     }
     return null;

@@ -41,4 +41,48 @@ class VerificacaoViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> verificar(String documento, DateTime? dataNascimento) async {
+    _loading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try {
+      final usuario = await _userRepository.getUsuarioAtual();
+      final id = usuario!.id;
+
+      final response = await _userRepository.verificar(
+        id: id,
+        isOrganizador: _isOrganizador,
+        documento: documento,
+        dataNascimento: dataNascimento!
+      );
+
+      _mensagemErro = response.mensagem;
+      _loading = false;
+      notifyListeners();
+      return response.ok;
+    } on UserFailure catch (e) {
+      _mensagemErro = e.message;
+      _loading = false;
+      notifyListeners();
+      return false;
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      _loading = false;
+      notifyListeners();
+      developer.log(
+        'Falha ao verificar usuário',
+        name: 'VerificacaoViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+      return false;
+    }
+  }
+
+  void limparErro(){
+    _mensagemErro = null;
+    notifyListeners();
+  }
 }

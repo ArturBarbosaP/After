@@ -7,6 +7,7 @@ import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/verificacao/view_models/verificacao_viewmodel.dart';
 import 'package:after_project/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TelaVerificacao extends StatelessWidget {
@@ -33,10 +34,52 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
   final _cnpjController = TextEditingController();
   final _cpfController = TextEditingController();
 
-  void _handleVerificarClick() {
+  DateTime? _dataNascimento;
 
+  Future<void> _handleVerificarClick() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final verificacaoViewmodel = context.read<VerificacaoViewmodel>();
+
+    if (!verificacaoViewmodel.isOrganizador && _dataNascimento == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha a data de nascimento!')),
+      );
+      return;
+    }
+
+    final sucesso = await verificacaoViewmodel.verificar(
+      verificacaoViewmodel.isOrganizador ? _cnpjController.text : _cpfController.text,
+      _dataNascimento
+    );
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Perfil verificado com sucesso!"))
+      );
+      Navigator.pop(context);
+      limparCampos();
+    }
   }
 
+  Future<DateTime?> _selecionarDataHora(DateTime? valorAtual) async {
+    final data = await showDatePicker(
+      context: context,
+      initialDate: valorAtual ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (data == null || !mounted) return null;
+
+    return DateTime(data.year, data.month, data.day);
+  }
+
+  void limparCampos(){
+    _formKey.currentState?.reset();
+    _dataNascimento = null;
+    context.read<VerificacaoViewmodel>().limparErro();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +151,19 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
                       validator: (value) => Validators.cpf(value),
                       controller: _cpfController,
                       tipoInput: TextInputType.text,
+                    ),
+                    const SizedBox(height: 37),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final resultado = await _selecionarDataHora(_dataNascimento);
+                        if (resultado != null) setState(() => _dataNascimento = resultado);
+                      },
+                      child: Text(
+                        _dataNascimento == null ? 'Selecione a data de nascimento' : DateFormat('dd/MM/yyyy').format(_dataNascimento!),
+                        style: TextStyle(
+                          color: AppColors.textboxText
+                        ),
+                      ),
                     ),
                   ],
                   const SizedBox(height: 37),

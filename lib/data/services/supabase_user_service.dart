@@ -39,4 +39,8 @@ class SupabaseUserService {
   Future<void> updateOrganizador(String id, String site) async {
     return await _client.from(_nomeTabelaOrganizador).update({'site': site}).eq('id', id);
   }
+
+  Future<void> verificarUsuario(String id) async {
+    return await _client.from(_nomeTabela).update({'verificado': true}).eq('id', id);
+  }
 }
