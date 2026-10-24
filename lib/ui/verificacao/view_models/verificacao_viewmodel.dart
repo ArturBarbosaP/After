@@ -55,7 +55,7 @@ class VerificacaoViewmodel extends ChangeNotifier {
         id: id,
         isOrganizador: _isOrganizador,
         documento: documento,
-        dataNascimento: dataNascimento!
+        dataNascimento: dataNascimento
       );
 
       _mensagemErro = response.mensagem;

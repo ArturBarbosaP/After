@@ -1,7 +1,9 @@
 import 'dart:typed_data';
+import 'package:after_project/data/model/cnpj_dto.dart';
 import 'package:after_project/data/model/organizador_dto.dart';
 import 'package:after_project/data/model/supabase_edicao_usuario_model.dart';
 import 'package:after_project/data/model/user_profile_dto.dart';
+import 'package:after_project/data/services/brasil_api_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
 import 'package:after_project/data/services/supabase_user_service.dart';
 import 'package:after_project/domain/models/organizador.dart';
@@ -17,8 +19,9 @@ class UserFailure implements Exception {
 class UserRepository {
   final SupabaseUserService _userService;
   final SupabaseStorageService _storageService;
+  final BrasilApiService _brasilApiService;
 
-  UserRepository(this._userService, this._storageService);
+  UserRepository(this._userService, this._storageService, this._brasilApiService);
 
   Future<UserProfile?> getUsuarioAtual() async {
     try {
@@ -96,17 +99,29 @@ class UserRepository {
     required String id,
     required bool isOrganizador,
     required String documento,
-    required DateTime dataNascimento
+    required DateTime? dataNascimento
   }) async {
     try {
       String? mensagem;
       bool ok = true;
       if (isOrganizador){
+        final response = await _brasilApiService.fetchCnpj(documento);
+
+        if (response == null){
+          return (ok: false, mensagem: 'Erro interno de servidor');
+        }
+
+        final empresa = CnpjDto.fromJson(response).toDomain();
+
+        if (empresa.erro != null){
+          return (ok: false, mensagem: empresa.erro);
+        }
+
         mensagem = null;
-        ok = false;
+        ok = true;
       }
       else {
-        final anos = diferencaEmAnos(DateTime.now(), dataNascimento);
+        final anos = diferencaEmAnos(DateTime.now(), dataNascimento!);
 
         if (anos < 18){
           return (ok: false, mensagem: 'Você deve ter mais de 18 anos para realizar a verificação!');

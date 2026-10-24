@@ -5,6 +5,7 @@ import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/verificacao/view_models/verificacao_viewmodel.dart';
+import 'package:after_project/utils/helper.dart';
 import 'package:after_project/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -49,7 +50,7 @@ class _TelaVerificacaoState extends State<_TelaVerificacaoBody> {
     }
 
     final sucesso = await verificacaoViewmodel.verificar(
-      verificacaoViewmodel.isOrganizador ? _cnpjController.text : _cpfController.text,
+      verificacaoViewmodel.isOrganizador ? formataCNPJ(_cnpjController.text) : formataCPF(_cpfController.text),
       _dataNascimento
     );
 
