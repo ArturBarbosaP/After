@@ -316,7 +316,23 @@ class _TelaCadastroEventoState extends State<_TelaCadastroEventoBody> {
               stops: [0.0, 0.519, 1.0],
             ),
           ),
-          child: Center(child: CircularProgressIndicator(color: Colors.white))
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: CircularProgressIndicator(color: Colors.white)),
+              const SizedBox(height: 30),
+              Text(
+                cadastroEventoViewmodel.mensagemErro ?? '',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
