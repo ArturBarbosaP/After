@@ -2,6 +2,7 @@ import 'package:after_project/data/repositories/auth_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/mensagem_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
+import 'package:after_project/data/services/brasil_api_service.dart';
 import 'package:after_project/data/services/image_service.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/data/services/supabase_auth_service.dart';
@@ -10,6 +11,7 @@ import 'package:after_project/data/services/supabase_mensagem_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
 import 'package:after_project/data/services/supabase_user_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void setUpGetIt(){
@@ -44,6 +46,10 @@ void setUpGetIt(){
   getIt.registerLazySingleton<SupabaseMensagemService>(
       () => SupabaseMensagemService(getIt<SupabaseClient>())
   );
+  
+  getIt.registerLazySingleton<BrasilApiService>(
+      () => BrasilApiService(http.Client())
+  );
 
   //Repositories
   getIt.registerLazySingleton<AuthRepository>(
@@ -51,7 +57,7 @@ void setUpGetIt(){
   );
   
   getIt.registerLazySingleton<UserRepository>(
-      () => UserRepository(getIt<SupabaseUserService>())
+      () => UserRepository(getIt<SupabaseUserService>(), getIt<SupabaseStorageService>(), getIt<BrasilApiService>())
   );
   
   getIt.registerLazySingleton<EventoRepository>(

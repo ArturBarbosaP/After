@@ -1,3 +1,6 @@
+import 'package:cpf_cnpj_validator/cnpj_validator.dart';
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
+
 class Validators {
   Validators._();
 
@@ -62,6 +65,30 @@ class Validators {
 
     if (value!.length < nomeTamanhoMinimo || value.length > nomeTamanhoMaximo){
       return "O nome deve conter no mínimo $nomeTamanhoMinimo e no máximo $nomeTamanhoMinimo";
+    }
+    return null;
+  }
+
+  static String? cnpj(String? value){
+    final String? obrigatorio = required(value, campo: "CNPJ");
+    if (obrigatorio != null){
+      return obrigatorio;
+    }
+
+    if (!CNPJValidator.isValid(value)){
+      return "O CNPJ digitado é inválido!";
+    }
+    return null;
+  }
+
+  static String? cpf(String? value){
+    final String? obrigatorio = required(value, campo: "CPF");
+    if (obrigatorio != null){
+      return obrigatorio;
+    }
+
+    if (!CPFValidator.isValid(value)){
+      return "O CPF digitado é inválido!";
     }
     return null;
   }

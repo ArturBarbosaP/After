@@ -14,6 +14,7 @@ class CadastroEventoViewmodel extends ChangeNotifier {
 
   CadastroEventoViewmodel(this._eventoRepository, this._userRepository, this.id){
     _edicao = id != 0;
+    _loadOrganizador();
     if (_edicao){
       _loadEvento();
     }
@@ -56,6 +57,38 @@ class CadastroEventoViewmodel extends ChangeNotifier {
   void limparErro(){
     _mensagemErro = null;
     notifyListeners();
+  }
+
+  Future<void> _loadOrganizador() async {
+    _screenLoading = true;
+    _mensagemErro = null;
+    notifyListeners();
+
+    try{
+      final usuario = await _userRepository.getUsuarioAtual();
+
+      if (!usuario!.verificado){
+        _mensagemErro = 'Para criar eventos você deve verificar sua conta primeiro!';
+        notifyListeners();
+        return;
+      }
+      _screenLoading = false;
+      notifyListeners();
+    } on UserFailure catch (e) {
+      _mensagemErro = e.message;
+      _screenLoading = false;
+      notifyListeners();
+    } catch (e, stackTrace) {
+      _mensagemErro = 'Erro inesperado. Tente novamente.';
+      developer.log(
+        'Falha ao recuperar organizador',
+        name: 'CadastroEventoViewmodel',
+        error: e,
+        stackTrace: stackTrace
+      );
+      _screenLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _loadEvento() async {

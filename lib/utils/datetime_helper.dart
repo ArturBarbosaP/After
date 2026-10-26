@@ -1,3 +1,5 @@
+import 'package:jiffy/jiffy.dart';
+
 String greetingForHour(int hour) {
   if (hour >= 5 && hour < 12) return 'Bom dia!';
   if (hour >= 12 && hour < 18) return 'Boa tarde!';
@@ -69,4 +71,9 @@ String formatarProgressao(DateTime dataInicio, DateTime dataFim) {
 
   return '${formatarData(dataInicio)} • ${formatarHorario(dataInicio, true)} - '
       '${formatarData(dataFim)} • ${formatarHorario(dataFim, true)}';
+}
+
+int diferencaEmAnos(DateTime dataInicio, DateTime dataFim) {
+  final diffInYears = Jiffy.parseFromDateTime(dataInicio).diff(Jiffy.parseFromDateTime(dataFim), unit: Unit.year);
+  return diffInYears.toInt();
 }

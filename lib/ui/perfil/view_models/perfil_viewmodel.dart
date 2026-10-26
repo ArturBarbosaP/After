@@ -18,6 +18,9 @@ class PerfilViewmodel extends ChangeNotifier {
  
   UserProfile? _usuario;
   UserProfile? get usuario => _usuario;
+
+  bool _verificado = false;
+  bool get verificado => _verificado;
  
   Future<void> _load() async {
     _loading = true;
@@ -29,6 +32,7 @@ class PerfilViewmodel extends ChangeNotifier {
       if (_usuario == null) {
         _mensagemErro = 'Faça login para ver o seu perfil.';
       }
+      _verificado = _usuario!.verificado;
     } on UserFailure catch (e) {
       _mensagemErro = e.message;
     } catch (e, stackTrace) {
@@ -43,5 +47,9 @@ class PerfilViewmodel extends ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> refresh() async {
+    await _load();
   }
 }

@@ -12,7 +12,7 @@ class SupabaseUserService {
   Future<Map<String, dynamic>?> fetchUsuario(String id) async {
     return await _client
         .from(_nomeTabela)
-        .select('id, nome, foto_perfil')
+        .select('id, nome, foto_perfil, bio, verificado')
         .eq('id', id)
         .maybeSingle();
   }
@@ -23,5 +23,24 @@ class SupabaseUserService {
         .select()
         .eq('id', id)
         .maybeSingle();
+  }
+
+  Future<void> updateImagemPerfil(String id, String url) async {
+    return await _client
+        .from(_nomeTabela)
+        .update({'foto_perfil': url})
+        .eq('id', id);
+  }
+
+  Future<void> updateUsuario(String id, Map<String, dynamic> dados) async {
+    return await _client.from(_nomeTabela).update(dados).eq('id', id);
+  }
+
+  Future<void> updateOrganizador(String id, String site) async {
+    return await _client.from(_nomeTabelaOrganizador).update({'site': site}).eq('id', id);
+  }
+
+  Future<void> verificarUsuario(String id) async {
+    return await _client.from(_nomeTabela).update({'verificado': true}).eq('id', id);
   }
 }

@@ -4,7 +4,10 @@ import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/ui/edicao_usuario/widgets/tela_edicao_usuario.dart';
 import 'package:after_project/ui/perfil/view_models/perfil_viewmodel.dart';
+import 'package:after_project/ui/verificacao/widgets/tela_verificacao.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
  
@@ -19,23 +22,82 @@ class TelaPerfil extends StatelessWidget {
     );
   }
 }
- 
-class _TelaPerfilBody extends StatelessWidget {
+
+class _TelaPerfilBody extends StatefulWidget {
   const _TelaPerfilBody();
+
+  @override
+  State<StatefulWidget> createState() => _TelaPerfilState();
+}
+
+class _TelaPerfilState extends State<_TelaPerfilBody> {
  
   void _handleEditarPerfil() {
-    // TODO abrir tela de edição do perfil
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => TelaEdicaoUsuario()
+      ),
+    );
+  }
+
+  void _handleVerificarOrganizador() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => TelaVerificacao()
+      ),
+    );
   }
  
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.watch<PerfilViewmodel>();
     final usuario = viewmodel.usuario;
- 
+
+    if (viewmodel.isLoading || usuario == null){
+      return Scaffold(
+        appBar: const AppTopBar(
+            title: 'Meu perfil'
+        ),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.bgTop,
+                AppColors.bgMid,
+                AppColors.bgBottom,
+              ],
+              stops: [0.0, 0.519, 1.0],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (viewmodel.isLoading)...[
+                Center(child: CircularProgressIndicator(color: Colors.white)),
+              ],
+              const SizedBox(height: 30),
+              Text(
+                viewmodel.mensagemErro ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        )
+      );
+    }
+
     return Scaffold(
       appBar: const AppTopBar(
-        title: 'Meu perfil',
-        backIcon: true,
+        title: 'Meu perfil'
       ),
       body: Container(
         width: double.infinity,
@@ -53,21 +115,46 @@ class _TelaPerfilBody extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: viewmodel.isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white))
-              : usuario == null
-                  ? Center(
-                      child: Text(
-                        viewmodel.mensagemErro ?? '',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.white,
+          child: RefreshIndicator(
+            color: AppColors.textboxIcon,
+            backgroundColor: AppColors.textboxBackground,
+            onRefresh: () => viewmodel.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (!viewmodel.verificado)...[
+                      Container(
+                        height: 18,
+                        alignment: Alignment.center,
+                        color: AppColors.organizadorNaoVerificadoBackgroundColor,
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(text: 'Você não está verificado! Faça sua verificação '),
+                              TextSpan(
+                                text: 'clicando aqui!',
+                                recognizer: TapGestureRecognizer()..onTap = () => _handleVerificarOrganizador(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                  color: Color(0xFF8B0D0D),
+                                )
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    )
-                  : SingleChildScrollView(
+                    ],
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Column(
                         children: [
@@ -88,6 +175,24 @@ class _TelaPerfilBody extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ),
+                          if (usuario.bio != null && usuario.bio!.isNotEmpty)...[
+                            const SizedBox(height: 15),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                usuario.bio!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 20),
                           GradientButton(
                             text: 'Editar perfil',
@@ -117,6 +222,11 @@ class _TelaPerfilBody extends StatelessWidget {
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ),
       ),
     );
