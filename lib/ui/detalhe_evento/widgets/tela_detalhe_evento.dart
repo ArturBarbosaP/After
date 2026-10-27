@@ -18,6 +18,7 @@ import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:after_project/ui/comunidade/widgets/tela_comunidade.dart';
@@ -46,24 +47,50 @@ class _TelaDetalheEventoBody extends StatefulWidget {
 class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with WidgetsBindingObserver {
 
   void _handleComunidadeTap() {
-  final vm = context.read<DetalheEventoViewmodel>();
+    final vm = context.read<DetalheEventoViewmodel>();
 
-  if (!vm.verificado){
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Verifique sua conta para entrar na comunidade do evento!')),
+    if (!vm.verificado){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Verifique sua conta para entrar na comunidade do evento!')),
+      );
+      return;
+    }
+
+    final evento = vm.evento;
+    if (evento == null) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TelaComunidade(eventoId: evento.id, tituloEvento: evento.titulo),
+      ),
     );
-    return;
   }
 
-  final evento = vm.evento;
-  if (evento == null) return;
+  void _handleDenunciaTap(){
+    /*Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TelaDenuncia(),
+      ),
+    );*/
+  }
 
-  Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => TelaComunidade(eventoId: evento.id, tituloEvento: evento.titulo),
-    ),
-  );
-}
+  Future<void> _handleCompartilhar(EventoDetalhado evento) async {
+    final texto = [
+      evento.titulo,
+      'Data:  ${formatarPeriodo(evento.dataInicio, evento.dataFim)}',
+      'Endereço: ${evento.endereco}',
+      if (evento.preco != null) 'Valor: ${moedaFormat.format(evento.preco)}',
+      'Classificação: ${evento.classificacao.label}'
+    ].join('\n');
+
+    await Clipboard.setData(ClipboardData(text: texto));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Dados do evento copiados!')),
+    );
+  }
 
   Set<Marker> _buildMarkers(EventoDetalhado evento) {
     return {
@@ -144,13 +171,19 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
       appBar: AppTopBar(
         title: evento.titulo,
         backIcon: true,
-        actions: detalheEventoViewmodel.podeEditar,
+        actions: true,
+        iconActions: detalheEventoViewmodel.podeEditar ? Icons.edit : Icons.share,
         onActionPressed: (){
-          Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => TelaCadastroEvento(eventoId: evento.id),
-            ),
-          );
+          if (detalheEventoViewmodel.podeEditar){
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => TelaCadastroEvento(eventoId: evento.id),
+              ),
+            );
+          }
+          else{
+            _handleCompartilhar(evento);
+          }
         },
       ),
       body: Container(
@@ -469,6 +502,23 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
                                 border: Border.all(
                                   width: 1,
                                   color: Colors.transparent
+                                ),
+                              ),
+                              Container(
+                                height: 40,
+                                width: 40,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.favoritoBackgroundColor,
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: IconButton(
+                                  onPressed: _handleDenunciaTap,
+                                  icon: Icon(
+                                    Icons.flag_outlined,
+                                    size: 24,
+                                    color: AppColors.iconDenunca,
+                                  ),
                                 ),
                               ),
                             ],

@@ -32,6 +32,7 @@ class AppColors {
   static const Color favoritoIconColor = Color(0xFF740C0E);
   static const Color favoritoBackgroundColor = Color(0xFFD228CC);
   static const Color organizadorNaoVerificadoBackgroundColor = Color(0xFFF75151);
+  static const Color iconDenunca = Color(0xFFFBA910);
 
   //gradients
   //bem vindo - login e cadastro
