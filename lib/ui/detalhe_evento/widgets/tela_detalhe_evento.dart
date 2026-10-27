@@ -9,6 +9,7 @@ import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/classificacao.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/ui/denuncia/widgets/tela_denuncia.dart';
 import 'package:after_project/ui/detalhe_evento/view_models/detalhe_evento_viewmodel.dart';
 import 'package:after_project/ui/detalhe_evento/widgets/progressao_evento.dart';
 import 'package:after_project/utils/datetime_helper.dart';
@@ -32,13 +33,15 @@ class TelaDetalheEvento extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => DetalheEventoViewmodel(getIt<EventoRepository>(), getIt<UserRepository>(), eventoId),
-      child: const _TelaDetalheEventoBody(),
+      child: _TelaDetalheEventoBody(eventoId: eventoId),
     );
   }
 }
 
 class _TelaDetalheEventoBody extends StatefulWidget {
-  const _TelaDetalheEventoBody();
+  const _TelaDetalheEventoBody({required this.eventoId});
+
+  final int eventoId;
 
   @override
   State<StatefulWidget> createState() => _TelaDetalheEventoState();
@@ -67,11 +70,11 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
   }
 
   void _handleDenunciaTap(){
-    /*Navigator.of(context).push(
+    Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => TelaDenuncia(),
+        builder: (_) => TelaDenuncia(eventoId: widget.eventoId),
       ),
-    );*/
+    );
   }
 
   Future<void> _handleCompartilhar(EventoDetalhado evento) async {

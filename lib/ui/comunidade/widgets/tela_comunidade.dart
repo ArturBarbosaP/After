@@ -5,6 +5,7 @@ import 'package:after_project/ui/comunidade/view_models/comunidade_viewmodel.dar
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/avatar.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
+import 'package:after_project/ui/denuncia/widgets/tela_denuncia.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,14 +19,15 @@ class TelaComunidade extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ComunidadeViewmodel(getIt<UserRepository>(), getIt<MensagemRepository>(), eventoId),
-      child: _TelaComunidadeBody(tituloEvento: tituloEvento),
+      child: _TelaComunidadeBody(eventoId: eventoId, tituloEvento: tituloEvento),
     );
   }
 }
 
 class _TelaComunidadeBody extends StatefulWidget {
-  const _TelaComunidadeBody({required this.tituloEvento});
+  const _TelaComunidadeBody({required this.tituloEvento, required this.eventoId});
 
+  final int eventoId;
   final String tituloEvento;
 
   @override
@@ -120,6 +122,14 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
     );
   }
 
+  void _handleDenunciaClick(){
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TelaDenuncia(eventoId: widget.eventoId),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -208,6 +218,7 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
                                             urlFoto: msg.autorUrlFoto,
                                             texto: msg.texto,
                                             minha: minha,
+                                            onPressed: _handleDenunciaClick,
                                           );
                                         },
                                       ),
@@ -307,12 +318,14 @@ class _BalaoMensagem extends StatelessWidget {
     required this.urlFoto,
     required this.texto,
     required this.minha,
+    required this.onPressed
   });
 
   final String nome;
   final String? urlFoto;
   final String texto;
   final bool minha;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -338,27 +351,51 @@ class _BalaoMensagem extends StatelessWidget {
                 color: minha ? Colors.greenAccent : Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!minha)
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (!minha)...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              nome,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                color: Colors.black54,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: onPressed,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Icon(
+                                Icons.flag_outlined,
+                                color: AppColors.iconDenunca,
+                                size: 12,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
                     Text(
-                      nome,
+                      texto,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        color: Colors.black54,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Colors.black,
                       ),
                     ),
-                  Text(
-                    texto,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
