@@ -6,12 +6,12 @@ import 'package:after_project/domain/models/mensagem_comunidade.dart';
 import 'package:after_project/domain/models/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
- 
+
 class ComunidadeViewmodel extends ChangeNotifier {
   final UserRepository _userRepository;
   final MensagemRepository _mensagemRepository;
   final int eventoId;
- 
+
   ComunidadeViewmodel(this._userRepository, this._mensagemRepository, this.eventoId) {
     _load();
   }
@@ -20,31 +20,40 @@ class ComunidadeViewmodel extends ChangeNotifier {
 
   bool _loading = false;
   bool get isLoading => _loading;
- 
+
+  // Erro de carregamento ou de login (aparece no lugar do chat).
   String? _mensagemErro;
   String? get mensagemErro => _mensagemErro;
- 
+
+  // Erro de envio (aparece em um SnackBar, o chat continua na tela).
+  String? _erroEnvio;
+  String? get erroEnvio => _erroEnvio;
+
+  bool _enviando = false;
+  bool get isEnviando => _enviando;
+
   late UserProfile _usuarioAtual;
   UserProfile get usuarioAtual => _usuarioAtual;
- 
+
   List<MensagemComunidade> _mensagens = [];
   List<MensagemComunidade> get mensagens => _mensagens;
 
   bool _logado = false;
   bool get usuarioLogado => _logado;
- 
+
+  // O chat só aparece se está logado e carregou sem erro.
+  bool get chatDisponivel => _logado && _mensagemErro == null;
+
   Future<void> _load() async {
     _loading = true;
     _mensagemErro = null;
     notifyListeners();
- 
+
     try {
       final user = await _userRepository.getUsuarioAtual();
-      if (user == null){
+      if (user == null) {
         _mensagemErro = 'Você precisa fazer login para ver a comunidade do evento.';
-        _loading = false;
         _logado = false;
-        notifyListeners();
         return;
       }
       _logado = true;
@@ -59,8 +68,12 @@ class ComunidadeViewmodel extends ChangeNotifier {
           if (jaExiste) return;
           _mensagens = [..._mensagens, mensagem];
           notifyListeners();
-        }
+        },
       );
+    } on UserFailure catch (e) {
+      _mensagemErro = e.message;
+    } on ComunidadeFailure catch (e) {
+      _mensagemErro = e.message;
     } catch (e, stackTrace) {
       _mensagemErro = 'Erro inesperado. Tente novamente.';
       developer.log(
@@ -74,11 +87,16 @@ class ComunidadeViewmodel extends ChangeNotifier {
       notifyListeners();
     }
   }
- 
-  Future<void> enviarMensagem(String texto) async {
+
+  /// Retorna true se enviou (ou se não havia nada para enviar).
+  Future<bool> enviarMensagem(String texto) async {
     final limpo = texto.trim();
-    if (limpo.isEmpty) return;
- 
+    if (limpo.isEmpty) return true;
+
+    _enviando = true;
+    _erroEnvio = null;
+    notifyListeners();
+
     try {
       await _mensagemRepository.enviarMensagem(
         eventoId: eventoId,
@@ -87,19 +105,25 @@ class ComunidadeViewmodel extends ChangeNotifier {
           autorId: _usuarioAtual.id,
           autorNome: _usuarioAtual.nome,
           autorUrlFoto: _usuarioAtual.urlFotoPerfil,
-          texto: texto,
+          texto: limpo,
           enviadaEm: DateTime.now().toIso8601String(),
-        )
+        ),
       );
-      notifyListeners();
+      return true;
+    } on ComunidadeFailure catch (e) {
+      _erroEnvio = e.message;
+      return false;
     } catch (e, stackTrace) {
-      _mensagemErro = 'Erro ao enviar mensagem.';
+      _erroEnvio = 'Erro ao enviar mensagem.';
       developer.log(
         'Falha ao enviar mensagem',
         name: 'ComunidadeViewmodel',
         error: e,
         stackTrace: stackTrace,
       );
+      return false;
+    } finally {
+      _enviando = false;
       notifyListeners();
     }
   }
@@ -112,4 +136,3 @@ class ComunidadeViewmodel extends ChangeNotifier {
     super.dispose();
   }
 }
- 
