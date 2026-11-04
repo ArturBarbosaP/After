@@ -1,4 +1,5 @@
 import 'package:after_project/data/repositories/auth_repository.dart';
+import 'package:after_project/data/repositories/denuncia_repository.dart';
 import 'package:after_project/data/repositories/evento_repository.dart';
 import 'package:after_project/data/repositories/mensagem_repository.dart';
 import 'package:after_project/data/repositories/user_repository.dart';
@@ -6,6 +7,7 @@ import 'package:after_project/data/services/brasil_api_service.dart';
 import 'package:after_project/data/services/image_service.dart';
 import 'package:after_project/data/services/location_service.dart';
 import 'package:after_project/data/services/supabase_auth_service.dart';
+import 'package:after_project/data/services/supabase_denuncia_service.dart';
 import 'package:after_project/data/services/supabase_evento_service.dart';
 import 'package:after_project/data/services/supabase_mensagem_service.dart';
 import 'package:after_project/data/services/supabase_storage_service.dart';
@@ -46,6 +48,10 @@ void setUpGetIt(){
   getIt.registerLazySingleton<SupabaseMensagemService>(
       () => SupabaseMensagemService(getIt<SupabaseClient>())
   );
+
+  getIt.registerLazySingleton<SupabaseDenunciaService>(
+      () => SupabaseDenunciaService(getIt<SupabaseClient>())
+  );
   
   getIt.registerLazySingleton<BrasilApiService>(
       () => BrasilApiService(http.Client())
@@ -66,6 +72,10 @@ void setUpGetIt(){
 
   getIt.registerLazySingleton<MensagemRepository>(
       () => MensagemRepository(getIt<SupabaseMensagemService>())
+  );
+
+  getIt.registerLazySingleton<DenunciaRepository>(
+      () => DenunciaRepository(getIt<SupabaseDenunciaService>())
   );
 }
 

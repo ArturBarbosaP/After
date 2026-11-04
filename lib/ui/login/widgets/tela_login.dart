@@ -65,11 +65,6 @@ class _TelaLoginState extends State<_TelaLoginBody> {
   }
 
   void _handleEsqueciSenhaTap(){
-    /*Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const TelaEsqueciSenha(), TODO
-        )
-    );*/
     limparCampos();
   }
 
