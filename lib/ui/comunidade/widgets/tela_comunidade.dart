@@ -122,10 +122,10 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
     );
   }
 
-  void _handleDenunciaClick(){
+  void _handleDenunciaClick(String autorId){
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => TelaDenuncia(eventoId: widget.eventoId),
+        builder: (_) => TelaDenuncia(eventoId: widget.eventoId, usuarioId: autorId),
       ),
     );
   }
@@ -218,7 +218,7 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
                                             urlFoto: msg.autorUrlFoto,
                                             texto: msg.texto,
                                             minha: minha,
-                                            onPressed: _handleDenunciaClick,
+                                            onPressed: () => _handleDenunciaClick(msg.autorId),
                                           );
                                         },
                                       ),
@@ -374,6 +374,7 @@ class _BalaoMensagem extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: onPressed,
+                            behavior: HitTestBehavior.opaque,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 10),
                               child: Icon(
