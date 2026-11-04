@@ -1,20 +1,24 @@
+import 'package:after_project/config/get_it_config.dart';
+import 'package:after_project/data/repositories/denuncia_repository.dart';
 import 'package:after_project/ui/core/themes/app_colors.dart';
 import 'package:after_project/ui/core/ui/gradient_button.dart';
 import 'package:after_project/ui/core/ui/textbox.dart';
 import 'package:after_project/ui/core/ui/topbar.dart';
 import 'package:after_project/ui/denuncia/view_models/denuncia_viewmodel.dart';
+import 'package:after_project/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TelaDenuncia extends StatelessWidget {
-  final int eventoId;
+  final int? eventoId;
+  final String? usuarioId;
 
-  const TelaDenuncia({super.key, required this.eventoId});
+  const TelaDenuncia({super.key, this.eventoId, this.usuarioId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DenunciaViewmodel(eventoId),
+      create: (_) => DenunciaViewmodel(getIt<DenunciaRepository>(), eventoId, usuarioId),
       child: _TelaDenunciaBody(),
     );
   }
@@ -31,8 +35,26 @@ class _TelaDenunciaState extends State<_TelaDenunciaBody> {
   final _formKey = GlobalKey<FormState>();
   final _denunciaController = TextEditingController();
 
-  void _handleEnviarClick(){
+  Future<void> _handleEnviarClick() async {
+    if (!_formKey.currentState!.validate()) return;
 
+    final denunciaViewmodel = context.read<DenunciaViewmodel>();
+
+    final sucesso = await denunciaViewmodel.enviarDenuncia(_denunciaController.text.trimRight());
+
+    if (sucesso && mounted){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Denúncia enviada com sucesso!"))
+      );
+      Navigator.pop(context);
+      _formKey.currentState?.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _denunciaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,7 +108,7 @@ class _TelaDenunciaState extends State<_TelaDenunciaBody> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Preencha o campo para enviar sua denúncia sobre evento ou mensagem ',
+                        'Descreva a sua denúncia sobre o evento ou mensagem.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -99,6 +121,7 @@ class _TelaDenunciaState extends State<_TelaDenunciaBody> {
                         label: 'Detalhes',
                         controller: _denunciaController,
                         tipoInput: TextInputType.text,
+                        validator: (value) => Validators.required(value),
                       ),
                       const SizedBox(height: 37),
                       Text(
