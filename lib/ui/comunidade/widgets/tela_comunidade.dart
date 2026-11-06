@@ -9,15 +9,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TelaComunidade extends StatelessWidget {
-  const TelaComunidade({super.key, required this.eventoId, required this.tituloEvento});
-
+  const TelaComunidade({
+    super.key,
+    required this.eventoId,
+    required this.tituloEvento,
+    this.ehOrganizador = false,
+  });
+ 
   final int eventoId;
   final String tituloEvento;
-
+  final bool ehOrganizador;
+ 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ComunidadeViewmodel(getIt<UserRepository>(), getIt<MensagemRepository>(), eventoId),
+      create: (_) => ComunidadeViewmodel(
+        getIt<UserRepository>(),
+        getIt<MensagemRepository>(),
+        eventoId,
+        ehOrganizador,
+      ),
       child: _TelaComunidadeBody(tituloEvento: tituloEvento),
     );
   }
@@ -120,6 +131,36 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
     );
   }
 
+Future<void> _confirmarRemocao(String mensagemId) async {
+    final viewmodel = context.read<ComunidadeViewmodel>();
+ 
+    final confirmou = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Remover mensagem?'),
+        content: const Text('A mensagem vai aparecer como removida para todos.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Remover'),
+          ),
+        ],
+      ),
+    );
+    if (confirmou != true || !mounted) return;
+ 
+    final ok = await viewmodel.removerMensagem(mensagemId);
+    if (!mounted || ok) return;
+ 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(viewmodel.erroModeracao ?? 'Erro ao remover mensagem.')),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -203,11 +244,15 @@ class _TelaComunidadeState extends State<_TelaComunidadeBody> {
                                         itemBuilder: (context, index) {
                                           final msg = viewmodel.mensagens[index];
                                           final minha = msg.autorId == viewmodel.usuarioAtual.id;
-                                          return _BalaoMensagem(
+                                           return _BalaoMensagem(
                                             nome: msg.autorNome,
                                             urlFoto: msg.autorUrlFoto,
                                             texto: msg.texto,
                                             minha: minha,
+                                            removida: msg.removida,
+                                            onLongPress: viewmodel.ehOrganizador && !msg.removida
+                                                ? () => _confirmarRemocao(msg.id)
+                                                : null,
                                           );
                                         },
                                       ),
@@ -307,13 +352,17 @@ class _BalaoMensagem extends StatelessWidget {
     required this.urlFoto,
     required this.texto,
     required this.minha,
+    this.removida = false,
+    this.onLongPress,
   });
-
+ 
   final String nome;
   final String? urlFoto;
   final String texto;
   final bool minha;
-
+  final bool removida;
+  final VoidCallback? onLongPress;
+ 
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -332,33 +381,39 @@ class _BalaoMensagem extends StatelessWidget {
             const SizedBox(width: 10),
           ],
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: minha ? Colors.greenAccent : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!minha)
+            child: GestureDetector(
+              onLongPress: onLongPress,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: removida
+                      ? Colors.white24
+                      : (minha ? Colors.greenAccent : Colors.white),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!minha && !removida)
+                      Text(
+                        nome,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
                     Text(
-                      nome,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        color: Colors.black54,
+                      removida ? 'Mensagem removida pelo organizador' : texto,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        fontStyle: removida ? FontStyle.italic : FontStyle.normal,
+                        color: removida ? Colors.white70 : Colors.black,
                       ),
                     ),
-                  Text(
-                    texto,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

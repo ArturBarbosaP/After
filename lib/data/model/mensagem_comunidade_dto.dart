@@ -1,5 +1,5 @@
 import 'package:after_project/domain/models/mensagem_comunidade.dart';
-
+ 
 class MensagemComunidadeDto {
   final String id;
   final String autorId;
@@ -7,7 +7,8 @@ class MensagemComunidadeDto {
   final String? autorUrlFoto;
   final String texto;
   final String enviadaEm;
-
+  final bool removida;
+ 
   MensagemComunidadeDto({
     required this.id,
     required this.autorId,
@@ -15,8 +16,9 @@ class MensagemComunidadeDto {
     this.autorUrlFoto,
     required this.texto,
     required this.enviadaEm,
+    this.removida = false,
   });
-
+ 
   factory MensagemComunidadeDto.fromJson(Map<String, dynamic> json) {
     return MensagemComunidadeDto(
       id: json['id'] as String,
@@ -25,9 +27,10 @@ class MensagemComunidadeDto {
       autorUrlFoto: json['autor_url_foto'] as String?,
       texto: json['texto'] as String,
       enviadaEm: json['enviado_em'] as String,
+      removida: (json['removida'] as bool?) ?? false,
     );
   }
-
+ 
   MensagemComunidade toDomain() {
     return MensagemComunidade(
       id: id,
@@ -36,17 +39,18 @@ class MensagemComunidadeDto {
       autorUrlFoto: autorUrlFoto,
       texto: texto,
       enviadaEm: DateTime.parse(enviadaEm),
+      removida: removida,
     );
   }
-
-  Map<String, dynamic> toMap(int eventoId){
+ 
+  Map<String, dynamic> toMap(int eventoId) {
     return {
       'evento_id': eventoId,
       'autor_id': autorId,
       'autor_nome': autorNome,
       'autor_url_foto': autorUrlFoto,
       'texto': texto,
-      'enviado_em': enviadaEm
+      'enviado_em': enviadaEm,
     };
   }
 }

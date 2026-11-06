@@ -44,11 +44,16 @@ class MensagemRepository {
     }
   }
 
-  RealtimeChannel escutarMensagens({required int eventoId, required void Function(MensagemComunidade mensagem) onNovaMensagem}) {
+  RealtimeChannel escutarMensagens({
+    required int eventoId,
+    required void Function(MensagemComunidade mensagem) onNovaMensagem,
+    required void Function(MensagemComunidade mensagem) onMensagemAtualizada,
+  }) {
     try {
       return _mensagemService.escutarMensagens(
         eventoId: eventoId,
         onNovaMensagem: (json) => onNovaMensagem(MensagemComunidadeDto.fromJson(json).toDomain()),
+        onMensagemAtualizada: (json) => onMensagemAtualizada(MensagemComunidadeDto.fromJson(json).toDomain()),
       );
     } catch (ex, stackTrace) {
       developer.log(
@@ -61,10 +66,24 @@ class MensagemRepository {
     }
   }
 
+  Future<void> removerMensagem(String mensagemId) async {
+    try {
+      await _mensagemService.removerMensagem(mensagemId);
+    } catch (ex, stackTrace) {
+      developer.log(
+        'Falha ao remover mensagem - Exception',
+        name: 'MensagemRepository',
+        error: ex,
+        stackTrace: stackTrace
+      );
+      throw ComunidadeFailure('Não foi possível remover a mensagem.');
+    }
+  }
+
   Future<void> pararDeEscutar(RealtimeChannel channel) {
     try {
       return _mensagemService.pararDeEscutar(channel);
-    }  catch (ex, stackTrace) {
+    } catch (ex, stackTrace) {
       developer.log(
         'Falha ao parar de escutar as mensagens - Exception',
         name: 'MensagemRepository',

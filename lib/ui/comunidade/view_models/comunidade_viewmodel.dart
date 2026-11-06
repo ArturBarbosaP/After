@@ -11,11 +11,12 @@ class ComunidadeViewmodel extends ChangeNotifier {
   final UserRepository _userRepository;
   final MensagemRepository _mensagemRepository;
   final int eventoId;
-
-  ComunidadeViewmodel(this._userRepository, this._mensagemRepository, this.eventoId) {
+  final bool ehOrganizador;
+ 
+  ComunidadeViewmodel(this._userRepository, this._mensagemRepository, this.eventoId, this.ehOrganizador) {
     _load();
   }
-
+ 
   RealtimeChannel? _channel;
 
   bool _loading = false;
@@ -31,6 +32,9 @@ class ComunidadeViewmodel extends ChangeNotifier {
 
   bool _enviando = false;
   bool get isEnviando => _enviando;
+
+  String? _erroModeracao;
+  String? get erroModeracao => _erroModeracao;
 
   late UserProfile _usuarioAtual;
   UserProfile get usuarioAtual => _usuarioAtual;
@@ -67,6 +71,13 @@ class ComunidadeViewmodel extends ChangeNotifier {
           final jaExiste = _mensagens.any((m) => m.id == mensagem.id);
           if (jaExiste) return;
           _mensagens = [..._mensagens, mensagem];
+          notifyListeners();
+        },
+        onMensagemAtualizada: (mensagem) {
+          final i = _mensagens.indexWhere((m) => m.id == mensagem.id);
+          if (i == -1) return;
+          _mensagens = [..._mensagens];
+          _mensagens[i] = mensagem;
           notifyListeners();
         },
       );
@@ -125,6 +136,35 @@ class ComunidadeViewmodel extends ChangeNotifier {
     } finally {
       _enviando = false;
       notifyListeners();
+    }
+  }
+
+Future<bool> removerMensagem(String mensagemId) async {
+    if (!ehOrganizador) return false;
+ 
+    _erroModeracao = null;
+    try {
+      await _mensagemRepository.removerMensagem(mensagemId);
+ 
+      final i = _mensagens.indexWhere((m) => m.id == mensagemId);
+      if (i != -1) {
+        final m = _mensagens[i];
+        _mensagens = [..._mensagens];
+        _mensagens[i] = MensagemComunidade(
+          id: m.id,
+          autorId: m.autorId,
+          autorNome: m.autorNome,
+          autorUrlFoto: m.autorUrlFoto,
+          texto: m.texto,
+          enviadaEm: m.enviadaEm,
+          removida: true,
+        );
+        notifyListeners();
+      }
+      return true;
+    } on ComunidadeFailure catch (e) {
+      _erroModeracao = e.message;
+      return false;
     }
   }
 

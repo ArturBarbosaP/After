@@ -60,7 +60,11 @@ class _TelaDetalheEventoState extends State<_TelaDetalheEventoBody> with Widgets
 
   Navigator.of(context).push(
     MaterialPageRoute<void>(
-      builder: (_) => TelaComunidade(eventoId: evento.id, tituloEvento: evento.titulo),
+      builder: (_) => TelaComunidade(
+        eventoId: evento.id,
+        tituloEvento: evento.titulo,
+        ehOrganizador: vm.podeEditar,
+      ),
     ),
   );
 }

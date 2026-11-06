@@ -5,6 +5,7 @@ class MensagemComunidade {
   final String? autorUrlFoto;
   final String texto;
   final DateTime enviadaEm;
+  final bool removida;
  
   const MensagemComunidade({
     required this.id,
@@ -13,5 +14,7 @@ class MensagemComunidade {
     this.autorUrlFoto,
     required this.texto,
     required this.enviadaEm,
+    this.removida = false,
   });
 }
+ 
