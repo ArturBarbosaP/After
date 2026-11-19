@@ -1,1 +1,105 @@
+# After
 
+Aplicativo Android desenvolvido em Flutter, com banco de dados PostgreSQL no Supabase, para descobrir eventos que estão acontecendo ao vivo ou prestes a começar perto de você. Tem lista de eventos, mapa, detalhes do evento com chat em tempo real e uma área para organizadores criarem e gerenciarem seus eventos.
+
+## Como rodar
+
+Existem dois caminhos:
+
+- **Opção 1, instalar o APK:** o mais rápido e não exige nenhuma configuração.
+- **Opção 2, rodar pelo código:** clonar o repositório, colocar as chaves e executar com o Flutter.
+
+Nos dois casos o app usa o projeto Supabase e as chaves do desenvolvedor. Não há contas de teste, crie a sua pela tela de cadastro.
+
+---
+
+## Opção 1: instalar o APK
+
+1. Abra a [release](https://github.com/ArturBarbosaP/After/releases) mais recente.
+2. Baixe o arquivo `.apk` direto no celular Android (ou baixe no computador e copie para o celular).
+3. Abra o arquivo e, se o Android pedir, permita a instalação de apps de fontes desconhecidas.
+4. Abra o app e crie uma conta.
+
+O APK já vem com todas as chaves configuradas e foi assinado com a chave cadastrada no Google Cloud do projeto, então o mapa e o login com Google funcionam sem ajustes.
+
+---
+
+## Opção 2: rodar pelo código
+
+### Pré-requisitos
+
+- **Git**
+- **Flutter 3.41.6** (Dart 3.11.4), versão usada no desenvolvimento. O projeto exige Dart `^3.11.4`, e versões mais antigas falham no `flutter pub get`. Confira com `flutter --version`.
+- **Android Studio**, com o Android SDK e as *Command-line Tools* instalados (SDK Manager). O desenvolvimento usou o Android SDK 35.
+- **Licenças do Android aceitas:** `flutter doctor --android-licenses`
+- **Um dispositivo Android** com depuração USB ativada, **ou um emulador com Google Play**. O mapa e o login com Google dependem dos serviços do Google Play.
+- **Os arquivos de chaves**:
+    - o arquivo `.env`: [link do Drive](https://drive.google.com/file/d/1tLBGZIGaMWzZ0JVAqXCdAkRNMN9dMWjL/view?usp=sharing)
+    - o valor da chave do Google Maps (`MAPS_API_KEY`): [link do Drive](https://docs.google.com/document/d/1GyPA55rQ_YvHsAHYeu7TlspyvGdwHsYFFBb5salkVh4/edit?usp=sharing)
+
+> O desenvolvimento foi feito no Windows 10. Os comandos abaixo funcionam também no macOS e no Linux.
+
+### Passo a passo
+
+**1. Clonar o repositório**
+
+```bash
+git clone https://github.com/ArturBarbosaP/After.git
+git checkout master
+```
+
+**2. Colocar o arquivo `.env` na raiz do projeto**
+
+Baixe o `.env` do [Drive](https://drive.google.com/file/d/1tLBGZIGaMWzZ0JVAqXCdAkRNMN9dMWjL/view?usp=sharing) e salve na raiz do projeto, na mesma pasta do `pubspec.yaml`. O nome do arquivo precisa ser exatamente `.env`. No Windows, ative a exibição das extensões de arquivo para ter certeza de que ele não foi salvo como `.env.txt`.
+
+**3. Colocar a chave do Google Maps**
+
+Abra o arquivo `android/local.properties` e adicione, em uma nova linha, a [chave](https://docs.google.com/document/d/1GyPA55rQ_YvHsAHYeu7TlspyvGdwHsYFFBb5salkVh4/edit?usp=sharing)
+
+Esse arquivo é criado automaticamente pelo Flutter e pelo Android Studio e já tem outras linhas (como `flutter.sdk` e `sdk.dir`), que devem ser mantidas. Se ele ainda não existir, rode `flutter pub get` antes, ou crie o arquivo manualmente.
+
+
+**4. Instalar as dependências**
+
+```bash
+flutter pub get
+```
+
+**5. Escolher o dispositivo**
+
+Conecte o celular ou abra o emulador e confira que ele aparece na lista:
+
+```bash
+flutter devices
+```
+
+**6. Rodar**
+
+```bash
+flutter run
+```
+
+Se houver mais de um dispositivo, use `flutter run -d <id_do_dispositivo>`. A primeira execução baixa as dependências do Gradle e pode levar vários minutos.
+
+Para gerar um APK próprio:
+
+```bash
+flutter build apk --release
+```
+
+O arquivo fica em `build/app/outputs/flutter-apk/app-release.apk`.
+
+---
+
+## Mapa e login com Google: sobre o SHA-1
+
+O Google Maps e o login com Google são vinculados ao pacote do app e à impressão digital **SHA-1 da chave que assinou o app**, cadastrados no Google Cloud.
+
+Ao rodar pelo código, o app é assinado com a **chave de debug da sua máquina**, que tem um SHA-1 diferente do cadastrado. Por isso, na sua máquina:
+
+- o **mapa aparece cinza**, só com os botões de zoom e de localização;
+- o **login com Google pode falhar** (por exemplo, com `[16] Account reauth failed`).
+
+**Isso é esperado e não indica erro no projeto.** Todo o resto do app funciona, inclusive o cadastro e o login com e-mail e senha.
+
+Para ver o mapa e o login com Google funcionando, **use o APK da release** (Opção 1), que já está assinado com a chave cadastrada.
